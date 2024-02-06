@@ -14,6 +14,8 @@ UNetwork_Manager_R::UNetwork_Manager_R(): Socket(nullptr)
 	const FString ServerIP = TEXT("192.168.0.102");
 	int32 port = 8080;
 	ConnectToServer(ServerIP, port);
+
+	//
 }
 
 bool UNetwork_Manager_R::ConnectToServer(const FString& IP, int32 Port)
