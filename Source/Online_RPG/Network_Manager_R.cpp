@@ -20,6 +20,7 @@ UNetwork_Manager_R::UNetwork_Manager_R(): Socket(nullptr)
 
 bool UNetwork_Manager_R::ConnectToServer(const FString& IP, int32 Port)
 {
+	return false;
 	Socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(NAME_Stream, TEXT("default"), false);
     
 	FIPv4Address Addr;
