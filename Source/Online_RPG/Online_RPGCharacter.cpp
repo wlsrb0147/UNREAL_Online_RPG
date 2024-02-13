@@ -6,13 +6,17 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Net/UnrealNetwork.h"
-#include "Engine/Engine.h"
-#include "Projectile_dm.h"
 #include "GameFramework/Controller.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+
+#include "Net/UnrealNetwork.h"
+#include "Engine/Engine.h"
+
+#include "RED_Projectile.h"
+
+
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -21,6 +25,7 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 AOnline_RPGCharacter::AOnline_RPGCharacter()
 {
+	bReplicates = true;
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
@@ -56,31 +61,35 @@ AOnline_RPGCharacter::AOnline_RPGCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
-
-	//ÇÃ·¹ÀÌ¾î Ã¼·Â ÃÊ±âÈ­
+	//í”Œë ˆì´ì–´ ì²´ë ¥ ì´ˆê¸°í™”
 	MaxHealth = 100.0f;
 	CurrentHealth = MaxHealth;
 
-	//¹ß»çÃ¼ Å¬·¡½º ÃÊ±âÈ­
-	ProjectileClass = AProjectile_dm::StaticClass();
-	//¹ß»ç ¼Óµµ ÃÊ±âÈ­
+	//ë°œì‚¬ì²´ í´ë˜ìŠ¤ ì´ˆê¸°í™”
+	ProjectileClass = ARED_Projectile::StaticClass();
+	//ë°œì‚¬ ì†ë„ ì´ˆê¸°í™”
 	FireRate = 0.25f;
 	bIsFiringWeapon = false;
 }
 
-// ¸®ÇÃ¸®ÄÉÀÌÆ®µÈ ÇÁ·ÎÆÛÆ¼
-
-void AOnline_RPGCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifetimeProps) const
+void AOnline_RPGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	//ÇöÀç Ã¼·Â ¸®ÇÃ¸®ÄÉÀÌÆ®
+	//í˜„ì¬ ì²´ë ¥ ë¦¬í”Œë¦¬ì¼€ì´íŠ¸
 	DOREPLIFETIME(AOnline_RPGCharacter, CurrentHealth);
+	DOREPLIFETIME(AOnline_RPGCharacter, Mana);
 }
 
 void AOnline_RPGCharacter::OnHealthUpdate()
 {
-	//Å¬¶óÀÌ¾ğÆ® Àü¿ë ÇÔ¼ö ±â´É
+	if(IsPlayerControlled())
+	{
+		FString healthMessage = FString::Printf(TEXT("ëˆ„êµ°ê°€ í”¼ê°€ ë‹¬ì•˜ë‹¤."));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
+	}
+	
+	//í´ë¼ì´ì–¸íŠ¸ ì „ìš© í•¨ìˆ˜ ê¸°ëŠ¥
 	if (IsLocallyControlled())
 	{
 		FString healthMessage = FString::Printf(TEXT("You now have %f health remaining."), CurrentHealth);
@@ -93,16 +102,16 @@ void AOnline_RPGCharacter::OnHealthUpdate()
 		}
 	}
 
-	//¼­¹ö Àü¿ë ÇÔ¼ö ±â´É
+	//ì„œë²„ ì „ìš© í•¨ìˆ˜ ê¸°ëŠ¥
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		FString healthMessage = FString::Printf(TEXT("%s now has %f health remaining."), *GetFName().ToString(), CurrentHealth);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
 	}
 
-	//¸ğµç ¸Ó½Å¿¡¼­ ½ÇÇàµÇ´Â ÇÔ¼ö
-	/*
-		¿©±â¿¡ ´ë¹ÌÁö ¶Ç´Â »ç¸ÁÀÇ °á°ú·Î ¹ß»ıÇÏ´Â Æ¯º° ÇÔ¼ö ±â´É ¹èÄ¡
+	//ëª¨ë“  ë¨¸ì‹ ì—ì„œ ì‹¤í–‰ë˜ëŠ” í•¨ìˆ˜ 
+	/*  
+		ì—¬ê¸°ì— ëŒ€ë¯¸ì§€ ë˜ëŠ” ì‚¬ë§ì˜ ê²°ê³¼ë¡œ ë°œìƒí•˜ëŠ” íŠ¹ë³„ í•¨ìˆ˜ ê¸°ëŠ¥ ë°°ì¹˜ 
 	*/
 }
 
@@ -124,24 +133,33 @@ void AOnline_RPGCharacter::StopFire()
 
 void AOnline_RPGCharacter::HandleFire_Implementation()
 {
-	FVector spawnLocation = GetActorLocation() + (GetActorRotation().Vector() * 100.0f) + (GetActorUpVector() * 50.0f);
+	FVector spawnLocation = GetActorLocation() + ( GetActorRotation().Vector()  * 100.0f ) + (GetActorUpVector() * 50.0f);
 	FRotator spawnRotation = GetActorRotation();
 
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.Instigator = GetInstigator();
 	spawnParameters.Owner = this;
 
-	AProjectile_dm* spawnedProjectile = GetWorld()->SpawnActor<AProjectile_dm>(spawnLocation, spawnRotation, spawnParameters);
+	ARED_Projectile* spawnedProjectile = GetWorld()->SpawnActor<ARED_Projectile>(spawnLocation, spawnRotation, spawnParameters);
 }
 
-void AOnline_RPGCharacter::OnRep_CurrentHealth()
+void AOnline_RPGCharacter::SetCurrentHealth(float healthValue)
 {
-	OnHealthUpdate();
-	//ÇÔ¼ö
-	//ÇÔ¼ö
-	//ÇÔ¼ö
-	
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		CurrentHealth = FMath::Clamp(healthValue, 0.f, MaxHealth);
+		OnHealthUpdate();
+	}
 }
+
+float AOnline_RPGCharacter::TakeDamage(float DamageTaken, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	float damageApplied = CurrentHealth - DamageTaken;
+	SetCurrentHealth(damageApplied);
+	return damageApplied;
+}
+
 
 void AOnline_RPGCharacter::BeginPlay()
 {
@@ -156,7 +174,11 @@ void AOnline_RPGCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-	
+}
+
+void AOnline_RPGCharacter::OnRep_CurrentHealth()
+{
+	OnHealthUpdate();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -176,31 +198,14 @@ void AOnline_RPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AOnline_RPGCharacter::Look);
-
-		// ¹ß»çÃ¼ ¹ß»ç Ã³¸®
-		PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AOnline_RPGCharacter::StartFire);
 	}
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
-}
 
-void AOnline_RPGCharacter::SetCurrentHealth(float healthValue)
-{
-	if (GetLocalRole() == ROLE_Authority)
-	{
-		CurrentHealth = FMath::Clamp(healthValue, 0.f, MaxHealth);
-		OnHealthUpdate();
-	}
-}
-
-float AOnline_RPGCharacter::TakeDamage(float DamageTaken, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	float damageApplied = CurrentHealth - DamageTaken;
-	SetCurrentHealth(damageApplied);
-
-	return damageApplied;
+	// ë°œì‚¬ì²´ ë°œì‚¬ ì²˜ë¦¬
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AOnline_RPGCharacter::StartFire);
 }
 
 void AOnline_RPGCharacter::Move(const FInputActionValue& Value)
