@@ -16,6 +16,9 @@ void UWIdget_Login::LoginClick(FString id, FString pw)
 {
 	UE_LOG(LogTemp, Log, TEXT("Login CLick!!!! %s %s"), *id, *pw);
 	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
+
+	Instance->SelectUser(id,pw);
+	
 }
 
 // void UWIdget_Login::LoginClick()

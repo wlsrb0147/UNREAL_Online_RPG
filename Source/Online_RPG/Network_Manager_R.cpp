@@ -30,9 +30,69 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 	{
 		if (EHttpResponseCodes::IsOk(Response->GetResponseCode()))
 		{
+			// JSON 응답 파싱을 시도합니다.
+
+			// JSON 응답을 배열로 파싱 시도합니다.
+			TSharedPtr<FJsonValue> JsonValue;
+			TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+
+			if (FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid() && JsonValue->Type == EJson::Array)
+			{
+				TArray<TSharedPtr<FJsonValue>> JsonArray = JsonValue->AsArray();
+				// 배열 내의 객체를 처리합니다.
+				for (auto& Item : JsonArray)
+				{
+					TSharedPtr<FJsonObject> JsonObject = Item->AsObject();
+					if (JsonObject.IsValid())
+					{
+						if (JsonObject->HasField(TEXT("document")))
+						{
+							// "document" 객체에 접근합니다.
+							TSharedPtr<FJsonObject> DocumentObject = JsonObject->GetObjectField(TEXT("document"));
+							if (DocumentObject.IsValid())
+							{
+								//이미 있는것이니 성공 띄우고 몇초 뒤에 로그인 시켜버리면됨
+								UE_LOG(LogTemp, Error, TEXT("성공창 "));
+								
+								// "name" 필드 값을 가져옵니다.
+								FString Name = DocumentObject->GetStringField(TEXT("name"));
+								UE_LOG(LogTemp, Log, TEXT("Document Name: %s"), *Name);
+
+								// "fields" 객체 내의 "ID"와 "PW" 필드 값을 가져옵니다.
+								TSharedPtr<FJsonObject> FieldsObject = DocumentObject->GetObjectField(TEXT("fields"));
+								if (FieldsObject.IsValid())
+								{
+									FString ID = FieldsObject->GetObjectField(TEXT("ID"))->GetStringField(TEXT("stringValue"));
+									FString PW = FieldsObject->GetObjectField(TEXT("PW"))->GetStringField(TEXT("stringValue"));
+									UE_LOG(LogTemp, Log, TEXT("ID: %s, PW: %s"), *ID, *PW);
+								}
+
+								return;
+							}
+						}else
+						{
+							UE_LOG(LogTemp, Error, TEXT("이럼 없는 거임"));
+							
+						}
+						
+					}
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON response."));
+			}
+			//TSharedPtr<FJsonObject> JsonObject;
+			//TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+
 			UE_LOG(LogTemp, Log, TEXT("HTTP Request was successful. Response: %s"), *Response->GetContentAsString());
 			// Parse the JSON response if needed
 			// ... rest of your code for JSON parsing
+			// Assuming the query results are in an array named "results"
+			 //TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+			
+			
+			
 		}
 		else
 		{
@@ -43,6 +103,10 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 	{
 		UE_LOG(LogTemp, Error, TEXT("HTTP Request was not successful."));
 	}
+
+
+	//여기에 실패 띄우기
+	UE_LOG(LogTemp, Error, TEXT("실패창 "));
 }
 
 void UNetwork_Manager_R::SelectUser(const FString& Username, const FString& Password)
