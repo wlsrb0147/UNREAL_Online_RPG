@@ -14,6 +14,7 @@ class ONLINE_RPG_API AEnemyDog : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AEnemyDog();
+	void Attack();
 
 protected:
 	// Called when the game starts or when spawned
@@ -21,9 +22,15 @@ protected:
 
 public:	
 	// Called every frame
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+private:
+	UPROPERTY(VisibleAnywhere)
+	float Health;
+	UPROPERTY(EditAnywhere)
+	float MaxHealth = 100.f;
 
 };

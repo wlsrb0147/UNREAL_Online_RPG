@@ -15,7 +15,7 @@ AEnemyDog::AEnemyDog()
 void AEnemyDog::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Health = MaxHealth;
 }
 
 // Called every frame
@@ -32,3 +32,17 @@ void AEnemyDog::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void AEnemyDog::Attack()
+{
+	UE_LOG(LogTemp, Display, TEXT("Enemy Attack "));
+}
+float AEnemyDog::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	// 기본 동작으로 데미지를 받음
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	// 여기에 데미지를 처리하고 추가 작업을 수행하는 코드를 추가할 수 있음
+	UE_LOG(LogTemp, Warning, TEXT("Actor took damage: %f"), ActualDamage);
+
+	return ActualDamage;
+}
