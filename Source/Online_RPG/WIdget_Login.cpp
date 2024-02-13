@@ -5,8 +5,10 @@
 
 void UWIdget_Login::JoinClick()
 {
+	UE_LOG(LogTemp, Log, TEXT("Join CLick!!!!"));
 }
 
 void UWIdget_Login::LoginClick()
 {
+	UE_LOG(LogTemp, Log, TEXT("Login CLick!!!!"));
 }
