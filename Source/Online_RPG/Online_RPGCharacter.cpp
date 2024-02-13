@@ -6,6 +6,9 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/Engine.h"
+#include "Projectile_dm.h"
 #include "GameFramework/Controller.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -52,6 +55,92 @@ AOnline_RPGCharacter::AOnline_RPGCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+
+	//플레이어 체력 초기화
+	MaxHealth = 100.0f;
+	CurrentHealth = MaxHealth;
+
+	//발사체 클래스 초기화
+	ProjectileClass = AProjectile_dm::StaticClass();
+	//발사 속도 초기화
+	FireRate = 0.25f;
+	bIsFiringWeapon = false;
+}
+
+// 리플리케이트된 프로퍼티
+
+void AOnline_RPGCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//현재 체력 리플리케이트
+	DOREPLIFETIME(AOnline_RPGCharacter, CurrentHealth);
+}
+
+void AOnline_RPGCharacter::OnHealthUpdate()
+{
+	//클라이언트 전용 함수 기능
+	if (IsLocallyControlled())
+	{
+		FString healthMessage = FString::Printf(TEXT("You now have %f health remaining."), CurrentHealth);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
+
+		if (CurrentHealth <= 0)
+		{
+			FString deathMessage = FString::Printf(TEXT("You have been killed."));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, deathMessage);
+		}
+	}
+
+	//서버 전용 함수 기능
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		FString healthMessage = FString::Printf(TEXT("%s now has %f health remaining."), *GetFName().ToString(), CurrentHealth);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
+	}
+
+	//모든 머신에서 실행되는 함수
+	/*
+		여기에 대미지 또는 사망의 결과로 발생하는 특별 함수 기능 배치
+	*/
+}
+
+void AOnline_RPGCharacter::StartFire()
+{
+	if (!bIsFiringWeapon)
+	{
+		bIsFiringWeapon = true;
+		UWorld* World = GetWorld();
+		World->GetTimerManager().SetTimer(FiringTimer, this, &AOnline_RPGCharacter::StopFire, FireRate, false);
+		HandleFire();
+	}
+}
+
+void AOnline_RPGCharacter::StopFire()
+{
+	bIsFiringWeapon = false;
+}
+
+void AOnline_RPGCharacter::HandleFire_Implementation()
+{
+	FVector spawnLocation = GetActorLocation() + (GetActorRotation().Vector() * 100.0f) + (GetActorUpVector() * 50.0f);
+	FRotator spawnRotation = GetActorRotation();
+
+	FActorSpawnParameters spawnParameters;
+	spawnParameters.Instigator = GetInstigator();
+	spawnParameters.Owner = this;
+
+	AProjectile_dm* spawnedProjectile = GetWorld()->SpawnActor<AProjectile_dm>(spawnLocation, spawnRotation, spawnParameters);
+}
+
+void AOnline_RPGCharacter::OnRep_CurrentHealth()
+{
+	OnHealthUpdate();
+	//함수
+	//함수
+	//함수
+	
 }
 
 void AOnline_RPGCharacter::BeginPlay()
@@ -67,6 +156,7 @@ void AOnline_RPGCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,11 +176,31 @@ void AOnline_RPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AOnline_RPGCharacter::Look);
+
+		// 발사체 발사 처리
+		PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AOnline_RPGCharacter::StartFire);
 	}
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+void AOnline_RPGCharacter::SetCurrentHealth(float healthValue)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		CurrentHealth = FMath::Clamp(healthValue, 0.f, MaxHealth);
+		OnHealthUpdate();
+	}
+}
+
+float AOnline_RPGCharacter::TakeDamage(float DamageTaken, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float damageApplied = CurrentHealth - DamageTaken;
+	SetCurrentHealth(damageApplied);
+
+	return damageApplied;
 }
 
 void AOnline_RPGCharacter::Move(const FInputActionValue& Value)
