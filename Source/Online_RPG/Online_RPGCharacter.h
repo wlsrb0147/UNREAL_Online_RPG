@@ -1,3 +1,6 @@
+﻿
+
+
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -15,7 +18,7 @@ struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
-UCLASS(config=Game)
+UCLASS(config = Game)
 class AOnline_RPGCharacter : public ACharacter
 {
 	GENERATED_BODY()
@@ -27,7 +30,7 @@ class AOnline_RPGCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
-	
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
@@ -46,7 +49,7 @@ class AOnline_RPGCharacter : public ACharacter
 
 public:
 	AOnline_RPGCharacter();
-	
+
 	/** 프로퍼티 리플리케이션 */
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 protected:
@@ -56,12 +59,12 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
+
 
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 	// To add mapping context
 	virtual void BeginPlay();
 
@@ -84,18 +87,18 @@ protected:
 	UFUNCTION()
 	void OnHealthUpdate();
 
-	UPROPERTY(EditDefaultsOnly, Category="Gameplay|Projectile")
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay|Projectile")
 	TSubclassOf<class ARED_Projectile> ProjectileClass;
 
 	/** 발사 딜레이, 단위는 초. 테스트 발사체의 발사 속도를 제어하는 데 사용되지만, 서버 함수의 추가분이 SpawnProjectile을 입력에 직접 바인딩하지 않게 하는 역할도 합니다.*/
-	UPROPERTY(EditDefaultsOnly, Category="Gameplay")
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	float FireRate;
 
 	/** true인 경우 발사체를 발사하는 프로세스 도중입니다. */
 	bool bIsFiringWeapon;
 
 	/** 무기 발사 시작 함수*/
-	UFUNCTION(BlueprintCallable, Category="Gameplay")
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	void StartFire();
 
 	/** 무기 발사 종료 함수. 호출되면 플레이어가 StartFire를 다시 사용할 수 있습니다.*/
@@ -116,20 +119,18 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	/** 최대 체력 게터*/
-	UFUNCTION(BlueprintPure, Category="Health")
+	UFUNCTION(BlueprintPure, Category = "Health")
 	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
 
 	/** 현재 체력 게터*/
-	UFUNCTION(BlueprintPure, Category="Health")
+	UFUNCTION(BlueprintPure, Category = "Health")
 	FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
 
 	/** 현재 체력 세터. 값을 0과 MaxHealth 사이로 범위제한하고 OnHealthUpdate를 호출합니다. 서버에서만 호출되어야 합니다.*/
-	UFUNCTION(BlueprintCallable, Category="Health")
+	UFUNCTION(BlueprintCallable, Category = "Health")
 	void SetCurrentHealth(float healthValue);
 
 	/** 대미지를 받는 이벤트. APawn에서 오버라이드됩니다.*/
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	float TakeDamage( float DamageTaken, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser ) override;
+	float TakeDamage(float DamageTaken, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 };
-
-
