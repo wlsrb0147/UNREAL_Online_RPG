@@ -21,7 +21,5 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LoginClick();
-
-	
 	
 };
