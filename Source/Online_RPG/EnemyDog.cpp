@@ -2,7 +2,8 @@
 
 
 #include "EnemyDog.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
 // Sets default values
 AEnemyDog::AEnemyDog()
 {
@@ -34,6 +35,10 @@ void AEnemyDog::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemyDog::Attack()
 {
+	if(Attack1Particle != nullptr)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, Attack1Particle, this->GetActorLocation(), this->GetActorRotation());
+	}
 	UE_LOG(LogTemp, Display, TEXT("Enemy Attack "));
 }
 float AEnemyDog::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

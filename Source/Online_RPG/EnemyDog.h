@@ -33,4 +33,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float MaxHealth = 100.f;
 
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem *Attack1Particle;
 };
