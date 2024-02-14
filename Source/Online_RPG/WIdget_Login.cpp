@@ -21,6 +21,14 @@ void UWIdget_Login::LoginClick(FString id, FString pw)
 	
 }
 
+void UWIdget_Login::ResistClick(FString id, FString pw, FString nickname)
+{
+	UE_LOG(LogTemp, Log, TEXT("Resist CLick!!!! %s %s %s"), *id, *pw, *nickname);
+	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
+
+	Instance->ResistUser(id,pw, nickname);
+}
+
 // void UWIdget_Login::LoginClick()
 // {
 // 	UE_LOG(LogTemp, Log, TEXT("Login CLick!!!!"));

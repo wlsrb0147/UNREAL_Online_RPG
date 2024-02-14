@@ -21,6 +21,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LoginClick(FString id, FString pw);
+
+	UFUNCTION(BlueprintCallable)
+	void ResistClick(FString id, FString pw, FString nickname);
 	
 	
 };
