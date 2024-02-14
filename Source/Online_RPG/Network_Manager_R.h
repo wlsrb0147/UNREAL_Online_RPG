@@ -30,9 +30,16 @@ public:
 	// void ReceiveMessageFromServer();
 
 	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	void OnResponseReceived_Join(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void SelectUser(const FString& Username, const FString& Password);
-	void InsertUser(const FString& Username, const FString& Password);
+	void InsertUser(const FString& Username, const FString& Password, const FString& NickName);
+	void ResistUser(const FString& Username, const FString& Password, const FString& NickName);
 	void OnInsertUserResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+
+	FString Join_ID;
+	FString Join_PW;
+	FString Join_NickName;
+	
 private:
 	FSocket* Socket;
 	// 기타 필요한 변수 및 함수들
