@@ -20,8 +20,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-	void LoginClick();
-
+	void LoginClick(FString id, FString pw);
 	
 	
 };

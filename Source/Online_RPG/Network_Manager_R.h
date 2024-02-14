@@ -30,6 +30,7 @@ public:
 	// void ReceiveMessageFromServer();
 
 	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	void SelectUser(const FString& Username, const FString& Password);
 	void InsertUser(const FString& Username, const FString& Password);
 	void OnInsertUserResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 private:
