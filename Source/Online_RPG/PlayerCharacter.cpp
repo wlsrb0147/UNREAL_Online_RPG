@@ -9,6 +9,10 @@
 #include "Engine/Engine.h"
 #include "Projectile_dm.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
+#include "DrawDebugHelpers.h"
+
 
 
 
@@ -77,6 +81,7 @@ void APlayerCharacter::StartFire()
 {
 	if (!bIsFiringWeapon)
 	{
+		CMAttack();
 		bIsFiringWeapon = true;
 		UWorld* World = GetWorld();
 		World->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::StopFire, FireRate, false);
@@ -208,3 +213,56 @@ void APlayerCharacter::Look(const FInputActionInstance& Instance)
 	}
 }
 
+void APlayerCharacter::CMAttack()
+{
+	
+
+	APawn* OwnerPawn = Cast<APawn>(this);
+	if (OwnerPawn == nullptr) return;
+	AController* OwnerController = OwnerPawn->GetController();
+	if (OwnerController == nullptr) return;
+
+	FVector Location;
+	FRotator Rotation;
+
+	OwnerController->GetPlayerViewPoint(Location, Rotation);
+	
+	//ECC_GameTraceChannel1
+
+	FVector End = Location + Rotation.Vector() * CMAttackRange;
+	FHitResult Hit;
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this);
+	params.AddIgnoredActor(GetOwner());
+	bool bSuccess = GetWorld()->LineTraceSingleByChannel(Hit, Location, End, ECollisionChannel::ECC_GameTraceChannel1, params);
+	if (bSuccess)
+	{
+		FVector ShotDirection = -Rotation.Vector();
+		
+		AActor* HitActor = Hit.GetActor();
+		if (HitActor != nullptr)
+		{
+			SpawnDebugSphere(Hit.ImpactPoint, 30);
+
+			FPointDamageEvent DamageEvent(CMAttackDamage, Hit, ShotDirection, nullptr);
+			HitActor->TakeDamage(CMAttackDamage, DamageEvent, OwnerController, this);
+		}
+
+	}
+
+}
+void APlayerCharacter::SpawnDebugSphere(FVector Location, float Radius)
+{
+
+	DrawDebugSphere(
+		GetWorld(),
+		Location,
+		Radius,
+		20,
+		FColor::Green,
+		false,
+		2, // 스피어를 유지할 시간(초)
+		0,
+		1
+	);
+}
