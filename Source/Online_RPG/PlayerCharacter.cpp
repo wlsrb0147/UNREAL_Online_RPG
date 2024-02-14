@@ -10,6 +10,8 @@
 #include "Projectile_dm.h"
 #include "GameFramework/SpringArmComponent.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -17,7 +19,7 @@ APlayerCharacter::APlayerCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	
+
 
 	//마우스 이동시 캐릭터를 회전 시키지 않음
 	bUseControllerRotationYaw = false;
@@ -33,17 +35,131 @@ APlayerCharacter::APlayerCharacter()
 	FireRate = 0.25f;
 	bIsFiringWeapon = false;
 
-	
+	//죽음 상태 초기화
+	bIsDead = false;
+
 }
 
-// 리플리케이트된 프로퍼티
+// Called when the game starts or when spawned
+void APlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
 
+	APlayerController* PlayerController = Cast<APlayerController>(Controller);
+	if (PlayerController != nullptr)
+	{
+		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
+		if (Subsystem != nullptr)
+		{
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+	}
+
+	FTimerHandle TestTimerHandle;
+	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &APlayerCharacter::SetIsDead, 0.1f);
+
+}
+
+// Called every frame
+void APlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (GetMovementComponent()->IsFalling()) {
+		UE_LOG(LogTemp, Warning, TEXT("IsFalling : True"));
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("IsFalling : False"));
+	}
+
+}
+
+// Called to bind functionality to input
+void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+
+	if (Input != nullptr)
+	{
+		Input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		Input->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+
+		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+		Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
+
+
+		// 발사체 발사 처리
+		PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::StartFire);
+	}
+
+}
+
+void APlayerCharacter::Move(const FInputActionInstance& Instance)
+{
+	FVector2D MovementVector = Instance.GetValue().Get<FVector2D>();
+
+	if (Controller != nullptr)
+	{
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+		const FVector FowardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+		AddMovementInput(FowardDirection, MovementVector.Y);
+		AddMovementInput(RightDirection, MovementVector.X);
+
+		//UE_LOG(LogTemp, Warning, TEXT("XXXXX : %f, YYYYY : %f"), MovementVector.X, MovementVector.Y);
+	}
+}
+
+void APlayerCharacter::Look(const FInputActionInstance& Instance)
+{
+	FVector2D LookVector = Instance.GetValue().Get<FVector2D>();
+
+	if (Controller != nullptr)
+	{
+		AddControllerYawInput(-LookVector.X);
+		AddControllerPitchInput(LookVector.Y);
+
+		//UE_LOG(LogTemp, Warning, TEXT("XXXXX : %f, YYYYY : %f"), LookVector.X, LookVector.Y);
+	}
+}
+
+
+
+// 리플리케이트된 프로퍼티
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	//현재 체력 리플리케이트
 	DOREPLIFETIME(APlayerCharacter, CurrentHealth);
+
+	//현재 죽음 상태 리플리케이트
+	DOREPLIFETIME(APlayerCharacter, bIsDead);
+}
+
+
+
+void APlayerCharacter::SetCurrentHealth(float healthValue)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		CurrentHealth = FMath::Clamp(healthValue, 0.f, MaxHealth);
+		OnHealthUpdate();
+	}
+}
+
+void APlayerCharacter::OnRep_CurrentHealth()
+{
+	OnHealthUpdate();
+	//함수
+	//함수
+	//함수
+
 }
 
 void APlayerCharacter::OnHealthUpdate()
@@ -58,6 +174,8 @@ void APlayerCharacter::OnHealthUpdate()
 		{
 			FString deathMessage = FString::Printf(TEXT("You have been killed."));
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, deathMessage);
+
+			SetIsDead(true);
 		}
 	}
 
@@ -102,74 +220,60 @@ void APlayerCharacter::HandleFire_Implementation()
 	AProjectile_dm* spawnedProjectile = GetWorld()->SpawnActor<AProjectile_dm>(spawnLocation, spawnRotation, spawnParameters);
 }
 
-void APlayerCharacter::OnRep_CurrentHealth()
-{
-	OnHealthUpdate();
-	//함수
-	//함수
-	//함수
 
+void APlayerCharacter::SetIsDead(bool IsDead)
+{
+	//서버 전용 함수 기능
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		bIsDead = IsDead;
+		OnIsDeadUpdate();
+	}
 }
 
-// Called when the game starts or when spawned
-void APlayerCharacter::BeginPlay()
+void APlayerCharacter::SetIsDead()
 {
-	Super::BeginPlay();
-
-	APlayerController* PlayerController = Cast<APlayerController>(Controller);
-	if (PlayerController != nullptr)
+	//서버 전용 함수 기능
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
-		if (Subsystem != nullptr)
+		bIsDead = true;
+		OnIsDeadUpdate();
+	}
+}
+
+void APlayerCharacter::OnRep_IsDead()
+{
+	OnIsDeadUpdate();
+}
+
+void APlayerCharacter::OnIsDeadUpdate()
+{
+	//클라이언트 전용 함수 기능
+	if (IsLocallyControlled())
+	{
+		if (bIsDead)
 		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			//...
+
 		}
 	}
 
-	
-	/*UCharacterMovementComponent* MyCharacter = GetCharacterMovement();
-	MyCharacter->*/
-	//GetCharacterMovement()->JumpZVelocity = 800.0f;
-}
-
-// Called every frame
-void APlayerCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-
-}
-
-// Called to bind functionality to input
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-
-	if (Input != nullptr)
-	{
-		Input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
-		Input->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-
-		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-		Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
-
-
-		// 발사체 발사 처리
-		PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::StartFire);
-	}
-
-}
-
-void APlayerCharacter::SetCurrentHealth(float healthValue)
-{
+	//서버 전용 함수 기능
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		CurrentHealth = FMath::Clamp(healthValue, 0.f, MaxHealth);
-		OnHealthUpdate();
+		if (bIsDead)
+		{
+			//...
+
+		}
 	}
+
+	//모든 머신에서 실행되는 함수
+	/*
+		여기에 대미지 또는 사망의 결과로 발생하는 특별 함수 기능 배치
+	*/
 }
+
 
 float APlayerCharacter::TakeDamage(float DamageTaken, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
@@ -179,35 +283,4 @@ float APlayerCharacter::TakeDamage(float DamageTaken, FDamageEvent const& Damage
 	return damageApplied;
 }
 
-void APlayerCharacter::Move(const FInputActionInstance& Instance)
-{
-	FVector2D MovementVector = Instance.GetValue().Get<FVector2D>();
-
-	if (Controller != nullptr)
-	{
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		const FVector FowardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-		AddMovementInput(FowardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
-
-		//UE_LOG(LogTemp, Warning, TEXT("XXXXX : %f, YYYYY : %f"), MovementVector.X, MovementVector.Y);
-	}
-}
-
-void APlayerCharacter::Look(const FInputActionInstance& Instance)
-{
-	FVector2D LookVector = Instance.GetValue().Get<FVector2D>();
-
-	if (Controller != nullptr)
-	{
-		AddControllerYawInput(-LookVector.X);
-		AddControllerPitchInput(LookVector.Y);
-
-		UE_LOG(LogTemp, Warning, TEXT("XXXXX : %f, YYYYY : %f"), LookVector.X, LookVector.Y);
-	}
-}
 

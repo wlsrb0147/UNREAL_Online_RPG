@@ -35,6 +35,16 @@ public:
 	float TakeDamage(float DamageTaken, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 
+	//죽음 상태 게터
+	UFUNCTION(BlueprintPure, Category = "State")
+	bool GetIsDead() const { return bIsDead; }
+	//죽음 상태 세터
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void SetIsDead(bool IsDead);
+
+	void SetIsDead();
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -82,6 +92,18 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	bool bIsFalling;
+
+	//현재 죽음 상태
+	UPROPERTY(ReplicatedUsing = OnRep_IsDead)
+	bool bIsDead;
+
+	//죽음 상태 변경에 대한 RepNotify
+	UFUNCTION()
+	void OnRep_IsDead();
+
+	//업데이트되는 죽음 상태에 반응. 서버에서는 수정 즉시 호출, 클라이언트에서는 RepNotify에 반응하여 호출
+	void OnIsDeadUpdate();
+
 
 public:	
 	// Called every frame
