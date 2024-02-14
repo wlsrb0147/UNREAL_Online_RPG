@@ -12,13 +12,21 @@ void UWIdget_Login::JoinClick()
 	
 }
 
-void UWIdget_Login::LoginClick(FString id, FString pw)
+void UWIdget_Login::LoginClick(FString _id, FString _pw)
 {
-	UE_LOG(LogTemp, Log, TEXT("Login CLick!!!! %s %s"), *id, *pw);
+	UE_LOG(LogTemp, Log, TEXT("Login CLick!!!! %s %s"), *_id, *_pw);
 	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
 
-	Instance->SelectUser(id,pw);
+	Instance->SelectUser(_id,_pw);
 	
+}
+
+void UWIdget_Login::ResistClick(FString _id, FString _pw, FString nickname)
+{
+	UE_LOG(LogTemp, Log, TEXT("Resist CLick!!!! %s %s %s"), *_id, *_pw, *nickname);
+	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
+
+	Instance->ResistUser(_id,_pw, nickname);
 }
 
 // void UWIdget_Login::LoginClick()
