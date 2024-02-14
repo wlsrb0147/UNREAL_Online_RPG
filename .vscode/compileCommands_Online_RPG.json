@@ -1,0 +1,186 @@
+[
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\AAACTTTTOR.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\AAACTTTTOR.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\LoginController.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\LoginController.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\MyCharacter.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\MyCharacter.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\NetworkManager.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\NetworkManager.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\Network_Manager_R.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\Network_Manager_R.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\Online_RPG.Build.cs",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\Online_RPG.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\Online_RPG.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\Online_RPGCharacter.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\Online_RPGCharacter.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\Online_RPGGameMode.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\Online_RPGGameMode.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\RED_Projectile.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\RED_Projectile.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\TiTle_GameMode.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\TiTle_GameMode.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\WIdget_Login.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "D:\\unreal\\GitHub\\Source\\Online_RPG\\WIdget_Login.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@D:\\unreal\\GitHub\\.vscode\\compileCommands_Online_RPG\\Online_RPG.1.rsp"
+		],
+		"directory": "D:\\unreal\\UE_5.3\\Engine\\Source"
+	}
+]

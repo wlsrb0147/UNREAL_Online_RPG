@@ -3,12 +3,28 @@
 
 #include "WIdget_Login.h"
 
+#include "Network_Manager_R.h"
+
 void UWIdget_Login::JoinClick()
 {
 	UE_LOG(LogTemp, Log, TEXT("Join CLick!!!!"));
+
+	
 }
 
-void UWIdget_Login::LoginClick()
+void UWIdget_Login::LoginClick(FString id, FString pw)
 {
-	UE_LOG(LogTemp, Log, TEXT("Login CLick!!!!"));
+	UE_LOG(LogTemp, Log, TEXT("Login CLick!!!! %s %s"), *id, *pw);
+	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
+
+	Instance->SelectUser(id,pw);
+	
 }
+
+// void UWIdget_Login::LoginClick()
+// {
+// 	UE_LOG(LogTemp, Log, TEXT("Login CLick!!!!"));
+// 	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
+// 	
+// 	
+// }

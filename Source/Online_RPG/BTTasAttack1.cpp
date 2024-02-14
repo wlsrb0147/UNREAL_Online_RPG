@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "BTTasAttack1.h"
 #include "EnemyDog.h"
