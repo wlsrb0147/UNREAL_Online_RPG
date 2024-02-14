@@ -80,6 +80,9 @@ protected:
 	/** 스폰 사이에 발사 속도 딜레이를 넣는 타이머 핸들*/
 	FTimerHandle FiringTimer;
 
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	bool bIsFalling;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -88,6 +91,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+
 	UPROPERTY(EditAnywhere, Category = Input)
 	class UInputMappingContext* DefaultMappingContext;
 

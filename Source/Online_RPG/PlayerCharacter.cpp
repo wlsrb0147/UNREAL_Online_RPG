@@ -11,7 +11,6 @@
 #include "GameFramework/SpringArmComponent.h"
 
 
-
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -33,6 +32,8 @@ APlayerCharacter::APlayerCharacter()
 	//발사 속도 초기화
 	FireRate = 0.25f;
 	bIsFiringWeapon = false;
+
+	
 }
 
 // 리플리케이트된 프로퍼티
@@ -126,7 +127,9 @@ void APlayerCharacter::BeginPlay()
 	}
 
 	
-
+	/*UCharacterMovementComponent* MyCharacter = GetCharacterMovement();
+	MyCharacter->*/
+	//GetCharacterMovement()->JumpZVelocity = 800.0f;
 }
 
 // Called every frame
