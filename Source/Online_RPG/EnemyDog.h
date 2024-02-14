@@ -32,7 +32,14 @@ private:
 	float Health;
 	UPROPERTY(EditAnywhere)
 	float MaxHealth = 100.f;
+	UPROPERTY(EditAnywhere)
+	float MaxRange = 1000.f;
+	UPROPERTY(EditAnywhere)
+	float Damage1 = 1.f;
 
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem *Attack1Particle;
+
+	void SpawnDebugSphere(FVector Location, float Radius);
+
 };
