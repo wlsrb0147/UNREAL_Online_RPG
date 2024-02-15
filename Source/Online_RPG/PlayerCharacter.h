@@ -30,19 +30,27 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void SetCurrentHealth(float healthValue);
 
-	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ´ï¿½ ï¿½Ìºï¿½Æ®. APawnï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½Ë´Ï´ï¿½.*/
+	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?ï¿½Þ´ï¿½ ï¿½Ìºï¿½Æ®. APawnï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½Ë´Ï´ï¿?*/
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	float TakeDamage(float DamageTaken, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageTaken, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 
 	//Á×À½ »óÅÂ °ÔÅÍ
 	UFUNCTION(BlueprintPure, Category = "State")
-	bool GetIsDead() const { return bIsDead; }
+	FORCEINLINE bool GetIsDead() const { return bIsDead; }
 	//Á×À½ »óÅÂ ¼¼ÅÍ
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetIsDead(bool IsDead);
 
 	void SetIsDead();
+
+
+	//Shoot »óÅÂ °ÔÅÍ
+	UFUNCTION(BlueprintPure, Category = "State")
+	FORCEINLINE bool GetIsShoot() const { return bIsShoot; }
+	//Shoot »óÅÂ ¼¼ÅÍ
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void SetIsShoot(bool IsShoot);
 
 
 protected:
@@ -61,25 +69,25 @@ protected:
 	UFUNCTION()
 	void OnRep_CurrentHealth();
 
-	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ç´ï¿½ Ã¼ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ È£ï¿½ï¿½, Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RepNotifyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ È£ï¿½ï¿½*/
+	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ç´ï¿½ Ã¼ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿?È£ï¿½ï¿½, Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RepNotifyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ È£ï¿½ï¿½*/
 	void OnHealthUpdate();
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay|Projectile")
 	TSubclassOf<class AProjectile_dm> ProjectileClass;
 
-	/** ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½. ï¿½×½ï¿½Æ® ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ SpawnProjectileï¿½ï¿½ ï¿½Ô·Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Òµï¿½ ï¿½Õ´Ï´ï¿½.*/
+	/** ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½. ï¿½×½ï¿½Æ® ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ SpawnProjectileï¿½ï¿½ ï¿½Ô·Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Òµï¿½ ï¿½Õ´Ï´ï¿½.*/
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	float FireRate;
 
-	/** trueï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Î¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½. */
+	/** trueï¿½ï¿½ ï¿½ï¿½ï¿?ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Î¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½. */
 	bool bIsFiringWeapon;
 
 	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½*/
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	void StartFire();
 
-	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½. È£ï¿½ï¿½Ç¸ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ StartFireï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.*/
+	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½. È£ï¿½ï¿½Ç¸ï¿?ï¿½Ã·ï¿½ï¿½Ì¾î°¡ StartFireï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿?ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.*/
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	void StopFire();
 
@@ -87,7 +95,7 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void HandleFire();
 
-	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½ß»ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½Ö´ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½Úµï¿½*/
+	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½ß»ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½Ì¸ï¿?ï¿½Ö´ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½Úµï¿½*/
 	FTimerHandle FiringTimer;
 
 	UPROPERTY(VisibleAnywhere, Category = "State")
@@ -103,6 +111,10 @@ protected:
 
 	//¾÷µ¥ÀÌÆ®µÇ´Â Á×À½ »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
 	void OnIsDeadUpdate();
+
+	//ÇöÀç Á×À½ »óÅÂ
+	//UPROPERTY(ReplicatedUsing = OnRep_IsDead)
+	bool bIsShoot;
 
 
 public:	
@@ -132,7 +144,7 @@ protected:
 
 
 private:
-	//ìž„ì‹œ
+	//?„ì‹œ
 	void SpawnDebugSphere(FVector Location, float Radius);
 	void CMAttack();
 	UPROPERTY(EditAnywhere, Category = "Attack")

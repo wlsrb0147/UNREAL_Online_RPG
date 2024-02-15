@@ -12,7 +12,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
-
+#include "Engine/DamageEvents.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -42,7 +42,11 @@ APlayerCharacter::APlayerCharacter()
 	//죽음 상태 초기화
 	bIsDead = false;
 
+	//Shoot 상태 초기화
+	bIsShoot = false;
+
 }
+
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
@@ -59,8 +63,9 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
-	FTimerHandle TestTimerHandle;
-	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &APlayerCharacter::SetIsDead, 0.1f);
+	//Dead 애니메이션 테스트 코드
+	/*FTimerHandle TestTimerHandle;
+	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &APlayerCharacter::SetIsDead, 0.1f);*/
 
 }
 
@@ -69,12 +74,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (GetMovementComponent()->IsFalling()) {
+	/*if (GetMovementComponent()->IsFalling()) {
 		UE_LOG(LogTemp, Warning, TEXT("IsFalling : True"));
 	}
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("IsFalling : False"));
-	}
+	}*/
 
 }
 
@@ -153,6 +158,11 @@ void APlayerCharacter::SetCurrentHealth(float healthValue)
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		CurrentHealth = FMath::Clamp(healthValue, 0.f, MaxHealth);
+
+		//화면 출력
+		FString HealthMessage = FString::Printf(TEXT("CurrentHealth : %f"), CurrentHealth);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, HealthMessage);
+
 		OnHealthUpdate();
 	}
 }
@@ -171,23 +181,27 @@ void APlayerCharacter::OnHealthUpdate()
 	//클라이언트 전용 함수 기능
 	if (IsLocallyControlled())
 	{
-		FString healthMessage = FString::Printf(TEXT("You now have %f health remaining."), CurrentHealth);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
+		//FString healthMessage = FString::Printf(TEXT("You now have %f health remaining."), CurrentHealth);
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
 
 		if (CurrentHealth <= 0)
 		{
-			FString deathMessage = FString::Printf(TEXT("You have been killed."));
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, deathMessage);
+			//FString deathMessage = FString::Printf(TEXT("You have been killed."));
+			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, deathMessage);
 
-			SetIsDead(true);
+
 		}
 	}
 
 	//서버 전용 함수 기능
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		FString healthMessage = FString::Printf(TEXT("%s now has %f health remaining."), *GetFName().ToString(), CurrentHealth);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
+		//FString healthMessage = FString::Printf(TEXT("%s now has %f health remaining."), *GetFName().ToString(), CurrentHealth);
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
+
+		if (CurrentHealth <= 0) {
+			SetIsDead(true);
+		}
 	}
 
 	//모든 머신에서 실행되는 함수
@@ -200,7 +214,7 @@ void APlayerCharacter::StartFire()
 {
 	if (!bIsFiringWeapon)
 	{
-		CMAttack();
+		bIsShoot = true; 
 		bIsFiringWeapon = true;
 		UWorld* World = GetWorld();
 		World->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::StopFire, FireRate, false);
@@ -210,21 +224,30 @@ void APlayerCharacter::StartFire()
 
 void APlayerCharacter::StopFire()
 {
+	bIsShoot = true;
 	bIsFiringWeapon = false;
 }
 
 void APlayerCharacter::HandleFire_Implementation()
 {
-	FVector spawnLocation = GetActorLocation() + (GetActorRotation().Vector() * 100.0f) + (GetActorUpVector() * 50.0f);
+	//Projectile 스폰
+	/*FVector spawnLocation = GetActorLocation() + (GetActorRotation().Vector() * 100.0f) + (GetActorUpVector() * 50.0f);
 	FRotator spawnRotation = GetActorRotation();
 
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.Instigator = GetInstigator();
 	spawnParameters.Owner = this;
 
-	AProjectile_dm* spawnedProjectile = GetWorld()->SpawnActor<AProjectile_dm>(spawnLocation, spawnRotation, spawnParameters);
+	AProjectile_dm* spawnedProjectile = GetWorld()->SpawnActor<AProjectile_dm>(spawnLocation, spawnRotation, spawnParameters);*/
+
+
+	CMAttack();
 }
 
+void APlayerCharacter::SetIsShoot(bool IsShoot)
+{
+	bIsShoot = IsShoot;
+}
 
 void APlayerCharacter::SetIsDead(bool IsDead)
 {
@@ -285,13 +308,18 @@ float APlayerCharacter::TakeDamage(float DamageTaken, FDamageEvent const& Damage
 	float damageApplied = CurrentHealth - DamageTaken;
 	SetCurrentHealth(damageApplied);
 
+	//화면 출력
+	FString TakeDamageMessage = FString::Printf(TEXT("TakeDamage Damage : %f"), DamageTaken);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TakeDamageMessage);
+	UE_LOG(LogTemp, Warning, TEXT("TakeDamage Damage : %f"), DamageTaken);
+
 	return damageApplied;
 }
 
 
 void APlayerCharacter::CMAttack()
 {
-	
+
 
 	APawn* OwnerPawn = Cast<APawn>(this);
 	if (OwnerPawn == nullptr) return;
@@ -302,7 +330,7 @@ void APlayerCharacter::CMAttack()
 	FRotator Rotation;
 
 	OwnerController->GetPlayerViewPoint(Location, Rotation);
-	
+
 	//ECC_GameTraceChannel1
 
 	FVector End = Location + Rotation.Vector() * CMAttackRange;
@@ -314,7 +342,7 @@ void APlayerCharacter::CMAttack()
 	if (bSuccess)
 	{
 		FVector ShotDirection = -Rotation.Vector();
-		
+
 		AActor* HitActor = Hit.GetActor();
 		if (HitActor != nullptr)
 		{
@@ -322,6 +350,17 @@ void APlayerCharacter::CMAttack()
 
 			FPointDamageEvent DamageEvent(CMAttackDamage, Hit, ShotDirection, nullptr);
 			HitActor->TakeDamage(CMAttackDamage, DamageEvent, OwnerController, this);
+			
+			
+
+			//화면 출력
+			FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), CMAttackDamage);
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
+			UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), CMAttackDamage);
+
+			FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
+			UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
 		}
 
 	}
