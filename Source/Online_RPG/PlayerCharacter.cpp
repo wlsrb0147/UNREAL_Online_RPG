@@ -224,7 +224,7 @@ void APlayerCharacter::StartFire()
 
 void APlayerCharacter::StopFire()
 {
-	bIsShoot = true;
+	bIsShoot = false;
 	bIsFiringWeapon = false;
 }
 
