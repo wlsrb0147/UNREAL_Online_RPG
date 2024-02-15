@@ -52,6 +52,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetIsShoot(bool IsShoot);
 
+	//Sword Å¬·¡½º
+	UPROPERTY(EditAnywhere, Category = "State")
+	TSubclassOf<class ASword> SwordClass;
+	ASword* MySword;
+	
+
 
 protected:
 	// Called when the game starts or when spawned

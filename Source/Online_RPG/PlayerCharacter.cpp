@@ -12,6 +12,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Sword.h"
 #include "Engine/DamageEvents.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
@@ -62,6 +63,15 @@ void APlayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	if(SwordClass)
+	{
+		UE_LOG(LogTemp, Log, TEXT("칼 생성 했자나"));
+		MySword = GetWorld()->SpawnActor<ASword>(SwordClass);
+		MySword->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket_r"));
+		MySword->SetOwner(this);
+	}
+		UE_LOG(LogTemp, Log, TEXT("칼 생성 했지..?"));
 
 	//Dead 애니메이션 테스트 코드
 	/*FTimerHandle TestTimerHandle;
