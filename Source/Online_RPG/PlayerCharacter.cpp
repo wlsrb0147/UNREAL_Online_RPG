@@ -12,6 +12,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Sword.h"
 #include "Engine/DamageEvents.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
@@ -45,6 +46,9 @@ APlayerCharacter::APlayerCharacter()
 	//Shoot 상태 초기화
 	bIsShoot = false;
 
+	//UpperSlash 상태 초기화
+	bIsUpperSlash = false;
+
 }
 
 
@@ -63,11 +67,22 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
+	if (SwordClass)
+	{
+		UE_LOG(LogTemp, Log, TEXT("칼 생성 했자나"));
+		MySword = GetWorld()->SpawnActor<ASword>(SwordClass);
+		MySword->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket_r"));
+		MySword->SetOwner(this);
+	}
+	UE_LOG(LogTemp, Log, TEXT("칼 생성 했지..?"));
+
 	//Dead 애니메이션 테스트 코드
 	/*FTimerHandle TestTimerHandle;
 	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &APlayerCharacter::SetIsDead, 0.1f);*/
 
 }
+
+
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
@@ -98,9 +113,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 
-
+		//UpperSlash Bind
+		Input->BindAction(UpperSlashAction, ETriggerEvent::Triggered, this, &APlayerCharacter::UpperSlash);
 		// 발사체 발사 처리
-		PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::StartFire);
+		//PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::StartFire);
+		Input->BindAction(FireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
+		//공격
+		Input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
 	}
 
 }
@@ -137,6 +156,32 @@ void APlayerCharacter::Look(const FInputActionInstance& Instance)
 	}
 }
 
+void APlayerCharacter::UpperSlash()
+{
+	UE_LOG(LogTemp, Log, TEXT("Upper Slash init"));
+	if(bIsFiringWeapon) return;
+	
+	
+	FTimerHandle Handle;
+	GetWorldTimerManager().SetTimer(Handle, this, &APlayerCharacter::StopUpperSlash, UpperSlash_Rate, false);
+	bIsUpperSlash = true;
+	bIsFiringWeapon = true;
+}
+
+void APlayerCharacter::StopUpperSlash()
+{
+	bIsUpperSlash = false;
+	bIsFiringWeapon = false;
+}
+
+bool APlayerCharacter::GetIsUpperSlash() const
+{
+	return bIsUpperSlash;
+}
+
+void APlayerCharacter::OnRep_IsUpperSlash()
+{
+}
 
 
 // 리플리케이트된 프로퍼티
@@ -149,6 +194,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Ou
 
 	//현재 죽음 상태 리플리케이트
 	DOREPLIFETIME(APlayerCharacter, bIsDead);
+	DOREPLIFETIME(APlayerCharacter, bIsUpperSlash);
 }
 
 
@@ -214,7 +260,7 @@ void APlayerCharacter::StartFire()
 {
 	if (!bIsFiringWeapon)
 	{
-		bIsShoot = true; 
+		bIsShoot = true;
 		bIsFiringWeapon = true;
 		UWorld* World = GetWorld();
 		World->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::StopFire, FireRate, false);
@@ -224,7 +270,7 @@ void APlayerCharacter::StartFire()
 
 void APlayerCharacter::StopFire()
 {
-	bIsShoot = true;
+	bIsShoot = false;
 	bIsFiringWeapon = false;
 }
 
@@ -247,6 +293,29 @@ void APlayerCharacter::HandleFire_Implementation()
 void APlayerCharacter::SetIsShoot(bool IsShoot)
 {
 	bIsShoot = IsShoot;
+}
+
+void APlayerCharacter::StartAttack()
+{
+	if (!bIsAttackWeapon)
+	{
+		bIsAttack = true;
+		bIsAttackWeapon = true;
+		UWorld* World = GetWorld();
+		World->GetTimerManager().SetTimer(AttackTimer, this, &APlayerCharacter::StopAttack, AttackRate, false);
+		HandleAttack();
+	}
+}
+
+void APlayerCharacter::StopAttack()
+{
+	bIsAttack = false;
+	bIsAttackWeapon = false;
+}
+
+void APlayerCharacter::HandleAttack_Implementation()
+{
+	
 }
 
 void APlayerCharacter::SetIsDead(bool IsDead)
@@ -350,8 +419,8 @@ void APlayerCharacter::CMAttack()
 
 			FPointDamageEvent DamageEvent(CMAttackDamage, Hit, ShotDirection, nullptr);
 			HitActor->TakeDamage(CMAttackDamage, DamageEvent, OwnerController, this);
-			
-			
+
+
 
 			//화면 출력
 			FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), CMAttackDamage);
