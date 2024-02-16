@@ -13,6 +13,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "Sword.h"
+#include "Gun.h"
 #include "Engine/DamageEvents.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
@@ -74,7 +75,14 @@ void APlayerCharacter::BeginPlay()
 		MySword->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket_r"));
 		MySword->SetOwner(this);
 	}
-	UE_LOG(LogTemp, Log, TEXT("칼 생성 했지..?"));
+
+	if (GunClass)
+	{
+		UE_LOG(LogTemp, Log, TEXT("칼 생성 했자나"));
+		MyGun = GetWorld()->SpawnActor<AGun>(GunClass);
+		MyGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket_l"));
+		MyGun->SetOwner(this);
+	}
 
 	//Dead 애니메이션 테스트 코드
 	/*FTimerHandle TestTimerHandle;
@@ -117,7 +125,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		Input->BindAction(UpperSlashAction, ETriggerEvent::Triggered, this, &APlayerCharacter::UpperSlash);
 		// 발사체 발사 처리
 		//PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::StartFire);
-		Input->BindAction(FireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
+		Input->BindAction(FireDownAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
+		Input->BindAction(FireUpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StopFire);
 		//공격
 		Input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
 	}
@@ -256,15 +265,15 @@ void APlayerCharacter::OnHealthUpdate()
 	*/
 }
 
-void APlayerCharacter::StartFire()
+void APlayerCharacter::StartFire_Implementation()
 {
 	if (!bIsFiringWeapon)
 	{
 		bIsShoot = true;
 		bIsFiringWeapon = true;
-		UWorld* World = GetWorld();
-		World->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::StopFire, FireRate, false);
-		HandleFire();
+		//UWorld* World = GetWorld();
+		//World->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::StopFire, FireRate, false);
+		//HandleFire();
 	}
 }
 
@@ -359,6 +368,41 @@ void APlayerCharacter::OnIsDeadUpdate()
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		if (bIsDead)
+		{
+			//...
+
+		}
+	}
+
+	//모든 머신에서 실행되는 함수
+	/*
+		여기에 대미지 또는 사망의 결과로 발생하는 특별 함수 기능 배치
+	*/
+}
+
+
+void APlayerCharacter::OnRep_IsShoot()
+{
+	OnIsShootUpdate();
+}
+
+
+void APlayerCharacter::OnIsShootUpdate()
+{
+	//클라이언트 전용 함수 기능
+	if (IsLocallyControlled())
+	{
+		if (bIsShoot)
+		{
+			//...
+
+		}
+	}
+
+	//서버 전용 함수 기능
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		if (bIsShoot)
 		{
 			//...
 
