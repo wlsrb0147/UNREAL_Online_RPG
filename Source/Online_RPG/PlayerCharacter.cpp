@@ -156,7 +156,7 @@ void APlayerCharacter::Look(const FInputActionInstance& Instance)
 	}
 }
 
-void APlayerCharacter::UpperSlash()
+void APlayerCharacter::UpperSlash_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("Upper Slash init"));
 	if(bIsFiringWeapon) return;
