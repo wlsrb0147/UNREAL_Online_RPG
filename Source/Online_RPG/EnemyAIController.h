@@ -20,12 +20,13 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
 
 private:
-	/*UPROPERTY(EditAnywhere)
-	float AcceptanceRadius = 200;*/
+	
 	UPROPERTY(EditAnywhere)
 	class UBehaviorTree* AIBehavior;
+
 
 
 };

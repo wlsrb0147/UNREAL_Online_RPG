@@ -23,7 +23,6 @@ void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	UE_LOG(LogTemp,Log, TEXT("RED TEST"));
-
 }
 
 // Called to bind functionality to input

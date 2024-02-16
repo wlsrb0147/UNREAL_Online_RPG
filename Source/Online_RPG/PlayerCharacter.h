@@ -214,6 +214,7 @@ private:
 protected:
 	void Move(const struct FInputActionInstance& Instance);
 	void Look(const FInputActionInstance& Instance);
+	UFUNCTION(Server, Reliable)
 	void UpperSlash();
 
 private:
