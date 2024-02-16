@@ -46,8 +46,8 @@ APlayerCharacter::APlayerCharacter()
 	//Shoot 상태 초기화
 	bIsShoot = false;
 
-	//Attack 상태 초기화
-	bIsAttack = false;
+	//UpperSlash 상태 초기화
+	bIsUpperSlash = false;
 
 }
 
@@ -82,6 +82,8 @@ void APlayerCharacter::BeginPlay()
 
 }
 
+
+
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
@@ -111,7 +113,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 
-
+		//UpperSlash Bind
+		Input->BindAction(UpperSlashAction, ETriggerEvent::Triggered, this, &APlayerCharacter::UpperSlash);
 		// 발사체 발사 처리
 		//PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::StartFire);
 		Input->BindAction(FireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
@@ -153,6 +156,32 @@ void APlayerCharacter::Look(const FInputActionInstance& Instance)
 	}
 }
 
+void APlayerCharacter::UpperSlash()
+{
+	UE_LOG(LogTemp, Log, TEXT("Upper Slash init"));
+	if(bIsFiringWeapon) return;
+	
+	
+	FTimerHandle Handle;
+	GetWorldTimerManager().SetTimer(Handle, this, &APlayerCharacter::StopUpperSlash, UpperSlash_Rate, false);
+	bIsUpperSlash = true;
+	bIsFiringWeapon = true;
+}
+
+void APlayerCharacter::StopUpperSlash()
+{
+	bIsUpperSlash = false;
+	bIsFiringWeapon = false;
+}
+
+bool APlayerCharacter::GetIsUpperSlash() const
+{
+	return bIsUpperSlash;
+}
+
+void APlayerCharacter::OnRep_IsUpperSlash()
+{
+}
 
 
 // 리플리케이트된 프로퍼티
@@ -165,6 +194,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Ou
 
 	//현재 죽음 상태 리플리케이트
 	DOREPLIFETIME(APlayerCharacter, bIsDead);
+	DOREPLIFETIME(APlayerCharacter, bIsUpperSlash);
 }
 
 
