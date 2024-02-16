@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "EnemyProjectile.h"
 #include "EnemyDog.generated.h"
 
 UCLASS()
@@ -26,7 +27,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
+	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	bool RangeCheck();
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	float Health;
@@ -39,7 +43,20 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem *Attack1Particle;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AActor> AmmoBlueprint;
+
+	UPROPERTY(EditAnywhere)
+	float AttackRange = 500;
+	//void FireProjectile();
+
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", meta = (AllowPrivateAccess = "true"))
+	//class UProjectileMovementComponent* ProjectileComponent;
+
+	//// 프로젝타일 클래스 변수
+	//UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	//TSubclassOf<class AEnemyProjectile> ProjectileClass;
 
 	void SpawnDebugSphere(FVector Location, float Radius);
-
+	void SpawnActor22();
 };
