@@ -46,6 +46,9 @@ APlayerCharacter::APlayerCharacter()
 	//Shoot 상태 초기화
 	bIsShoot = false;
 
+	//Attack 상태 초기화
+	bIsAttack = false;
+
 }
 
 
@@ -64,14 +67,14 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
-	if(SwordClass)
+	if (SwordClass)
 	{
 		UE_LOG(LogTemp, Log, TEXT("칼 생성 했자나"));
 		MySword = GetWorld()->SpawnActor<ASword>(SwordClass);
 		MySword->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket_r"));
 		MySword->SetOwner(this);
 	}
-		UE_LOG(LogTemp, Log, TEXT("칼 생성 했지..?"));
+	UE_LOG(LogTemp, Log, TEXT("칼 생성 했지..?"));
 
 	//Dead 애니메이션 테스트 코드
 	/*FTimerHandle TestTimerHandle;
@@ -110,7 +113,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 
 		// 발사체 발사 처리
-		PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::StartFire);
+		//PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::StartFire);
+		Input->BindAction(FireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
+		//공격
+		Input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
 	}
 
 }
@@ -224,7 +230,7 @@ void APlayerCharacter::StartFire()
 {
 	if (!bIsFiringWeapon)
 	{
-		bIsShoot = true; 
+		bIsShoot = true;
 		bIsFiringWeapon = true;
 		UWorld* World = GetWorld();
 		World->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::StopFire, FireRate, false);
@@ -257,6 +263,29 @@ void APlayerCharacter::HandleFire_Implementation()
 void APlayerCharacter::SetIsShoot(bool IsShoot)
 {
 	bIsShoot = IsShoot;
+}
+
+void APlayerCharacter::StartAttack()
+{
+	if (!bIsAttackWeapon)
+	{
+		bIsAttack = true;
+		bIsAttackWeapon = true;
+		UWorld* World = GetWorld();
+		World->GetTimerManager().SetTimer(AttackTimer, this, &APlayerCharacter::StopAttack, AttackRate, false);
+		HandleAttack();
+	}
+}
+
+void APlayerCharacter::StopAttack()
+{
+	bIsAttack = false;
+	bIsAttackWeapon = false;
+}
+
+void APlayerCharacter::HandleAttack_Implementation()
+{
+	
 }
 
 void APlayerCharacter::SetIsDead(bool IsDead)
@@ -360,8 +389,8 @@ void APlayerCharacter::CMAttack()
 
 			FPointDamageEvent DamageEvent(CMAttackDamage, Hit, ShotDirection, nullptr);
 			HitActor->TakeDamage(CMAttackDamage, DamageEvent, OwnerController, this);
-			
-			
+
+
 
 			//화면 출력
 			FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), CMAttackDamage);

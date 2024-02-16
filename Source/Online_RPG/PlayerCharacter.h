@@ -104,6 +104,33 @@ protected:
 	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½ß»ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½Ì¸ï¿?ï¿½Ö´ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½Úµï¿½*/
 	FTimerHandle FiringTimer;
 
+
+	/** °ø°Ý ÄðÅ¸ÀÓ*/
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+	float AttackRate;
+
+	/** true¸é ÄðÅ¸ÀÓ */
+	bool bIsAttackWeapon;
+
+	/** °ø°Ý*/
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void StartAttack();
+
+	/** °ø°Ý ÄðÅ¸ÀÓ ³¡*/
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void StopAttack();
+
+	/** °ø°Ý ¼­¹öÇÔ¼ö*/
+	UFUNCTION(Server, Reliable)
+	void HandleAttack();
+
+	/** °ø°Ý ÄðÅ¸ÀÓ¿ë Å¸ÀÌ¸Ó ÇÚµé*/
+	FTimerHandle AttackTimer;
+
+	//ÇöÀç Attack »óÅÂ
+	bool bIsAttack;
+
+
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	bool bIsFalling;
 
@@ -118,8 +145,7 @@ protected:
 	//¾÷µ¥ÀÌÆ®µÇ´Â Á×À½ »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
 	void OnIsDeadUpdate();
 
-	//ÇöÀç Á×À½ »óÅÂ
-	//UPROPERTY(ReplicatedUsing = OnRep_IsDead)
+	//ÇöÀç Shoot »óÅÂ
 	bool bIsShoot;
 
 
@@ -143,6 +169,12 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* FireAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* AttackAction;
 
 protected:
 	void Move(const struct FInputActionInstance& Instance);
