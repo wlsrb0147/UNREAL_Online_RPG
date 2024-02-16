@@ -55,7 +55,9 @@ public:
 	//Sword 클래스
 	UPROPERTY(EditAnywhere, Category = "State")
 	TSubclassOf<class ASword> SwordClass;
+	UPROPERTY(EditAnywhere, Category = "State")
 	ASword* MySword;
+	
 	
 
 
@@ -122,6 +124,20 @@ protected:
 	//UPROPERTY(ReplicatedUsing = OnRep_IsDead)
 	bool bIsShoot;
 
+	//어퍼슬래시
+	UPROPERTY(ReplicatedUsing=OnRep_IsUpperSlash)
+	bool bIsUpperSlash;
+	float UpperSlash_Rate = 2.0f;
+
+	UFUNCTION()
+	void StopUpperSlash();
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool GetIsUpperSlash() const;
+
+	UFUNCTION()
+	void OnRep_IsUpperSlash();
+
 
 public:	
 	// Called every frame
@@ -144,10 +160,13 @@ private:
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* MoveAction;
 
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* UpperSlashAction;
+
 protected:
 	void Move(const struct FInputActionInstance& Instance);
 	void Look(const FInputActionInstance& Instance);
-
+	void UpperSlash();
 
 private:
 	//?꾩떆
