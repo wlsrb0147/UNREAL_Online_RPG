@@ -6,14 +6,14 @@
 #include "BehaviorTree/BlackboardComponent.h"
 AEnemyAIController::AEnemyAIController()
 {
-	;
+
 }
 
 void AEnemyAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
 	if(LineOfSightTo(PlayerPawn))
 	{
 		SetFocus(PlayerPawn);
@@ -43,3 +43,4 @@ void AEnemyAIController::BeginPlay()
 
 	
 }
+
