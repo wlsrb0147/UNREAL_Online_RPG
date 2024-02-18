@@ -161,7 +161,6 @@ void APlayerCharacter::UpperSlash_Implementation()
 	UE_LOG(LogTemp, Log, TEXT("Upper Slash init"));
 	if(bIsFiringWeapon) return;
 	
-	
 	FTimerHandle Handle;
 	GetWorldTimerManager().SetTimer(Handle, this, &APlayerCharacter::StopUpperSlash, UpperSlash_Rate, false);
 	bIsUpperSlash = true;
