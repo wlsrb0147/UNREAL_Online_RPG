@@ -58,7 +58,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "State")
 	ASword* MySword;
 	
-	
+	//Gun Å¬·¡½º
+	UPROPERTY(EditAnywhere, Category = "State")
+	TSubclassOf<class AGun> GunClass;
+	UPROPERTY(EditAnywhere, Category = "State")
+	AGun* MyGun;
 
 
 protected:
@@ -84,7 +88,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay|Projectile")
 	TSubclassOf<class AProjectile_dm> ProjectileClass;
 
-	/** ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½. ï¿½×½ï¿½Æ® ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ SpawnProjectileï¿½ï¿½ ï¿½Ô·Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Òµï¿½ ï¿½Õ´Ï´ï¿½.*/
+	/** */
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	float FireRate;
 
@@ -92,7 +96,7 @@ protected:
 	bool bIsFiringWeapon;
 
 	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½*/
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Gameplay")
 	void StartFire();
 
 	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½. È£ï¿½ï¿½Ç¸ï¿?ï¿½Ã·ï¿½ï¿½Ì¾î°¡ StartFireï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿?ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.*/
@@ -100,7 +104,7 @@ protected:
 	void StopFire();
 
 	/** ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½*/
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void HandleFire();
 
 	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½ß»ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½Ì¸ï¿?ï¿½Ö´ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½Úµï¿½*/
@@ -148,7 +152,16 @@ protected:
 	void OnIsDeadUpdate();
 
 	//ÇöÀç Shoot »óÅÂ
+	UPROPERTY(ReplicatedUsing = OnRep_IsShoot)
 	bool bIsShoot;
+
+	//Shoot »óÅÂ º¯°æ¿¡ ´ëÇÑ RepNotify
+	UFUNCTION()
+	void OnRep_IsShoot();
+
+	//¾÷µ¥ÀÌÆ®µÇ´Â Shoot »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
+	void OnIsShootUpdate();
+
 
 	//¾îÆÛ½½·¡½Ã
 	UPROPERTY(ReplicatedUsing=OnRep_IsUpperSlash)
@@ -187,7 +200,10 @@ private:
 	UInputAction* MoveAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* FireAction;
+	UInputAction* FireDownAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* FireUpAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* AttackAction;
