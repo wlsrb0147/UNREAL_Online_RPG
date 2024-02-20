@@ -52,12 +52,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetIsShoot(bool IsShoot);
 
+	//ShootAnim »óÅÂ °ÔÅÍ
+	UFUNCTION(BlueprintPure, Category = "State")
+	FORCEINLINE bool GetIsShootAnim() const { return bIsShootAnim; }
+	//ShootAnim »óÅÂ ¼¼ÅÍ
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void SetIsShootAnim(bool IsShootAnim);
+
 	//Sword Å¬·¡½º
 	UPROPERTY(EditAnywhere, Category = "State")
 	TSubclassOf<class ASword> SwordClass;
 	UPROPERTY(EditAnywhere, Category = "State")
 	ASword* MySword;
-	
+
 	//Gun Å¬·¡½º
 	UPROPERTY(EditAnywhere, Category = "State")
 	TSubclassOf<class AGun> GunClass;
@@ -74,7 +81,7 @@ protected:
 	float MaxHealth;
 
 	/** ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½. 0ï¿½ï¿½ ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÖµË´Ï´ï¿½.*/
-	UPROPERTY(VisibleAnywhere,ReplicatedUsing = OnRep_CurrentHealth)
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_CurrentHealth)
 	float CurrentHealth;
 
 	/** ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½æ¿¡ ï¿½ï¿½ï¿½ï¿½ RepNotify*/
@@ -90,18 +97,20 @@ protected:
 
 	/** */
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
-	float FireRate;
+	float CoolTime;
 
 	/** trueï¿½ï¿½ ï¿½ï¿½ï¿?ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Î¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½. */
-	bool bIsFiringWeapon;
+	bool bIsAttacking;
 
 	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½*/
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Gameplay")
 	void StartFire();
 
 	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½. È£ï¿½ï¿½Ç¸ï¿?ï¿½Ã·ï¿½ï¿½Ì¾î°¡ StartFireï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿?ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.*/
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void StopFire();
+
+	void AttackCoolTime();
 
 	/** ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½*/
 	UFUNCTION(Server, Reliable, BlueprintCallable)
@@ -127,7 +136,7 @@ protected:
 	void StopAttack();
 
 	/** °ø°Ý ¼­¹öÇÔ¼ö*/
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void HandleAttack();
 
 	/** °ø°Ý ÄðÅ¸ÀÓ¿ë Å¸ÀÌ¸Ó ÇÚµé*/
@@ -162,13 +171,27 @@ protected:
 	//¾÷µ¥ÀÌÆ®µÇ´Â Shoot »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
 	void OnIsShootUpdate();
 
+	//ÇöÀç ShootAnim »óÅÂ
+	UPROPERTY(ReplicatedUsing = OnRep_IsShootAnim)
+	bool bIsShootAnim;
+
+	//Á×À½ »óÅÂ º¯°æ¿¡ ´ëÇÑ RepNotify
+	UFUNCTION()
+	void OnRep_IsShootAnim();
+
+	//¾÷µ¥ÀÌÆ®µÇ´Â Á×À½ »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
+	void OnIsShootAnimUpdate();
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void EndShootAnim();
+
 
 	//¾îÆÛ½½·¡½Ã
-	UPROPERTY(ReplicatedUsing=OnRep_IsUpperSlash)
+	UPROPERTY(ReplicatedUsing = OnRep_IsUpperSlash)
 	bool bIsUpperSlash;
 	float UpperSlash_Rate = 2.0f;
 
-	UFUNCTION()
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void StopUpperSlash();
 
 	UFUNCTION(BlueprintPure)
@@ -178,7 +201,10 @@ protected:
 	void OnRep_IsUpperSlash();
 
 
-public:	
+
+
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
