@@ -4,6 +4,8 @@
 #include "Networking.h"
 #include "Sockets.h"
 #include "SocketSubsystem.h"
+#include "WIdget_Login.h"
+#include "Blueprint/UserWidget.h"
 
 
 const char *host = "localhost";
@@ -60,6 +62,18 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 								{
 									//이미 있는것이니 성공 띄우고 몇초 뒤에 로그인 시켜버리면됨
 									UE_LOG(LogTemp, Error, TEXT("성공창 "));
+									if(Current_Widget)
+									{
+										UE_LOG(LogTemp, Error, TEXT("성공해서 위젯 없애버려볼까 "));
+										Current_Widget->RemoveFromParent();
+										if(Success_Widget)
+										{
+											UUserWidget* TmpWidget = CreateWidget<UUserWidget>(this, UUserWidget::StaticClass(), TEXT("Success Widget"));
+											TmpWidget->AddToViewport();
+											UE_LOG(LogTemp, Log, TEXT("성공창 띠ㅡ웠음"));
+										}
+										
+									}
 								
 									// "name" 필드 값을 가져옵니다.
 									FString Name = DocumentObject->GetStringField(TEXT("name"));
@@ -190,8 +204,9 @@ void UNetwork_Manager_R::OnResponseReceived_Join(FHttpRequestPtr Request, FHttpR
 	UE_LOG(LogTemp, Error, TEXT("실패창 "));
 }
 
-void UNetwork_Manager_R::SelectUser(const FString& Username, const FString& Password)
+void UNetwork_Manager_R::SelectUser(const FString& Username, const FString& Password, UUserWidget* InputWidget)
 {
+	Current_Widget = InputWidget;
 	FHttpModule* Http = &FHttpModule::Get();
 	if (Http)
 	{

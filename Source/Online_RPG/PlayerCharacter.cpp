@@ -15,6 +15,7 @@
 #include "Gun.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 
 
 // Sets default values
@@ -36,8 +37,8 @@ APlayerCharacter::APlayerCharacter()
 	//발사체 클래스 초기화
 	ProjectileClass = AProjectile_dm::StaticClass();
 	//발사 속도 초기화
-	FireRate = 0.25f;
-	bIsFiringWeapon = false;
+	CoolTime = 0.11f;
+	bIsAttacking = false;
 
 	//죽음 상태 초기화
 	bIsDead = false;
@@ -47,7 +48,7 @@ APlayerCharacter::APlayerCharacter()
 
 	//UpperSlash 상태 초기화
 	bIsUpperSlash = false;
-
+	
 }
 
 
@@ -85,7 +86,7 @@ void APlayerCharacter::BeginPlay()
 	//Dead 애니메이션 테스트 코드
 	/*FTimerHandle TestTimerHandle;
 	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &APlayerCharacter::SetIsDead, 0.1f);*/
-
+	
 }
 
 
@@ -133,6 +134,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::Move(const FInputActionInstance& Instance)
 {
+	//공격중에는 움직임 X
+	if (bIsAttacking) return;
+
 	FVector2D MovementVector = Instance.GetValue().Get<FVector2D>();
 
 	if (Controller != nullptr)
@@ -165,19 +169,21 @@ void APlayerCharacter::Look(const FInputActionInstance& Instance)
 
 void APlayerCharacter::UpperSlash_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("Upper Slash init"));
-	if(bIsFiringWeapon) return;
 	
-	FTimerHandle Handle;
-	GetWorldTimerManager().SetTimer(Handle, this, &APlayerCharacter::StopUpperSlash, UpperSlash_Rate, false);
+	if (bIsAttacking) return;
+	UE_LOG(LogTemp, Log, TEXT("Upper Slash init"));
+	//FTimerHandle Handle;
+	//GetWorldTimerManager().SetTimer(Handle, this, &APlayerCharacter::StopUpperSlash, UpperSlash_Rate, false);
 	bIsUpperSlash = true;
-	bIsFiringWeapon = true;
+	bIsAttacking = true;
 }
 
-void APlayerCharacter::StopUpperSlash()
+void APlayerCharacter::StopUpperSlash_Implementation()
 {
 	bIsUpperSlash = false;
-	bIsFiringWeapon = false;
+	FTimerHandle Handle;
+	GetWorldTimerManager().SetTimer(Handle, this, &APlayerCharacter::AttackCoolTime, CoolTime, false);
+	//bIsAttacking = false;
 }
 
 bool APlayerCharacter::GetIsUpperSlash() const
@@ -201,6 +207,9 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Ou
 	//현재 죽음 상태 리플리케이트
 	DOREPLIFETIME(APlayerCharacter, bIsDead);
 	DOREPLIFETIME(APlayerCharacter, bIsUpperSlash);
+	DOREPLIFETIME(APlayerCharacter, bIsShoot);
+	DOREPLIFETIME(APlayerCharacter, bIsShootAnim);
+
 }
 
 
@@ -264,20 +273,27 @@ void APlayerCharacter::OnHealthUpdate()
 
 void APlayerCharacter::StartFire_Implementation()
 {
-	if (!bIsFiringWeapon)
-	{
-		bIsShoot = true;
-		bIsFiringWeapon = true;
-		//UWorld* World = GetWorld();
-		//World->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::StopFire, FireRate, false);
-		//HandleFire();
-	}
+	if (bIsAttacking) return;
+
+	bIsShoot = true;
+	bIsAttacking = true;
+	bIsShootAnim = true;
+	//UWorld* World = GetWorld();
+	//World->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::StopFire, FireRate, false);
+	//HandleFire();
+
 }
 
-void APlayerCharacter::StopFire()
+void APlayerCharacter::StopFire_Implementation()
 {
 	bIsShoot = false;
-	bIsFiringWeapon = false;
+	//UWorld* World = GetWorld();
+	//World->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::AttackCoolTime, FireRate, false);
+	bIsAttacking = false;
+}
+
+void APlayerCharacter::AttackCoolTime() {
+	bIsAttacking = false;
 }
 
 void APlayerCharacter::HandleFire_Implementation()
@@ -301,6 +317,11 @@ void APlayerCharacter::SetIsShoot(bool IsShoot)
 	bIsShoot = IsShoot;
 }
 
+void APlayerCharacter::SetIsShootAnim(bool IsShootAnim)
+{
+	bIsShootAnim = IsShootAnim;
+}
+
 void APlayerCharacter::StartAttack()
 {
 	if (!bIsAttackWeapon)
@@ -321,7 +342,7 @@ void APlayerCharacter::StopAttack()
 
 void APlayerCharacter::HandleAttack_Implementation()
 {
-	
+
 }
 
 void APlayerCharacter::SetIsDead(bool IsDead)
@@ -334,19 +355,11 @@ void APlayerCharacter::SetIsDead(bool IsDead)
 	}
 }
 
-void APlayerCharacter::SetIsDead()
-{
-	//서버 전용 함수 기능
-	if (GetLocalRole() == ROLE_Authority)
-	{
-		bIsDead = true;
-		OnIsDeadUpdate();
-	}
-}
 
 void APlayerCharacter::OnRep_IsDead()
 {
 	OnIsDeadUpdate();
+	
 }
 
 void APlayerCharacter::OnIsDeadUpdate()
@@ -357,7 +370,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 		if (bIsDead)
 		{
 			//...
-
+			UE_LOG(LogTemp, Display, TEXT("7777"));
 		}
 	}
 
@@ -367,7 +380,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 		if (bIsDead)
 		{
 			//...
-
+			UE_LOG(LogTemp, Display, TEXT("8888"));
 		}
 	}
 
@@ -375,14 +388,25 @@ void APlayerCharacter::OnIsDeadUpdate()
 	/*
 		여기에 대미지 또는 사망의 결과로 발생하는 특별 함수 기능 배치
 	*/
-}
+	if (bIsDead)
+	{
+		//중력 끔
+		//GetCapsuleComponent()->SetEnableGravity(false);
+		//콜리전 끔
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		// 죽음 상태에서는 물리 효과 제거
+		GetCharacterMovement()->DisableMovement();
+		//GetCapsuleComponent()->SetHiddenInGame(true);
+		//SetActorTickEnabled(false);
 
+	}
+
+}
 
 void APlayerCharacter::OnRep_IsShoot()
 {
 	OnIsShootUpdate();
 }
-
 
 void APlayerCharacter::OnIsShootUpdate()
 {
@@ -410,6 +434,20 @@ void APlayerCharacter::OnIsShootUpdate()
 	/*
 		여기에 대미지 또는 사망의 결과로 발생하는 특별 함수 기능 배치
 	*/
+}
+
+void APlayerCharacter::OnRep_IsShootAnim()
+{
+	OnIsShootAnimUpdate();
+}
+
+void APlayerCharacter::OnIsShootAnimUpdate()
+{
+}
+
+void APlayerCharacter::EndShootAnim_Implementation()
+{
+	bIsShootAnim = false;
 }
 
 
@@ -491,7 +529,3 @@ void APlayerCharacter::SpawnDebugSphere(FVector Location, float Radius)
 		1
 	);
 }
-
-//ㅁㄴㅇ
-
-//ㅋㅌㅊ
