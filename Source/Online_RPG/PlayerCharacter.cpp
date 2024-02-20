@@ -17,6 +17,7 @@
 #include "Engine/DamageEvents.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 
 
 // Sets default values
@@ -49,7 +50,7 @@ APlayerCharacter::APlayerCharacter()
 
 	//UpperSlash 상태 초기화
 	bIsUpperSlash = false;
-
+	
 }
 
 
@@ -87,7 +88,7 @@ void APlayerCharacter::BeginPlay()
 	//Dead 애니메이션 테스트 코드
 	/*FTimerHandle TestTimerHandle;
 	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &APlayerCharacter::SetIsDead, 0.1f);*/
-
+	
 }
 
 
@@ -356,19 +357,11 @@ void APlayerCharacter::SetIsDead(bool IsDead)
 	}
 }
 
-void APlayerCharacter::SetIsDead()
-{
-	//서버 전용 함수 기능
-	if (GetLocalRole() == ROLE_Authority)
-	{
-		bIsDead = true;
-		OnIsDeadUpdate();
-	}
-}
 
 void APlayerCharacter::OnRep_IsDead()
 {
 	OnIsDeadUpdate();
+	
 }
 
 void APlayerCharacter::OnIsDeadUpdate()
@@ -379,7 +372,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 		if (bIsDead)
 		{
 			//...
-
+			UE_LOG(LogTemp, Display, TEXT("7777"));
 		}
 	}
 
@@ -389,7 +382,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 		if (bIsDead)
 		{
 			//...
-
+			UE_LOG(LogTemp, Display, TEXT("8888"));
 		}
 	}
 
@@ -397,6 +390,19 @@ void APlayerCharacter::OnIsDeadUpdate()
 	/*
 		여기에 대미지 또는 사망의 결과로 발생하는 특별 함수 기능 배치
 	*/
+	if (bIsDead)
+	{
+		//중력 끔
+		//GetCapsuleComponent()->SetEnableGravity(false);
+		//콜리전 끔
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		// 죽음 상태에서는 물리 효과 제거
+		GetCharacterMovement()->DisableMovement();
+		//GetCapsuleComponent()->SetHiddenInGame(true);
+		//SetActorTickEnabled(false);
+
+	}
+
 }
 
 void APlayerCharacter::OnRep_IsShoot()

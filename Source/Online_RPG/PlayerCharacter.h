@@ -42,8 +42,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetIsDead(bool IsDead);
 
-	void SetIsDead();
-
 
 	//Shoot 상태 게터
 	UFUNCTION(BlueprintPure, Category = "State")
