@@ -40,11 +40,14 @@ private:
 	float MaxRange = 1000.f;
 	UPROPERTY(EditAnywhere)
 	float Damage1 = 1.f;
+	UPROPERTY(VisibleAnywhere)
+	bool IsDead = false;
+
 
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem *Attack1Particle;
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AActor> AmmoBlueprint;
+	TSubclassOf<class AActor> AttackProjectile;
 
 	UPROPERTY(EditAnywhere)
 	float AttackRange = 500;
@@ -58,5 +61,7 @@ private:
 	//TSubclassOf<class AEnemyProjectile> ProjectileClass;
 
 	void SpawnDebugSphere(FVector Location, float Radius);
-	void SpawnActor22();
+	void SpawnProjectile();
+	void Dead();
+
 };

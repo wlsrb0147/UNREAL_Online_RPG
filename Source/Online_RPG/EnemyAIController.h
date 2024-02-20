@@ -16,17 +16,22 @@ class ONLINE_RPG_API AEnemyAIController : public AAIController
 	AEnemyAIController();
 protected:
 	virtual void BeginPlay() override;
-	
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
+	void Dead();
+
 
 private:
-	
+
 	UPROPERTY(EditAnywhere)
 	class UBehaviorTree* AIBehavior;
 
+	void StopBehaviorTree();
 
+	void StartBehaviorTree();
 
+	UPROPERTY(VisibleAnywhere)
+	bool IsDead = false;
 };
