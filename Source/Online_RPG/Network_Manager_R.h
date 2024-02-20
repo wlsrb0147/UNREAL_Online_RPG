@@ -13,6 +13,7 @@
 
 #include "Network_Manager_R.generated.h"
 
+class UWIdget_Login;
 /**
  * 
  */
@@ -31,7 +32,7 @@ public:
 
 	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void OnResponseReceived_Join(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-	void SelectUser(const FString& Username, const FString& Password);
+	void SelectUser(const FString& Username, const FString& Password, UUserWidget* InputWidget);
 	void InsertUser(const FString& Username, const FString& Password, const FString& NickName);
 	void ResistUser(const FString& Username, const FString& Password, const FString& NickName);
 	void OnInsertUserResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
@@ -39,6 +40,18 @@ public:
 	FString Join_ID;
 	FString Join_PW;
 	FString Join_NickName;
+
+	UPROPERTY(EditAnywhere)
+	UUserWidget* Current_Widget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> Fail_Widget;
+	//UWIdget_Login* Fail_Widget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> Success_Widget;
+	//UWIdget_Login* Success_Widget;
+	
 	
 private:
 	FSocket* Socket;
