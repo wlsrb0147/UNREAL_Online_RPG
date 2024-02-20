@@ -68,8 +68,8 @@ AOnline_RPGCharacter::AOnline_RPGCharacter()
 	//발사체 클래스 초기화
 	ProjectileClass = ARED_Projectile::StaticClass();
 	//발사 속도 초기화
-	FireRate = 0.25f;
-	bIsFiringWeapon = false;
+	CoolTime = 0.25f;
+	bIsAttacking = false;
 }
 
 void AOnline_RPGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -117,18 +117,18 @@ void AOnline_RPGCharacter::OnHealthUpdate()
 
 void AOnline_RPGCharacter::StartFire()
 {
-	if (!bIsFiringWeapon)
+	if (!bIsAttacking)
 	{
-		bIsFiringWeapon = true;
+		bIsAttacking = true;
 		UWorld* World = GetWorld();
-		World->GetTimerManager().SetTimer(FiringTimer, this, &AOnline_RPGCharacter::StopFire, FireRate, false);
+		World->GetTimerManager().SetTimer(FiringTimer, this, &AOnline_RPGCharacter::StopFire, CoolTime, false);
 		HandleFire();
 	}
 }
 
 void AOnline_RPGCharacter::StopFire()
 {
-	bIsFiringWeapon = false;
+	bIsAttacking = false;
 }
 
 void AOnline_RPGCharacter::HandleFire_Implementation()

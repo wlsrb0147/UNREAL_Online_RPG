@@ -92,10 +92,10 @@ protected:
 
 	/** 발사 딜레이, 단위는 초. 테스트 발사체의 발사 속도를 제어하는 데 사용되지만, 서버 함수의 추가분이 SpawnProjectile을 입력에 직접 바인딩하지 않게 하는 역할도 합니다.*/
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
-	float FireRate;
+	float CoolTime;
 
 	/** true인 경우 발사체를 발사하는 프로세스 도중입니다. */
-	bool bIsFiringWeapon;
+	bool bIsAttacking;
 
 	/** 무기 발사 시작 함수*/
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
