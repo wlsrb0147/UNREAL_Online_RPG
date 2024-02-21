@@ -16,6 +16,7 @@ AProjectile_dm::AProjectile_dm()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// 리플리케이트
 	bReplicates = true;
 
 	//발사체와 콜리전의 루트 컴포넌트 역할을 할 SphereComponent 정의
