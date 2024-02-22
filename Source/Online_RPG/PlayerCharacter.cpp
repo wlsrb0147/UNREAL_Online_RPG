@@ -127,7 +127,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		Input->BindAction(FireDownAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
 		Input->BindAction(FireUpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StopFire);
 		//공격
-		Input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
+		//Input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
 	}
 
 }
@@ -169,7 +169,6 @@ void APlayerCharacter::Look(const FInputActionInstance& Instance)
 
 void APlayerCharacter::UpperSlash_Implementation()
 {
-	
 	if (bIsAttacking) return;
 	UE_LOG(LogTemp, Log, TEXT("Upper Slash init"));
 	//FTimerHandle Handle;
@@ -209,6 +208,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Ou
 	DOREPLIFETIME(APlayerCharacter, bIsUpperSlash);
 	DOREPLIFETIME(APlayerCharacter, bIsShoot);
 	DOREPLIFETIME(APlayerCharacter, bIsShootAnim);
+	DOREPLIFETIME(APlayerCharacter, bIsAttacking);
 
 }
 
@@ -274,10 +274,10 @@ void APlayerCharacter::OnHealthUpdate()
 void APlayerCharacter::StartFire_Implementation()
 {
 	if (bIsAttacking) return;
-
+	//UE_LOG(LogTemp, Display, TEXT("??????????????"));
 	bIsShoot = true;
 	bIsAttacking = true;
-	bIsShootAnim = true;
+	//bIsShootAnim = true;
 	//UWorld* World = GetWorld();
 	//World->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::StopFire, FireRate, false);
 	//HandleFire();
@@ -292,11 +292,21 @@ void APlayerCharacter::StopFire_Implementation()
 	bIsAttacking = false;
 }
 
+void APlayerCharacter::OnRep_IsAttacking()
+{
+	OnIsAttackingUpdate();
+}
+
+void APlayerCharacter::OnIsAttackingUpdate()
+{
+
+}
+
 void APlayerCharacter::AttackCoolTime() {
 	bIsAttacking = false;
 }
 
-void APlayerCharacter::HandleFire_Implementation()
+void APlayerCharacter::HandleFire()
 {
 	//Projectile 스폰
 	/*FVector spawnLocation = GetActorLocation() + (GetActorRotation().Vector() * 100.0f) + (GetActorUpVector() * 50.0f);
@@ -310,6 +320,8 @@ void APlayerCharacter::HandleFire_Implementation()
 
 
 	CMAttack();
+	USceneComponent* ShootEffectSpawnPoint = MyGun->EffectSpawnPoint;
+	UGameplayStatics::SpawnEmitterAtLocation(this, ShootPaticles, ShootEffectSpawnPoint->GetComponentLocation(), GetActorRotation());
 }
 
 void APlayerCharacter::SetIsShoot(bool IsShoot)
@@ -320,6 +332,31 @@ void APlayerCharacter::SetIsShoot(bool IsShoot)
 void APlayerCharacter::SetIsShootAnim(bool IsShootAnim)
 {
 	bIsShootAnim = IsShootAnim;
+}
+
+void APlayerCharacter::OnRep_IsShootAnim()
+{
+	OnIsShootAnimUpdate();
+}
+
+void APlayerCharacter::OnIsShootAnimUpdate()
+{
+}
+
+void APlayerCharacter::StartShootAnim()
+{
+	bIsShootAnim = true;
+}
+
+void APlayerCharacter::EndShootAnim()
+{
+	bIsShootAnim = false;
+}
+
+void APlayerCharacter::SpawnShootEffect_Implementation()
+{
+	USceneComponent* ShootEffectSpawnPoint = MyGun->EffectSpawnPoint;
+	UGameplayStatics::SpawnEmitterAtLocation(this, ShootPaticles, ShootEffectSpawnPoint->GetComponentLocation(), ShootEffectSpawnPoint->GetComponentRotation());
 }
 
 void APlayerCharacter::StartAttack()
@@ -436,19 +473,7 @@ void APlayerCharacter::OnIsShootUpdate()
 	*/
 }
 
-void APlayerCharacter::OnRep_IsShootAnim()
-{
-	OnIsShootAnimUpdate();
-}
 
-void APlayerCharacter::OnIsShootAnimUpdate()
-{
-}
-
-void APlayerCharacter::EndShootAnim_Implementation()
-{
-	bIsShootAnim = false;
-}
 
 
 float APlayerCharacter::TakeDamage(float DamageTaken, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
