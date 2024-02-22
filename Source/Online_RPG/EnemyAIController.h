@@ -21,9 +21,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	void Dead();
+	void SetPlayer(APawn* _pawn);
 
+	void PlayerRangeCheck();
 
 private:
+	UPROPERTY(EditAnywhere)
+	float ChaseRange = 1000;
+
 
 	UPROPERTY(EditAnywhere)
 	class UBehaviorTree* AIBehavior;
@@ -34,4 +39,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	bool IsDead = false;
+
+	APawn* AttackPawn;
+
 };

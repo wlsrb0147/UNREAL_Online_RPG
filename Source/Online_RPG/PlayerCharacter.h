@@ -30,40 +30,40 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void SetCurrentHealth(float healthValue);
 
-	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?ï¿½Þ´ï¿½ ï¿½Ìºï¿½Æ®. APawnï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½Ë´Ï´ï¿?*/
+	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½Þ´ï¿½ ï¿½Ìºï¿½Æ®. APawnï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½Ë´Ï´ï¿½?*/
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	virtual float TakeDamage(float DamageTaken, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 
-	//Á×À½ »óÅÂ °ÔÅÍ
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UFUNCTION(BlueprintPure, Category = "State")
 	FORCEINLINE bool GetIsDead() const { return bIsDead; }
-	//Á×À½ »óÅÂ ¼¼ÅÍ
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetIsDead(bool IsDead);
 
 
-	//Shoot »óÅÂ °ÔÅÍ
+	//Shoot ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UFUNCTION(BlueprintPure, Category = "State")
 	FORCEINLINE bool GetIsShoot() const { return bIsShoot; }
-	//Shoot »óÅÂ ¼¼ÅÍ
+	//Shoot ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetIsShoot(bool IsShoot);
 
-	//ShootAnim »óÅÂ °ÔÅÍ
+	//ShootAnim ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UFUNCTION(BlueprintPure, Category = "State")
 	FORCEINLINE bool GetIsShootAnim() const { return bIsShootAnim; }
-	//ShootAnim »óÅÂ ¼¼ÅÍ
+	//ShootAnim ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetIsShootAnim(bool IsShootAnim);
 
-	//Sword Å¬·¡½º
+	//Sword Å¬ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(EditAnywhere, Category = "State")
 	TSubclassOf<class ASword> SwordClass;
 	UPROPERTY(EditAnywhere, Category = "State")
 	ASword* MySword;
 
-	//Gun Å¬·¡½º
+	//Gun Å¬ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(EditAnywhere, Category = "State")
 	TSubclassOf<class AGun> GunClass;
 	UPROPERTY(EditAnywhere, Category = "State")
@@ -86,7 +86,7 @@ protected:
 	UFUNCTION()
 	void OnRep_CurrentHealth();
 
-	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ç´ï¿½ Ã¼ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿?È£ï¿½ï¿½, Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RepNotifyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ È£ï¿½ï¿½*/
+	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ç´ï¿½ Ã¼ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½?È£ï¿½ï¿½, Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RepNotifyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ È£ï¿½ï¿½*/
 	void OnHealthUpdate();
 
 
@@ -97,14 +97,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	float CoolTime;
 
-	/** trueï¿½ï¿½ ï¿½ï¿½ï¿?ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Î¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½. */
+	/** trueï¿½ï¿½ ï¿½ï¿½ï¿½?ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Î¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½. */
 	bool bIsAttacking;
 
 	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½*/
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Gameplay")
 	void StartFire();
 
-	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½. È£ï¿½ï¿½Ç¸ï¿?ï¿½Ã·ï¿½ï¿½Ì¾î°¡ StartFireï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿?ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.*/
+	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½. È£ï¿½ï¿½Ç¸ï¿½?ï¿½Ã·ï¿½ï¿½Ì¾î°¡ StartFireï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.*/
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void StopFire();
 
@@ -114,77 +114,77 @@ protected:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void HandleFire();
 
-	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½ß»ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½Ì¸ï¿?ï¿½Ö´ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½Úµï¿½*/
+	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½ß»ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½?ï¿½Ö´ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½Úµï¿½*/
 	FTimerHandle FiringTimer;
 
 
-	/** °ø°Ý ÄðÅ¸ÀÓ*/
+	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½*/
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	float AttackRate;
 
-	/** true¸é ÄðÅ¸ÀÓ */
+	/** trueï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ */
 	bool bIsAttackWeapon;
 
-	/** °ø°Ý*/
+	/** ï¿½ï¿½ï¿½ï¿½*/
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	void StartAttack();
 
-	/** °ø°Ý ÄðÅ¸ÀÓ ³¡*/
+	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½*/
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	void StopAttack();
 
-	/** °ø°Ý ¼­¹öÇÔ¼ö*/
+	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½*/
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void HandleAttack();
 
-	/** °ø°Ý ÄðÅ¸ÀÓ¿ë Å¸ÀÌ¸Ó ÇÚµé*/
+	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½Ó¿ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½Úµï¿½*/
 	FTimerHandle AttackTimer;
 
-	//ÇöÀç Attack »óÅÂ
+	//ï¿½ï¿½ï¿½ï¿½ Attack ï¿½ï¿½ï¿½ï¿½
 	bool bIsAttack;
 
 
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	bool bIsFalling;
 
-	//ÇöÀç Á×À½ »óÅÂ
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(ReplicatedUsing = OnRep_IsDead)
 	bool bIsDead;
 
-	//Á×À½ »óÅÂ º¯°æ¿¡ ´ëÇÑ RepNotify
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½æ¿¡ ï¿½ï¿½ï¿½ï¿½ RepNotify
 	UFUNCTION()
 	void OnRep_IsDead();
 
-	//¾÷µ¥ÀÌÆ®µÇ´Â Á×À½ »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ È£ï¿½ï¿½, Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RepNotifyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ È£ï¿½ï¿½
 	void OnIsDeadUpdate();
 
-	//ÇöÀç Shoot »óÅÂ
+	//ï¿½ï¿½ï¿½ï¿½ Shoot ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(ReplicatedUsing = OnRep_IsShoot)
 	bool bIsShoot;
 
-	//Shoot »óÅÂ º¯°æ¿¡ ´ëÇÑ RepNotify
+	//Shoot ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½æ¿¡ ï¿½ï¿½ï¿½ï¿½ RepNotify
 	UFUNCTION()
 	void OnRep_IsShoot();
 
-	//¾÷µ¥ÀÌÆ®µÇ´Â Shoot »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ç´ï¿½ Shoot ï¿½ï¿½ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ È£ï¿½ï¿½, Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RepNotifyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ È£ï¿½ï¿½
 	void OnIsShootUpdate();
 
-	//ÇöÀç ShootAnim »óÅÂ
+	//ï¿½ï¿½ï¿½ï¿½ ShootAnim ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(ReplicatedUsing = OnRep_IsShootAnim)
 	bool bIsShootAnim;
 
-	//Á×À½ »óÅÂ º¯°æ¿¡ ´ëÇÑ RepNotify
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½æ¿¡ ï¿½ï¿½ï¿½ï¿½ RepNotify
 	UFUNCTION()
 	void OnRep_IsShootAnim();
 
-	//¾÷µ¥ÀÌÆ®µÇ´Â Á×À½ »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ È£ï¿½ï¿½, Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RepNotifyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ È£ï¿½ï¿½
 	void OnIsShootAnimUpdate();
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void EndShootAnim();
 
 
-	//¾îÆÛ½½·¡½Ã
+	//ï¿½ï¿½ï¿½Û½ï¿½ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(ReplicatedUsing = OnRep_IsUpperSlash)
 	bool bIsUpperSlash;
 	float UpperSlash_Rate = 2.0f;
@@ -242,7 +242,7 @@ protected:
 	void UpperSlash();
 
 private:
-	//?„ì‹œ
+	//?ï¿½ì‹œ
 	void SpawnDebugSphere(FVector Location, float Radius);
 	void CMAttack();
 	UPROPERTY(EditAnywhere, Category = "Attack")

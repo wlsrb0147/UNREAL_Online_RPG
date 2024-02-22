@@ -4,7 +4,6 @@
 #include "EnemyProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
-#include "DamageAble.h"
 #include "Engine/DamageEvents.h"
 #include "PlayerCharacter.h"
 

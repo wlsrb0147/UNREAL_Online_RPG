@@ -26,3 +26,4 @@ EBTNodeResult::Type UBTTask_EnemyRangeCheck::ExecuteTask(UBehaviorTreeComponent&
 	}
 	return EBTNodeResult::Succeeded;
 }
+

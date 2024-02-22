@@ -2,7 +2,8 @@
 
 
 #include "EnemyDog.h"
-#include "DamageAble.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/Engine.h"
 #include "EnemyProjectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
@@ -43,24 +44,19 @@ void AEnemyDog::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void AEnemyDog::Attack()
+void AEnemyDog::Attack_Implementation()
 {
 	SpawnProjectile();
 }
+
+
+
 float AEnemyDog::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	UDamageAble *DamageAble = this->GetComponentByClass<UDamageAble>();
+	AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
+	OwnerController->SetPlayer(Cast<APawn>(DamageCauser));
 	if (IsDead) return ActualDamage;
-
-	if(DamageAble)
-	{
-		if(DamageAble->GetIsDead())
-		{
-			return ActualDamage;
-		}
-		DamageAble->TakeDamage(ActualDamage);
-	}
 
 	if(Health-ActualDamage<= 0)
 	{
@@ -69,7 +65,6 @@ float AEnemyDog::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	}
 
 	Health -= ActualDamage;
-
 	UE_LOG(LogTemp, Display, TEXT("Actor took damage: %f Heath = %f"), ActualDamage, Health);
 	return ActualDamage;
 }
@@ -105,7 +100,6 @@ bool AEnemyDog::RangeCheck()
 {
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	float TargetDis = FVector::Dist(this->GetActorLocation(), PlayerPawn->GetActorLocation());
-	//UE_LOG(LogTemp, Warning, TEXT("Target Distance : %f"), TargetDis);
 
 	if(AttackRange>=TargetDis)
 	{

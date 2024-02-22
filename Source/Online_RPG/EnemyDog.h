@@ -15,6 +15,7 @@ class ONLINE_RPG_API AEnemyDog : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AEnemyDog();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Attack();
 
 protected:
