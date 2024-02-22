@@ -15,6 +15,9 @@ public:
 	// Sets default values for this actor's properties
 	AEnemyProjectile();
 
+	UFUNCTION()
+	void OnOverlapBegin(class AActor* OverlappedActor, class AActor* OtherActor);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -22,14 +25,17 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+
 private:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Mesh;
 	UPROPERTY(EditAnywhere, Category = Projectile)
 	class USphereComponent* SphreComponent;
-
-	void NotifyActorBeginOverlap(AActor* OtherActor);
+	UPROPERTY(EditAnywhere)
+	float ProjectileDamage = 10.f;
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* Attack1Particle;
 	void SpawnDebugSphere(FVector Location, float Radius);
 
-	
 };
