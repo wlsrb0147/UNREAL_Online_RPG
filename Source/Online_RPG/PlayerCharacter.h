@@ -63,6 +63,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Particle")
 	class UParticleSystem* ShootPaticles;
 
+	UPROPERTY(EditAnywhere, Category = "Particle")
+	class UParticleSystem* ShootHitPaticles;
+
 	//Sword Å¬·¡½º
 	UPROPERTY(EditAnywhere, Category = "State")
 	TSubclassOf<class ASword> SwordClass;
@@ -253,7 +256,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* UpperSlashAction;
 
-	
+
 
 protected:
 	void Move(const struct FInputActionInstance& Instance);
@@ -262,12 +265,19 @@ protected:
 	void UpperSlash();
 
 private:
-	//?„ì‹œ
 	void SpawnDebugSphere(FVector Location, float Radius);
 	void CMAttack();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ShootAttack();
 	UPROPERTY(EditAnywhere, Category = "Attack")
-	float CMAttackRange = 1000.f;
+	float ShootAttackRange = 1000.f;
 	UPROPERTY(EditAnywhere, Category = "Attack")
-	float CMAttackDamage = 5.f;
+	float ShootAttackDamage = 5.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootAttackWidth = 50.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootAttackHeight = 50.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootHitEffectScale = 0.1f;
 
 };
