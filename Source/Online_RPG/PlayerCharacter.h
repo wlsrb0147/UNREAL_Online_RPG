@@ -15,72 +15,215 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
-	/** ÇÁ·ÎÆÛÆ¼ ¸®ÇÃ¸®ÄÉÀÌ¼Ç */
+	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ */
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	/** ÃÖ´ë Ã¼·Â °ÔÅÍ*/
+	/** ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	UFUNCTION(BlueprintPure, Category = "Health")
 	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
 
-	/** ÇöÀç Ã¼·Â °ÔÅÍ*/
+	/** ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	UFUNCTION(BlueprintPure, Category = "Health")
 	FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
 
-	/** ÇöÀç Ã¼·Â ¼¼ÅÍ. °ªÀ» 0°ú MaxHealth »çÀÌ·Î ¹üÀ§Á¦ÇÑÇÏ°í OnHealthUpdate¸¦ È£ÃâÇÕ´Ï´Ù. ¼­¹ö¿¡¼­¸¸ È£ÃâµÇ¾î¾ß ÇÕ´Ï´Ù.*/
+	/** ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ MaxHealth ï¿½ï¿½ï¿½Ì·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ OnHealthUpdateï¿½ï¿½ È£ï¿½ï¿½ï¿½Õ´Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½Ç¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½.*/
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void SetCurrentHealth(float healthValue);
 
-	/** ´ë¹ÌÁö¸¦ ¹Þ´Â ÀÌº¥Æ®. APawn¿¡¼­ ¿À¹ö¶óÀÌµåµË´Ï´Ù.*/
+	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?ï¿½Þ´ï¿½ ï¿½Ìºï¿½Æ®. APawnï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½Ë´Ï´ï¿?*/
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	float TakeDamage(float DamageTaken, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageTaken, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+
+	//Á×À½ »óÅÂ °ÔÅÍ
+	UFUNCTION(BlueprintPure, Category = "State")
+	FORCEINLINE bool GetIsDead() const { return bIsDead; }
+	//Á×À½ »óÅÂ ¼¼ÅÍ
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void SetIsDead(bool IsDead);
+
+
+	//Shoot »óÅÂ °ÔÅÍ
+	UFUNCTION(BlueprintPure, Category = "State")
+	FORCEINLINE bool GetIsShoot() const { return bIsShoot; }
+	//Shoot »óÅÂ ¼¼ÅÍ
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void SetIsShoot(bool IsShoot);
+
+	//ShootAnim »óÅÂ °ÔÅÍ
+	UFUNCTION(BlueprintPure, Category = "State")
+	FORCEINLINE bool GetIsShootAnim() const { return bIsShootAnim; }
+	//ShootAnim »óÅÂ ¼¼ÅÍ
+	UFUNCTION(BlueprintCallable, Category = "State")
+	void SetIsShootAnim(bool IsShootAnim);
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void SpawnShootEffect();
+
+	UPROPERTY(EditAnywhere, Category = "Particle")
+	class UParticleSystem* ShootPaticles;
+
+	UPROPERTY(EditAnywhere, Category = "Particle")
+	class UParticleSystem* ShootHitPaticles;
+
+	//Sword Å¬·¡½º
+	UPROPERTY(EditAnywhere, Category = "State")
+	TSubclassOf<class ASword> SwordClass;
+	UPROPERTY(EditAnywhere, Category = "State")
+	ASword* MySword;
+
+	//Gun Å¬·¡½º
+	UPROPERTY(EditAnywhere, Category = "State")
+	TSubclassOf<class AGun> GunClass;
+	UPROPERTY(EditAnywhere, Category = "State")
+	AGun* MyGun;
 
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	/** ÇÃ·¹ÀÌ¾îÀÇ ÃÖ´ë Ã¼·Â. Ã¼·ÂÀÇ ÃÖ´ñ°ªÀÔ´Ï´Ù. ÀÌ °ªÀº ½ºÆù ½Ã ½ÃÀÛµÇ´Â Ä³¸¯ÅÍÀÇ Ã¼·Â °ªÀÔ´Ï´Ù.*/
+	/** ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½. Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½Ô´Ï´ï¿½. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ÛµÇ´ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Ô´Ï´ï¿½.*/
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
 	float MaxHealth;
 
-	/** ÇÃ·¹ÀÌ¾îÀÇ ÇöÀç Ã¼·Â. 0ÀÌ µÇ¸é Á×Àº °ÍÀ¸·Î °£ÁÖµË´Ï´Ù.*/
-	UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
+	/** ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½. 0ï¿½ï¿½ ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÖµË´Ï´ï¿½.*/
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_CurrentHealth)
 	float CurrentHealth;
 
-	/** ÇöÀç Ã¼·Â¿¡ °¡ÇØÁø º¯°æ¿¡ ´ëÇÑ RepNotify*/
+	/** ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½æ¿¡ ï¿½ï¿½ï¿½ï¿½ RepNotify*/
 	UFUNCTION()
 	void OnRep_CurrentHealth();
 
-	/** ¾÷µ¥ÀÌÆ®µÇ´Â Ã¼·Â¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ*/
+	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ç´ï¿½ Ã¼ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿?È£ï¿½ï¿½, Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RepNotifyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ È£ï¿½ï¿½*/
 	void OnHealthUpdate();
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay|Projectile")
 	TSubclassOf<class AProjectile_dm> ProjectileClass;
 
-	/** ¹ß»ç µô·¹ÀÌ, ´ÜÀ§´Â ÃÊ. Å×½ºÆ® ¹ß»çÃ¼ÀÇ ¹ß»ç ¼Óµµ¸¦ Á¦¾îÇÏ´Â µ¥ »ç¿ëµÇÁö¸¸, ¼­¹ö ÇÔ¼öÀÇ Ãß°¡ºÐÀÌ SpawnProjectileÀ» ÀÔ·Â¿¡ Á÷Á¢ ¹ÙÀÎµùÇÏÁö ¾Ê°Ô ÇÏ´Â ¿ªÇÒµµ ÇÕ´Ï´Ù.*/
+	/** */
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
-	float FireRate;
+	float CoolTime;
 
-	/** trueÀÎ °æ¿ì ¹ß»çÃ¼¸¦ ¹ß»çÇÏ´Â ÇÁ·Î¼¼½º µµÁßÀÔ´Ï´Ù. */
-	bool bIsFiringWeapon;
 
-	/** ¹«±â ¹ß»ç ½ÃÀÛ ÇÔ¼ö*/
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	UPROPERTY(ReplicatedUsing = OnRep_IsAttacking)
+	bool bIsAttacking;
+
+	//bIsAttacking º¯°æ¿¡ ´ëÇÑ RepNotify
+	UFUNCTION()
+	void OnRep_IsAttacking();
+
+	//¾÷µ¥ÀÌÆ®µÇ´Â bIsAttacking »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
+	void OnIsAttackingUpdate();
+
+
+	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½*/
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Gameplay")
 	void StartFire();
 
-	/** ¹«±â ¹ß»ç Á¾·á ÇÔ¼ö. È£ÃâµÇ¸é ÇÃ·¹ÀÌ¾î°¡ StartFire¸¦ ´Ù½Ã »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù.*/
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½. È£ï¿½ï¿½Ç¸ï¿?ï¿½Ã·ï¿½ï¿½Ì¾î°¡ StartFireï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿?ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.*/
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void StopFire();
 
-	/** ¹ß»çÃ¼¸¦ ½ºÆùÇÏ´Â ¼­¹ö ÇÔ¼ö*/
-	UFUNCTION(Server, Reliable)
+	void AttackCoolTime();
+
+	/** ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½*/
+	UFUNCTION(BlueprintCallable)
 	void HandleFire();
 
-	/** ½ºÆù »çÀÌ¿¡ ¹ß»ç ¼Óµµ µô·¹ÀÌ¸¦ ³Ö´Â Å¸ÀÌ¸Ó ÇÚµé*/
+	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½ß»ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½Ì¸ï¿?ï¿½Ö´ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½Úµï¿½*/
 	FTimerHandle FiringTimer;
 
-public:	
+
+	/** °ø°Ý ÄðÅ¸ÀÓ*/
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+	float AttackRate;
+
+	/** true¸é ÄðÅ¸ÀÓ */
+	bool bIsAttackWeapon;
+
+	/** °ø°Ý*/
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void StartAttack();
+
+	/** °ø°Ý ÄðÅ¸ÀÓ ³¡*/
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void StopAttack();
+
+	/** °ø°Ý ¼­¹öÇÔ¼ö*/
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void HandleAttack();
+
+	/** °ø°Ý ÄðÅ¸ÀÓ¿ë Å¸ÀÌ¸Ó ÇÚµé*/
+	FTimerHandle AttackTimer;
+
+	//ÇöÀç Attack »óÅÂ
+	bool bIsAttack;
+
+
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	bool bIsFalling;
+
+	//ÇöÀç Á×À½ »óÅÂ
+	UPROPERTY(ReplicatedUsing = OnRep_IsDead)
+	bool bIsDead;
+
+	//Á×À½ »óÅÂ º¯°æ¿¡ ´ëÇÑ RepNotify
+	UFUNCTION()
+	void OnRep_IsDead();
+
+	//¾÷µ¥ÀÌÆ®µÇ´Â Á×À½ »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
+	void OnIsDeadUpdate();
+
+	//ÇöÀç Shoot »óÅÂ
+	UPROPERTY(ReplicatedUsing = OnRep_IsShoot)
+	bool bIsShoot;
+
+	//Shoot »óÅÂ º¯°æ¿¡ ´ëÇÑ RepNotify
+	UFUNCTION()
+	void OnRep_IsShoot();
+
+	//¾÷µ¥ÀÌÆ®µÇ´Â Shoot »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
+	void OnIsShootUpdate();
+
+	//ÇöÀç ShootAnim »óÅÂ
+	UPROPERTY(ReplicatedUsing = OnRep_IsShootAnim)
+	bool bIsShootAnim;
+
+	//Á×À½ »óÅÂ º¯°æ¿¡ ´ëÇÑ RepNotify
+	UFUNCTION()
+	void OnRep_IsShootAnim();
+
+	//¾÷µ¥ÀÌÆ®µÇ´Â Á×À½ »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
+	void OnIsShootAnimUpdate();
+
+
+	UFUNCTION(BlueprintCallable)
+	void StartShootAnim();
+	UFUNCTION(BlueprintCallable)
+	void EndShootAnim();
+
+
+	//¾îÆÛ½½·¡½Ã
+	UPROPERTY(ReplicatedUsing = OnRep_IsUpperSlash)
+	bool bIsUpperSlash;
+	float UpperSlash_Rate = 2.0f;
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void StopUpperSlash();
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool GetIsUpperSlash() const;
+
+	UFUNCTION()
+	void OnRep_IsUpperSlash();
+
+
+
+
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -88,6 +231,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+
 	UPROPERTY(EditAnywhere, Category = Input)
 	class UInputMappingContext* DefaultMappingContext;
 
@@ -100,8 +244,40 @@ private:
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* MoveAction;
 
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* FireDownAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* FireUpAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* AttackAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* UpperSlashAction;
+
+
+
 protected:
 	void Move(const struct FInputActionInstance& Instance);
 	void Look(const FInputActionInstance& Instance);
+	UFUNCTION(Server, Reliable)
+	void UpperSlash();
+
+private:
+	void SpawnDebugSphere(FVector Location, float Radius);
+	void CMAttack();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ShootAttack();
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootAttackRange = 1000.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootAttackDamage = 5.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootAttackWidth = 50.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootAttackHeight = 50.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootHitEffectScale = 0.1f;
 
 };
