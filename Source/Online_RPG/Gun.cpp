@@ -14,6 +14,8 @@ AGun::AGun()
 	SetRootComponent(SceneComponent);
 	SKeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 	SKeletalMesh->SetupAttachment(SceneComponent);
+	EffectSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Point"));
+	EffectSpawnPoint->SetupAttachment(SKeletalMesh);
 }
 
 // Called when the game starts or when spawned

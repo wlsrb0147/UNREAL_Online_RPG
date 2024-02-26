@@ -21,6 +21,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	class USkeletalMeshComponent* SKeletalMesh;
 
+	UPROPERTY(EditAnywhere)
+	USceneComponent* EffectSpawnPoint;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

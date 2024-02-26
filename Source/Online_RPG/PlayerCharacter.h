@@ -57,6 +57,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State")
 	void SetIsShootAnim(bool IsShootAnim);
 
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void SpawnShootEffect();
+
+	UPROPERTY(EditAnywhere, Category = "Particle")
+	class UParticleSystem* ShootPaticles;
+
+	UPROPERTY(EditAnywhere, Category = "Particle")
+	class UParticleSystem* ShootHitPaticles;
+
 	//Sword Å¬·¡½º
 	UPROPERTY(EditAnywhere, Category = "State")
 	TSubclassOf<class ASword> SwordClass;
@@ -97,8 +106,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	float CoolTime;
 
-	/** trueï¿½ï¿½ ï¿½ï¿½ï¿?ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Î¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½. */
+
+	UPROPERTY(ReplicatedUsing = OnRep_IsAttacking)
 	bool bIsAttacking;
+
+	//bIsAttacking º¯°æ¿¡ ´ëÇÑ RepNotify
+	UFUNCTION()
+	void OnRep_IsAttacking();
+
+	//¾÷µ¥ÀÌÆ®µÇ´Â bIsAttacking »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
+	void OnIsAttackingUpdate();
+
 
 	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½*/
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Gameplay")
@@ -111,7 +129,7 @@ protected:
 	void AttackCoolTime();
 
 	/** ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½*/
-	UFUNCTION(Server, Reliable, BlueprintCallable)
+	UFUNCTION(BlueprintCallable)
 	void HandleFire();
 
 	/** ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½ß»ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½Ì¸ï¿?ï¿½Ö´ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½Úµï¿½*/
@@ -180,7 +198,10 @@ protected:
 	//¾÷µ¥ÀÌÆ®µÇ´Â Á×À½ »óÅÂ¿¡ ¹ÝÀÀ. ¼­¹ö¿¡¼­´Â ¼öÁ¤ Áï½Ã È£Ãâ, Å¬¶óÀÌ¾ðÆ®¿¡¼­´Â RepNotify¿¡ ¹ÝÀÀÇÏ¿© È£Ãâ
 	void OnIsShootAnimUpdate();
 
-	UFUNCTION(Server, Reliable, BlueprintCallable)
+
+	UFUNCTION(BlueprintCallable)
+	void StartShootAnim();
+	UFUNCTION(BlueprintCallable)
 	void EndShootAnim();
 
 
@@ -235,6 +256,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* UpperSlashAction;
 
+
+
 protected:
 	void Move(const struct FInputActionInstance& Instance);
 	void Look(const FInputActionInstance& Instance);
@@ -242,12 +265,19 @@ protected:
 	void UpperSlash();
 
 private:
-	//?„ì‹œ
 	void SpawnDebugSphere(FVector Location, float Radius);
 	void CMAttack();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ShootAttack();
 	UPROPERTY(EditAnywhere, Category = "Attack")
-	float CMAttackRange = 1000.f;
+	float ShootAttackRange = 1000.f;
 	UPROPERTY(EditAnywhere, Category = "Attack")
-	float CMAttackDamage = 5.f;
+	float ShootAttackDamage = 5.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootAttackWidth = 50.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootAttackHeight = 50.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootHitEffectScale = 0.1f;
 
 };
