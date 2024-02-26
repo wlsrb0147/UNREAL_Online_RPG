@@ -8,7 +8,7 @@ public class Online_RPG : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput","Networking",  "Sockets" , "UMG", "Http", "Json", "JsonUtilities", "GameplayTasks", "AIModule"});
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput","Networking",  "Sockets" , "UMG", "Http", "Json", "JsonUtilities", "GameplayTasks", "AIModule", "LevelSequence", "MovieScene"});
 		
 		//PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "../../ThirdParty/connector/include/mysql"));
 //PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "../../ThirdParty/connector/lib64", "YourLibrary.lib"));

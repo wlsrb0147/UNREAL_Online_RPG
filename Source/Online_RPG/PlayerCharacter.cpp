@@ -50,7 +50,8 @@ APlayerCharacter::APlayerCharacter()
 
 	//UpperSlash 상태 초기화
 	bIsUpperSlash = false;
-	
+
+	bReplicates = true;
 }
 
 
