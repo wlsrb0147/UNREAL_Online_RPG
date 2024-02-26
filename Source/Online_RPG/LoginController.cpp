@@ -57,6 +57,8 @@ void ALoginController::ChangePawn_Implementation(int PlayerIdx)
 				
 				// 새로 생성된 Pawn을 PlayerController에 빙의시킵니다.
 				PlayerController->Possess(NewPawn);
+				UE_LOG(LogTemp, Log, TEXT("ChangePawn_Implementation 플레이어 컨트롤러: %s"), *NewPawn->GetController()->GetName());
+				
 			}
 		}
 	}
@@ -69,9 +71,9 @@ void ALoginController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(GetLocalRole() == ROLE_Authority)
-	{
-		INDEX_OF_PLAYER_CONTROLLER = NetPlayerIndex;
-		UE_LOG(LogTemp, Error, TEXT("INDEX_OF_PLAYER_CONTROLLER 초기화 %d %d" ), NetPlayerIndex, INDEX_OF_PLAYER_CONTROLLER);
-	}
+	// if(GetLocalRole() == ROLE_Authority)
+	// {
+	// 	INDEX_OF_PLAYER_CONTROLLER = NetPlayerIndex;
+	// 	UE_LOG(LogTemp, Error, TEXT("INDEX_OF_PLAYER_CONTROLLER 초기화 %d %d" ), NetPlayerIndex, INDEX_OF_PLAYER_CONTROLLER);
+	// }
 }

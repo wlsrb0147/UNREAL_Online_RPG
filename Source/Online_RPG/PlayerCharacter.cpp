@@ -97,7 +97,6 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	/*if (GetMovementComponent()->IsFalling()) {
 		UE_LOG(LogTemp, Warning, TEXT("IsFalling : True"));
 	}
@@ -118,8 +117,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 // Called to bind functionality to input
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	UE_LOG(LogTemp,Log,TEXT("SetupPlayerInputComponent ..."));
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	UE_LOG(LogTemp,Log,TEXT("SetupPlayerInputComponent22 ..."));
 	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
 	if (Input != nullptr)
@@ -144,6 +144,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::Move(const FInputActionInstance& Instance)
 {
+	UE_LOG(LogTemp,Log,TEXT("Move ..."));
 	//공격중에는 움직임 X
 	if (bIsAttacking) return;
 
