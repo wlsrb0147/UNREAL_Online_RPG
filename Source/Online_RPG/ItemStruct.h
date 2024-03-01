@@ -13,7 +13,7 @@ enum class EItemType:uint8
 	LeftHand UMETA(DisplayName = "LeftHand" ),
 	RightHand UMETA(DisplayName = "RightHand" ),
 	Clothes UMETA(DisplayName = "RightHand" ),
-	Sobi UMETA(DisplayName = "Sobi" ),
+	Consume UMETA(DisplayName = "Consume" ),
 	Quest UMETA(DisplayName = "Quest" ),
 	Event UMETA(DisplayName = "Event" ),
 	Trash UMETA(DisplayName = "Trash" ),
@@ -88,10 +88,10 @@ struct FItemData:public FTableRowBase
 {
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere,Category = "Item Data")
-	FName ID;
+	FName ItemID;
 
 	UPROPERTY(EditAnywhere,Category = "Item Data")
-	EItemType ItemType;
+	EItemType ItemType = EItemType::Trash;
 	
 	UPROPERTY(EditAnywhere,Category = "Item Data")
 	FItemStatistics ItemStatistics;
