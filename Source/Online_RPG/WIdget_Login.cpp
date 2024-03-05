@@ -8,8 +8,6 @@
 void UWIdget_Login::JoinClick()
 {
 	UE_LOG(LogTemp, Log, TEXT("Join CLick!!!!"));
-
-	
 }
 
 void UWIdget_Login::LoginClick(FString _id, FString _pw)
@@ -18,7 +16,6 @@ void UWIdget_Login::LoginClick(FString _id, FString _pw)
 	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
 
 	Instance->SelectUser(_id,_pw, this);
-	
 }
 
 void UWIdget_Login::ResistClick(FString _id, FString _pw, FString nickname)
@@ -26,7 +23,7 @@ void UWIdget_Login::ResistClick(FString _id, FString _pw, FString nickname)
 	UE_LOG(LogTemp, Log, TEXT("Resist CLick!!!! %s %s %s"), *_id, *_pw, *nickname);
 	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
 
-	Instance->ResistUser(_id,_pw, nickname);
+	Instance->ResistUser(_id,_pw, nickname, this);
 }
 
 void UWIdget_Login::LoginSuccess()
@@ -48,7 +45,7 @@ void UWIdget_Login::SetCurrentWidget(AActor* Widget)
 void UWIdget_Login::SetSoonDestroy()
 {
 	FTimerHandle FTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(FTimerHandle, this,  &UWIdget_Login::SetDestroy, 2, false );
+	GetWorld()->GetTimerManager().SetTimer(FTimerHandle, this,  &UWIdget_Login::SetDestroy, 0.8f, false );
 	//World->GetTimerManager().SetTimer(FiringTimer, this, &AOnline_RPGCharacter::StopFire, FireRate, false);
 }
 
