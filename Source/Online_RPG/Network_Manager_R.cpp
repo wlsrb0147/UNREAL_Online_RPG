@@ -35,13 +35,9 @@ UNetwork_Manager_R::UNetwork_Manager_R()
 		// 에셋을 찾지 못한 경우 에러 처리
 		return;
 	}
-	
-	
-	
+
 	
 }
-
-
 
 
 

@@ -11,6 +11,8 @@ ALoginController::ALoginController()
 	
 
 	bReplicates = true;
+
+
 }
 
 void ALoginController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -59,12 +61,12 @@ void ALoginController::ChangePawn_Implementation(int PlayerIdx)
 				PlayerController->Possess(NewPawn);
 				UE_LOG(LogTemp, Log, TEXT("ChangePawn_Implementation 플레이어 컨트롤러: %s"), *NewPawn->GetController()->GetName());
 				
+				//마우스 커서 숨김
+				PlayerController->bShowMouseCursor = false;
 			}
 		}
 	}
 
-	
-	
 }
 
 void ALoginController::BeginPlay()
