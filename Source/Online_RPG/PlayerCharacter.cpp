@@ -17,6 +17,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "CollisionShape.h"
+#include "LoginController.h"
 
 
 // Sets default values
@@ -51,7 +52,50 @@ APlayerCharacter::APlayerCharacter()
 	//UpperSlash 상태 초기화
 	bIsUpperSlash = false;
 
-	bReplicates = true;
+	//bReplicates = true;
+}
+
+void APlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
+	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	UE_LOG(LogTemp, Log, TEXT("========================="));
+	
+	UE_LOG(LogTemp, Log, TEXT("Controller is POSSESSED!!!!!!!!!!!!!!!!: %s "), *NewController->GetName());
+	UE_LOG(LogTemp, Log, TEXT("========================="));
+}
+
+void APlayerCharacter::OnRep_Owner()
+{
+	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
+	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	UE_LOG(LogTemp, Log, TEXT("========================="));
+	AActor* OwnerActor = GetOwner();
+	if (OwnerActor)
+	{
+		UE_LOG(LogTemp, Log, TEXT("OnRep_Owner!!!!!!!!!!!!!!!!:  %s"), *GetOwner()->GetActorNameOrLabel());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("No Owner "));
+	}
+	Super::OnRep_Owner();
+	
+	
+	
+	
+
+	OwnerActor = GetOwner();
+	if (OwnerActor)
+	{
+		UE_LOG(LogTemp, Log, TEXT("OnRep_Owner!!!!!!!!!!!!!!!!:  %s"), *GetOwner()->GetActorNameOrLabel());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("No Owner "));
+	}
+	UE_LOG(LogTemp, Log, TEXT("========================="));
 }
 
 
@@ -59,6 +103,44 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	// 현재 실행 환경이 서버인지 클라이언트인지 확인
+	// FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
+	// UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	if (IsLocallyControlled())
+	{
+		UE_LOG(LogTemp, Display, TEXT("Locally controlled: %s"), *GetActorNameOrLabel());
+	}
+	else if (GetLocalRole() == ROLE_Authority)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Server controlled: %s"), *GetActorNameOrLabel());
+	}
+	else if (GetLocalRole() == ROLE_SimulatedProxy)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Simulated proxy: %s"), *GetActorNameOrLabel());
+	}
+	else if (GetLocalRole() == ROLE_None)
+	{
+		UE_LOG(LogTemp, Display, TEXT("No network role: %s"), *GetActorNameOrLabel());
+	}
+	
+	UE_LOG(LogTemp, Log, TEXT("========================= %s %s"), *GetName(), *GetActorNameOrLabel());
+	
+	if (GetController() != nullptr)
+	{
+
+		EnableInput(Cast<ALoginController>(GetController()));
+		UE_LOG(LogTemp, Log, TEXT("Controller is assigned: %s %s"), *GetController()->GetName(), *GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Controller is not assigned."));
+	}
+
+	
+
+	
+	UE_LOG(LogTemp, Log, TEXT("========================="));
 
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController != nullptr)
@@ -107,6 +189,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		UE_LOG(LogTemp, Warning, TEXT("IsFalling : False"));
 	}*/
 
+
 	FVector Location = GetActorLocation();
 	FRotator Rotation = GetActorRotation();
 	FVector End = Location + Rotation.Vector() * ShootAttackRange;
@@ -126,9 +209,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent22 ..."));
 	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-
+	
 	if (Input != nullptr)
 	{
+		UE_LOG(LogTemp,Log,TEXT("SetupPlayerInputComponent33 ..."));
 		Input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		Input->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
@@ -143,6 +227,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		Input->BindAction(FireUpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StopFire);
 		//공격
 		//Input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
+		PlayerInputComponent->BindAction(TEXT("Fire1"), IE_Pressed, this, &APlayerCharacter::StartFire);
+		UE_LOG(LogTemp,Log,TEXT("SetupPlayerInputComponent44 ..."));
 	}
 
 	////구 인풋
@@ -333,6 +419,7 @@ void APlayerCharacter::OnHealthUpdate()
 
 void APlayerCharacter::StartFire_Implementation()
 {
+	UE_LOG(LogTemp,Log,TEXT("START RFIRE"));
 	if (bIsAttacking) return;
 	//UE_LOG(LogTemp, Display, TEXT("??????????????"));
 	bIsShoot = true;
@@ -608,6 +695,22 @@ void APlayerCharacter::CMAttack()
 void APlayerCharacter::ShootAttack()
 {
 
+	//if (!HasAuthority()) return;
+	if(!HasLocalNetOwner()) return;
+	
+	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
+	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	
+	if(GetOwner())
+	{
+		UE_LOG(LogTemp,Log, TEXT(" Shoot 의 오우너 :  %s "), *GetOwner()->GetName())	;
+	}
+
+	if(GetNetOwner()){
+	
+		UE_LOG(LogTemp,Log, TEXT(" Shoot 의 넷 오우너 :  %s "), *GetNetOwner()->GetName())	;
+	
+	}
 	FVector Location = GetActorLocation();
 	FRotator Rotation = GetActorRotation();
 

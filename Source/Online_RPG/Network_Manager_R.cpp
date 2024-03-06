@@ -556,15 +556,22 @@ void UNetwork_Manager_R::Spawn_Init()
 void UNetwork_Manager_R::OnSequenceFinished()
 {
 	UE_LOG(LogTemp, Error, TEXT("시퀀스 콜백"));
-
-	if(GetWorld()->GetFirstPlayerController())
+	
+	// if(GetWorld()->GetFirstPlayerController())
+	// {
+	// 	ALoginController* MyController = Cast<ALoginController>(GetWorld()->GetFirstPlayerController());
+	// 	UE_LOG(LogTemp, Error, TEXT("얘 컨트롤러꺼를 바꿔야되는게 맞아 : %s" ), *GetWorld()->GetFirstPlayerController()->GetName());
+	// 	MyController->ChangePawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
+	// 	//CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
+	// }
+		
+	if(GetFirstLocalPlayerController())
 	{
-		ALoginController* MyController = Cast<ALoginController>(GetWorld()->GetFirstPlayerController());
+		ALoginController* MyController = Cast<ALoginController>(GetFirstLocalPlayerController());
+		UE_LOG(LogTemp, Error, TEXT("얘 컨트롤러꺼를 바꿔야되는게 맞아 : %s" ), *GetFirstLocalPlayerController()->GetName());
 		MyController->ChangePawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 		//CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 	}
-	
-	
 	
 }
 

@@ -20,6 +20,9 @@ public:
 
 	UPROPERTY(Replicated)
 	int32 INDEX_OF_PLAYER_CONTROLLER;
+	
+	virtual void PostNetInit() override;
+	virtual void OnPossess(APawn* InPawn) override;
 
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -30,6 +33,8 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<APawn> SpawnPawn;
 
+
+	virtual void Tick(float DeltaSeconds) override;
 	
 protected:
 	virtual void BeginPlay() override;

@@ -15,6 +15,9 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_Owner() override;
+
 	/** ������Ƽ ���ø����̼� */
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -80,6 +83,8 @@ public:
 	TSubclassOf<class AGun> GunClass;
 	UPROPERTY(EditAnywhere, Category = "State")
 	AGun* MyGun;
+
+	
 
 
 protected:
