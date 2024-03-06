@@ -3,6 +3,7 @@
 
 #include "LoginController.h"
 
+#include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
@@ -10,7 +11,7 @@ ALoginController::ALoginController()
 {
 	
 
-	bReplicates = true;
+	//bReplicates = true;
 }
 
 void ALoginController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -19,6 +20,34 @@ void ALoginController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 	DOREPLIFETIME(ALoginController, INDEX_OF_PLAYER_CONTROLLER);
 	
+}
+
+void ALoginController::PostNetInit()
+{
+
+	Super::PostNetInit();
+
+	UNetDriver* NetDriver = GetNetDriver();
+	if (NetDriver)
+	{
+		if (NetDriver->ServerConnection)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Server Connection: %s"), *NetDriver->ServerConnection->GetName());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("%s"), TEXT("No NetDriver"));
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("%s"), TEXT("End"));
+}
+
+void ALoginController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	UE_LOG(LogTemp, Log, TEXT(" possess success  %s   in Controller <<<   "), *InPawn->GetActorNameOrLabel());
 }
 
 void ALoginController::ChangePawn_Implementation(int PlayerIdx)
@@ -50,14 +79,26 @@ void ALoginController::ChangePawn_Implementation(int PlayerIdx)
 			
 			if (PlayerController != nullptr && PlayerController->INDEX_OF_PLAYER_CONTROLLER == PlayerIdx)
 			{
-				UE_LOG(LogTemp, Error, TEXT("CallSpawn init"));
+				UE_LOG(LogTemp, Error, TEXT("CallSpawn init %s "),*PC->GetName());
 				// 새 Pawn 클래스의 인스턴스를 생성합니다.
 				SpawnLocation = FVector(-2712.000000,-1030.000000,1187.000000);
 				APawn* NewPawn = GetWorld()->SpawnActor<APawn>(SpawnPawn, SpawnLocation, FQuat::Identity.Rotator());
 				
 				// 새로 생성된 Pawn을 PlayerController에 빙의시킵니다.
 				PlayerController->Possess(NewPawn);
-				UE_LOG(LogTemp, Log, TEXT("ChangePawn_Implementation 플레이어 컨트롤러: %s"), *NewPawn->GetController()->GetName());
+				//NewPawn->SetOwner(PlayerController);
+
+				
+				//Cast<APlayerCharacter>(NewPawn)->SetupPlayerInputComponent();
+
+
+				FInputModeGameOnly InputMode;
+				
+				PlayerController->SetInputMode(InputMode);
+    
+				PlayerController->bShowMouseCursor = false;
+				
+				UE_LOG(LogTemp, Log, TEXT("ChangePawn_Implementation 플레이어 컨트롤러가 가지고 있는것은 ? : %s"), *PlayerController->GetPawn()->GetName());
 				
 			}
 		}
@@ -67,9 +108,22 @@ void ALoginController::ChangePawn_Implementation(int PlayerIdx)
 	
 }
 
+void ALoginController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	// if(GetLocalRole() != ROLE_Authority) return;
+	// if(GetPawn())
+	// UE_LOG(LogTemp, Log, TEXT("Controller TIck..... %s %s"), *GetName(), *GetPawn()->GetName());
+	//
+}
+
 void ALoginController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FInputModeGameOnly GameOnlyInputMode;
+	SetInputMode(GameOnlyInputMode);
+	
 
 	// if(GetLocalRole() == ROLE_Authority)
 	// {

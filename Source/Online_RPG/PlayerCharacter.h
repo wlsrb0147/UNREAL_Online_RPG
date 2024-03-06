@@ -15,6 +15,9 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_Owner() override;
+
 	/** ������Ƽ ���ø����̼� */
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -77,6 +80,8 @@ public:
 	TSubclassOf<class AGun> GunClass;
 	UPROPERTY(EditAnywhere, Category = "State")
 	AGun* MyGun;
+
+	
 
 
 protected:
@@ -267,8 +272,10 @@ protected:
 private:
 	void SpawnDebugSphere(FVector Location, float Radius);
 	void CMAttack();
+	
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ShootAttack();
+	
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	float ShootAttackRange = 1000.f;
 	UPROPERTY(EditAnywhere, Category = "Attack")

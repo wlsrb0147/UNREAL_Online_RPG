@@ -7,7 +7,6 @@
 #include "Engine/DamageEvents.h"
 #include "PlayerCharacter.h"
 
-
 // Sets default values
 AEnemyProjectile::AEnemyProjectile()
 {
