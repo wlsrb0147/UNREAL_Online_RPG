@@ -63,7 +63,7 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void SpawnShootEffect();
 
-	UPROPERTY(EditAnywhere, Category = "Particle")
+	UPROPERTY(EditAnywhere, Category = "Particle", Replicated)
 	class UParticleSystem* ShootPaticles;
 
 	UPROPERTY(EditAnywhere, Category = "Particle")
@@ -272,10 +272,12 @@ protected:
 private:
 	void SpawnDebugSphere(FVector Location, float Radius);
 	void CMAttack();
-	
-	UFUNCTION(Server, Reliable, BlueprintCallable)
+	//UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ShootAttack();
-	
+
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void SpawnEmitterAtLocation_Multi(const UObject* WorldContextObject, UParticleSystem* Particle, FVector Location, FRotator Rotation = FRotator::ZeroRotator, FVector Scale = FVector(1.f));
+
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	float ShootAttackRange = 1000.f;
 	UPROPERTY(EditAnywhere, Category = "Attack")
@@ -286,5 +288,7 @@ private:
 	float ShootAttackHeight = 50.f;
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	float ShootHitEffectScale = 0.1f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootEffectScale = 1.f;
 
 };

@@ -26,7 +26,8 @@ APlayerCharacter::APlayerCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-
+	// 리플리케이트
+	bReplicates = true;
 
 	//마우스 이동시 캐릭터를 회전 시키지 않음
 	bUseControllerRotationYaw = false;
@@ -305,7 +306,8 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Ou
 	DOREPLIFETIME(APlayerCharacter, bIsUpperSlash);
 	DOREPLIFETIME(APlayerCharacter, bIsShoot);
 	DOREPLIFETIME(APlayerCharacter, bIsShootAnim);
-	DOREPLIFETIME(APlayerCharacter, bIsAttacking);
+	DOREPLIFETIME(APlayerCharacter, bIsAttacking); 
+	DOREPLIFETIME(APlayerCharacter, ShootPaticles);
 
 }
 
@@ -415,13 +417,17 @@ void APlayerCharacter::HandleFire()
 	spawnParameters.Owner = this;
 
 	AProjectile_dm* spawnedProjectile = GetWorld()->SpawnActor<AProjectile_dm>(spawnLocation, spawnRotation, spawnParameters);*/
-	UE_LOG(LogTemp, Display, TEXT("Attack!!!!!!!!!"));
+	
 
 	//CMAttack();
-	if(HasLocalNetOwner())
+	//서버 전용 함수 기능
+	if (GetLocalRole() == ROLE_Authority) {
+		UE_LOG(LogTemp, Display, TEXT("Attack!!!!!!!!!"));
+		USceneComponent* ShootEffectSpawnPoint = MyGun->EffectSpawnPoint;
+		SpawnEmitterAtLocation_Multi(this, ShootPaticles, ShootEffectSpawnPoint->GetComponentLocation(), GetActorRotation(), FVector(ShootEffectScale));
 		ShootAttack();
-	USceneComponent* ShootEffectSpawnPoint = MyGun->EffectSpawnPoint;
-	UGameplayStatics::SpawnEmitterAtLocation(this, ShootPaticles, ShootEffectSpawnPoint->GetComponentLocation(), GetActorRotation());
+	}
+	
 }
 
 void APlayerCharacter::SetIsShoot(bool IsShoot)
@@ -456,7 +462,8 @@ void APlayerCharacter::EndShootAnim()
 void APlayerCharacter::SpawnShootEffect_Implementation()
 {
 	USceneComponent* ShootEffectSpawnPoint = MyGun->EffectSpawnPoint;
-	UGameplayStatics::SpawnEmitterAtLocation(this, ShootPaticles, ShootEffectSpawnPoint->GetComponentLocation(), ShootEffectSpawnPoint->GetComponentRotation());
+	UGameplayStatics::SpawnEmitterAtLocation(this, ShootPaticles, ShootEffectSpawnPoint->GetComponentLocation(), ShootEffectSpawnPoint->GetComponentRotation(), FVector(50000.f));//FVector(ShootEffectScale));
+
 }
 
 void APlayerCharacter::StartAttack()
@@ -640,8 +647,9 @@ void APlayerCharacter::CMAttack()
 
 }
 
-void APlayerCharacter::ShootAttack_Implementation()
+void APlayerCharacter::ShootAttack()
 {
+
 	//if (!HasAuthority()) return;
 	if(!HasLocalNetOwner()) return;
 	
@@ -668,6 +676,7 @@ void APlayerCharacter::ShootAttack_Implementation()
 	FVector End = Location + Rotation.Vector() * ShootAttackRange;
 	FHitResult Hit;
 	FCollisionQueryParams params;
+
 	params.AddIgnoredActor(this);
 	params.AddIgnoredActor(GetOwner());
 	params.AddIgnoredActor(MyGun);
@@ -692,7 +701,8 @@ void APlayerCharacter::ShootAttack_Implementation()
 			SpawnDebugSphere(Hit.ImpactPoint, 30);
 
 			//피격 이펙트 생성
-			UGameplayStatics::SpawnEmitterAtLocation(this, ShootHitPaticles, Hit.ImpactPoint, FRotator::ZeroRotator, FVector(ShootHitEffectScale));
+			//UGameplayStatics::SpawnEmitterAtLocation(this, ShootHitPaticles, Hit.ImpactPoint, FRotator::ZeroRotator, FVector(ShootHitEffectScale));
+			SpawnEmitterAtLocation_Multi(this, ShootHitPaticles, Hit.ImpactPoint, FRotator::ZeroRotator, FVector(ShootHitEffectScale));
 
 			FPointDamageEvent DamageEvent(ShootAttackDamage, Hit, ShotDirection, nullptr);
 			HitActor->TakeDamage(ShootAttackDamage, DamageEvent, GetController(), this);
@@ -707,83 +717,20 @@ void APlayerCharacter::ShootAttack_Implementation()
 			UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
 		}
 
-	}
+		DrawDebugLine(GetWorld(), Location, End, FColor::Red, false, 3, 0, 5);
+		DrawDebugBox(GetWorld(), End, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Red, false, 3, 0, 5);
 
-	DrawDebugLine(GetWorld(), Location, End, FColor::Red, false, 3, 0, 5);
-	DrawDebugBox(GetWorld(), End, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Red, false, 3, 0, 5);
+	}
 
 }
 
-// void APlayerCharacter::ShootAttack_Implementation()
-// {
-// 	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
-// 	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
-// 	
-// 	if(GetOwner())
-// 	{
-// 		UE_LOG(LogTemp,Log, TEXT(" Shoot 의 오우너 :  %s "), *GetOwner()->GetName())	;
-// 	}
-//
-// 	if(GetNetOwner()){
-// 	
-// 		UE_LOG(LogTemp,Log, TEXT(" Shoot 의 넷 오우너 :  %s "), *GetNetOwner()->GetName())	;
-// 	
-// 	}
-// 	FVector Location = GetActorLocation();
-// 	FRotator Rotation = GetActorRotation();
-//
-// 	FCollisionShape AttackShape = FCollisionShape::MakeBox(FVector(10, ShootAttackWidth, ShootAttackHeight));
-//
-// 	//DrawDebugBox(GetWorld(), MyGun->EffectSpawnPoint->GetComponentLocation(), FVector(10, 50, 50), FColor::Cyan, false, 3, 0, 1);
-//
-// 	FVector End = Location + Rotation.Vector() * ShootAttackRange;
-// 	FHitResult Hit;
-// 	FCollisionQueryParams params;
-// 	params.AddIgnoredActor(this);
-// 	params.AddIgnoredActor(GetOwner());
-// 	params.AddIgnoredActor(MyGun);
-//
-// 	bool bSuccess = GetWorld()->SweepSingleByChannel(
-// 		Hit,
-// 		Location,
-// 		End,
-// 		FQuat::Identity,
-// 		ECollisionChannel::ECC_GameTraceChannel2,
-// 		AttackShape,
-// 		params
-// 	);
-//
-// 	if (bSuccess)
-// 	{
-// 		FVector ShotDirection = -Rotation.Vector();
-//
-// 		AActor* HitActor = Hit.GetActor();
-// 		if (HitActor != nullptr && GetController()->LineOfSightTo(HitActor))
-// 		{
-// 			SpawnDebugSphere(Hit.ImpactPoint, 30);
-//
-// 			//피격 이펙트 생성
-// 			UGameplayStatics::SpawnEmitterAtLocation(this, ShootHitPaticles, Hit.ImpactPoint, FRotator::ZeroRotator, FVector(ShootHitEffectScale));
-//
-// 			FPointDamageEvent DamageEvent(ShootAttackDamage, Hit, ShotDirection, nullptr);
-// 			HitActor->TakeDamage(ShootAttackDamage, DamageEvent, GetController(), this);
-//
-// 			//화면 출력
-// 			FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), ShootAttackDamage);
-// 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
-// 			UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
-//
-// 			FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
-// 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
-// 			UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
-// 		}
-//
-// 	}
-//
-// 	DrawDebugLine(GetWorld(), Location, End, FColor::Red, false, 3, 0, 5);
-// 	DrawDebugBox(GetWorld(), End, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Red, false, 3, 0, 5);
-//
-// }
+void APlayerCharacter::SpawnEmitterAtLocation_Multi_Implementation(const UObject* WorldContextObject, UParticleSystem* Particle, FVector Location, FRotator Rotation, FVector Scale)
+{
+	//피격 이펙트 생성
+	UGameplayStatics::SpawnEmitterAtLocation(WorldContextObject, Particle, Location, Rotation, Scale);
+}
+
+
 
 void APlayerCharacter::SpawnDebugSphere(FVector Location, float Radius)
 {
