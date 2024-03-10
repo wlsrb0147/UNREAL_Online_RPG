@@ -6,7 +6,7 @@
 #include "UObject/Interface.h"
 #include "ItemInteractionInterface.generated.h"
 
-class APlayerCharacter;
+class AItemC;
 
 UENUM()
 enum class EInteractionType:uint8
@@ -66,10 +66,11 @@ class ONLINE_RPG_API IItemInteractionInterface
 public:
 	FInteractionData InteractionData;
 
-protected:
 	virtual void BeginFocus();
 	virtual void EndFocus();
 	virtual void BeginInteract();
-	virtual void Interact(APlayerCharacter* PlayerCharacter);
+	virtual void Interact(AItemC* PlayerCharacter);
 	virtual void EndInteract();
+
+
 };

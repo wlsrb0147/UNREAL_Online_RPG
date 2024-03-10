@@ -14,25 +14,26 @@ class ONLINE_RPG_API UItemBase : public UObject
 {
 	GENERATED_BODY()
 public:
+	// 인벤토리에서의 수량
 	UPROPERTY(EditAnywhere,Category = "Item Data")
 	int32 BaseItemQuantity;
 	
-	UPROPERTY(EditAnywhere,Category = "Item Data")
+	UPROPERTY(VisibleAnywhere,Category = "Item Data")
 	FName BaseItemID;
 
-	UPROPERTY(EditAnywhere,Category = "Item Data")
+	UPROPERTY(VisibleAnywhere,Category = "Item Data")
 	EItemType BaseItemType;
 	
-	UPROPERTY(EditAnywhere,Category = "Item Data")
+	UPROPERTY(VisibleAnywhere,Category = "Item Data")
 	FItemStatistics BaseItemStatistics;
 
-	UPROPERTY(EditAnywhere,Category = "Item Data")
+	UPROPERTY(VisibleAnywhere,Category = "Item Data")
 	FItemTextData BaseItemTextData;
 	
-	UPROPERTY(EditAnywhere,Category = "Item Data")
+	UPROPERTY(VisibleAnywhere,Category = "Item Data")
 	FItemNumericData BaseItemNumericData;
 	
-	UPROPERTY(EditAnywhere,Category = "Item Data")
+	UPROPERTY(VisibleAnywhere,Category = "Item Data")
 	FItemAssetData BaseItemAssetData;
 
 protected:
