@@ -15,6 +15,9 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_Owner() override;
+
 	/** ������Ƽ ���ø����̼� */
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -64,7 +67,10 @@ public:
 	class UParticleSystem* ShootPaticles;
 
 	UPROPERTY(EditAnywhere, Category = "Particle")
-	class UParticleSystem* ShootHitPaticles;
+	UParticleSystem* ShootHitPaticles;
+
+	UPROPERTY(EditAnywhere, Category = "Particle")
+	UParticleSystem* UpperSlashPaticles;
 
 	//Sword Ŭ����
 	UPROPERTY(EditAnywhere, Category = "State")
@@ -77,6 +83,8 @@ public:
 	TSubclassOf<class AGun> GunClass;
 	UPROPERTY(EditAnywhere, Category = "State")
 	AGun* MyGun;
+
+	
 
 
 protected:
@@ -219,6 +227,8 @@ protected:
 	UFUNCTION()
 	void OnRep_IsUpperSlash();
 
+	UFUNCTION(BlueprintCallable)
+	void HandleUpperSlash();
 
 
 
@@ -261,14 +271,24 @@ private:
 protected:
 	void Move(const struct FInputActionInstance& Instance);
 	void Look(const FInputActionInstance& Instance);
+	void MoveForward(float AxisValue);
+	void MoveRight(float AxisValue);
+	void LookUpRate(float AxisValue);
+	void LookRightRate(float AxisValue);
 	UFUNCTION(Server, Reliable)
 	void UpperSlash();
 
 private:
 	void SpawnDebugSphere(FVector Location, float Radius);
+	void SpawnDebugCapsule(FVector Location, FVector CapsuleSize, FColor Color = FColor::Green);
 	void CMAttack();
-	UFUNCTION(Server, Reliable, BlueprintCallable)
+	//UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ShootAttack();
+	void UpperSlashAttack();
+
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void SpawnEmitterAtLocation_Multi(const UObject* WorldContextObject, UParticleSystem* Particle, FVector Location, FRotator Rotation = FRotator::ZeroRotator, FVector Scale = FVector(1.f), UParticleSystemComponent* ParticleSystemComponent = nullptr);
+
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	float ShootAttackRange = 1000.f;
 	UPROPERTY(EditAnywhere, Category = "Attack")
@@ -279,5 +299,20 @@ private:
 	float ShootAttackHeight = 50.f;
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	float ShootHitEffectScale = 0.1f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float ShootEffectScale = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float UpperSlashAttackDamage = 20.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float UpperSlashAttackRadius = 10.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float UpperSlashAttackHeight = 10.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float UpperSlashAttackDistance = 10.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float UpperSlashEffectScale = 1.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float UpperSlashEffectOffsetZ = 0.f;
 
 };
