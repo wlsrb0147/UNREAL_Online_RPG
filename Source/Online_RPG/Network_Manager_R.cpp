@@ -9,6 +9,7 @@
 #include "Networking.h"
 #include "Sockets.h"
 #include "SocketSubsystem.h"
+#include "Sound_Manager_R.h"
 #include "WIdget_Login.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/GameMode.h"
@@ -42,11 +43,25 @@ UNetwork_Manager_R::UNetwork_Manager_R()
 }
 
 
+ASound_Manager_R* UNetwork_Manager_R::Get_Sound_Instance()
+{
+	FActorSpawnParameters SpawnParams;
+	if(!Sound_Instance)
+	Sound_Instance = GetWorld()->SpawnActor<ASound_Manager_R>(Sound_Class, FVector(0,0,0), FRotator(0,0,0), SpawnParams);
 
+	return Sound_Instance;
+}
 
+void UNetwork_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator)
+{
+	if(!Sound_Instance) Get_Sound_Instance();
+	Sound_Instance->Sound_Play(Sound_Type, Audio_idx, Location, Rotator);
+	
+}
 
 void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
+	
 	if (bWasSuccessful && Response.IsValid())
 	{
 		if (EHttpResponseCodes::IsOk(Response->GetResponseCode()))
@@ -88,6 +103,7 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 										if(Success_Widget)
 										{
 											GetSpawnData();
+											Sound_Play(SOUND_TYPE::Btn_GameStart, 1, FVector(0,0,0), FRotator(0,0,0));
 											
 											// UUserWidget* TmpWidget = CreateWidget<UUserWidget>(this, Success_Widget, TEXT("SuccessWidget"));
 											// if(TmpWidget)
@@ -364,6 +380,10 @@ void UNetwork_Manager_R::OnInsertUserResponseReceived(FHttpRequestPtr Request, F
 
 void UNetwork_Manager_R::CreateWidget_OX(bool bIsSuccess)
 {
+
+	if(bIsSuccess) Sound_Play(SOUND_TYPE::Btn_GameStart, 2, FVector(0,0,0), FRotator(0,0,0));
+	else Sound_Play(SOUND_TYPE::Btn_Click_Fail, 2, FVector(0,0,0), FRotator(0,0,0));
+
 	UUserWidget* TmpWidget;
 	FString UniqueID = FGuid::NewGuid().ToString();
 	FName UniqueName = FName(*(FString("SuccessWidget_") + UniqueID));
@@ -379,7 +399,7 @@ void UNetwork_Manager_R::CreateWidget_OX(bool bIsSuccess)
 
 void UNetwork_Manager_R::GetSpawnData()
 {
-	CreateWidget_OX(true);
+	//CreateWidget_OX(true);
 
 	FHttpModule* Http = &FHttpModule::Get();
 	if (Http)
@@ -575,6 +595,10 @@ void UNetwork_Manager_R::OnSequenceFinished()
 		UE_LOG(LogTemp, Error, TEXT("얘 컨트롤러꺼를 바꿔야되는게 맞아 : %s" ), *GetFirstLocalPlayerController()->GetName());
 		MyController->ChangePawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 		//CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
+
+		//Ingame BGM ON
+		Sound_Play(SOUND_TYPE::BGM_Ingame, 1, FVector(0,0,0), FRotator(0,0,0));
+		
 	}
 	
 }

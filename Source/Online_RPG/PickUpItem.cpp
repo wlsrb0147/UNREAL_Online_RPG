@@ -21,7 +21,7 @@ void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const i
 	if (InstanceItemDataTable && !InstanceItemID.IsNone())
 	{
 		const FItemData* ItemData = InstanceItemDataTable->FindRow<FItemData>(InstanceItemID,TEXT("Error"));
-
+		
 		InstanceItemData = NewObject<UItemBase>(this,BaseClass);
 		
 		InstanceItemData->BaseItemID = ItemData->ItemID;
@@ -71,6 +71,8 @@ void APickUpItem::EndInteract()
 void APickUpItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	
 
 	const FName ChangedPropertyName = PropertyChangedEvent.Property?
 		PropertyChangedEvent.Property->GetFName() : NAME_None;
