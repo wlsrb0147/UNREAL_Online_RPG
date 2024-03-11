@@ -18,6 +18,7 @@
 #include "Components/CapsuleComponent.h"
 #include "CollisionShape.h"
 #include "LoginController.h"
+#include "Particles/ParticleSystemComponent.h"
 
 
 // Sets default values
@@ -61,7 +62,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
 	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
 	UE_LOG(LogTemp, Log, TEXT("========================="));
-	
+
 	UE_LOG(LogTemp, Log, TEXT("Controller is POSSESSED!!!!!!!!!!!!!!!!: %s "), *NewController->GetName());
 	UE_LOG(LogTemp, Log, TEXT("========================="));
 }
@@ -81,10 +82,10 @@ void APlayerCharacter::OnRep_Owner()
 		UE_LOG(LogTemp, Log, TEXT("No Owner "));
 	}
 	Super::OnRep_Owner();
-	
-	
-	
-	
+
+
+
+
 
 	OwnerActor = GetOwner();
 	if (OwnerActor)
@@ -103,7 +104,7 @@ void APlayerCharacter::OnRep_Owner()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	// 현재 실행 환경이 서버인지 클라이언트인지 확인
 	// FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
 	// UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
@@ -123,9 +124,9 @@ void APlayerCharacter::BeginPlay()
 	{
 		UE_LOG(LogTemp, Display, TEXT("No network role: %s"), *GetActorNameOrLabel());
 	}
-	
+
 	UE_LOG(LogTemp, Log, TEXT("========================= %s %s"), *GetName(), *GetActorNameOrLabel());
-	
+
 	if (GetController() != nullptr)
 	{
 
@@ -137,9 +138,9 @@ void APlayerCharacter::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Controller is not assigned."));
 	}
 
-	
 
-	
+
+
 	UE_LOG(LogTemp, Log, TEXT("========================="));
 
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
@@ -198,6 +199,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 	DrawDebugBox(GetWorld(), End, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Cyan, false);
 	DrawDebugBox(GetWorld(), Location, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Cyan, false);
 
+	/*if (bIsAttacking) {
+		UE_LOG(LogTemp, Display, TEXT("bIsAttacking TRUE"));
+	}
+	else {
+		UE_LOG(LogTemp, Display, TEXT("bIsAttacking FALSE"));
+	}*/
 
 	//SpawnDebugCapsule(Location, FVector(UpperSlashAttackRadius, UpperSlashAttackRadius, UpperSlashAttackHeight));
 }
@@ -208,43 +215,46 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent ..."));
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent22 ..."));
-	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	
-	if (Input != nullptr)
-	{
-		UE_LOG(LogTemp,Log,TEXT("SetupPlayerInputComponent33 ..."));
-		Input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
-		Input->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
-		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-		Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
+	//뉴인풋
+	//UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
-		//UpperSlash Bind
-		Input->BindAction(UpperSlashAction, ETriggerEvent::Triggered, this, &APlayerCharacter::UpperSlash);
-		// 발사체 발사 처리
-		//PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::StartFire);
-		Input->BindAction(FireDownAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
-		Input->BindAction(FireUpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StopFire);
-		//공격
-		//Input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
-		PlayerInputComponent->BindAction(TEXT("Fire1"), IE_Pressed, this, &APlayerCharacter::StartFire);
-		UE_LOG(LogTemp,Log,TEXT("SetupPlayerInputComponent44 ..."));
-	}
+	//if (Input != nullptr)
+	//{
+	//	UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent33 ..."));
+	//	Input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+	//	Input->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
-	////구 인풋
-	//PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &APlayerCharacter::MoveForward);
-	////PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &APawn::AddControllerPitchInput);
-	//PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &APlayerCharacter::MoveRight);
-	////PlayerInputComponent->BindAxis(TEXT("LookRight"), this, &APawn::AddControllerYawInput);
-	//PlayerInputComponent->BindAxis(TEXT("LookUpRate"), this, &APlayerCharacter::LookUpRate);
-	//PlayerInputComponent->BindAxis(TEXT("LookRightRate"), this, &APlayerCharacter::LookRightRate);
-	//
-	//PlayerInputComponent->BindAction(TEXT("FireDownAction"), EInputEvent::IE_Pressed, this, &APlayerCharacter::StartFire);
-	//PlayerInputComponent->BindAction(TEXT("FireUpAction"), EInputEvent::IE_Released, this, &APlayerCharacter::StopFire);
-	////Input->BindAction(FireDownAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
-	////Input->BindAction(FireUpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StopFire);
+	//	Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+	//	Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 
-	//PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
+	//	//UpperSlash Bind
+	//	Input->BindAction(UpperSlashAction, ETriggerEvent::Triggered, this, &APlayerCharacter::UpperSlash);
+	//	// 발사체 발사 처리
+	//	//PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::StartFire);
+	//	Input->BindAction(FireDownAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
+	//	Input->BindAction(FireUpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StopFire);
+	//	//공격
+	//	//Input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
+	//	PlayerInputComponent->BindAction(TEXT("Fire1"), IE_Pressed, this, &APlayerCharacter::StartFire);
+	//	UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent44 ..."));
+	//}
+
+	//구 인풋
+	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &APlayerCharacter::MoveForward);
+	//PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &APlayerCharacter::MoveRight);
+	//PlayerInputComponent->BindAxis(TEXT("LookRight"), this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis(TEXT("LookUpRate"), this, &APlayerCharacter::LookUpRate);
+	PlayerInputComponent->BindAxis(TEXT("LookRightRate"), this, &APlayerCharacter::LookRightRate);
+
+	PlayerInputComponent->BindAction(TEXT("FireDownAction"), EInputEvent::IE_Pressed, this, &APlayerCharacter::StartFire);
+	PlayerInputComponent->BindAction(TEXT("FireUpAction"), EInputEvent::IE_Released, this, &APlayerCharacter::StopFire);
+	PlayerInputComponent->BindAction(TEXT("UpperSlash"), EInputEvent::IE_Pressed, this, &APlayerCharacter::UpperSlash);
+	//Input->BindAction(FireDownAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
+	//Input->BindAction(FireUpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StopFire);
+
+	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 }
 
 void APlayerCharacter::Move(const FInputActionInstance& Instance)
@@ -272,12 +282,28 @@ void APlayerCharacter::Move(const FInputActionInstance& Instance)
 
 void APlayerCharacter::MoveForward(float AxisValue)
 {
-	AddMovementInput(GetActorForwardVector(), AxisValue);
+	if (bIsAttacking) return;
+
+	const FRotator Rotation = Controller->GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	const FVector FowardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	AddMovementInput(FowardDirection, AxisValue);
 }
 
 void APlayerCharacter::MoveRight(float AxisValue)
 {
-	AddMovementInput(GetActorRightVector(), AxisValue);
+	if (bIsAttacking) return;
+
+	const FRotator Rotation = Controller->GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	const FVector FowardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	AddMovementInput(RightDirection, AxisValue);
 }
 
 void APlayerCharacter::LookUpRate(float AxisValue)
@@ -319,7 +345,7 @@ void APlayerCharacter::StopUpperSlash_Implementation()
 	bIsUpperSlash = false;
 	FTimerHandle Handle;
 	GetWorldTimerManager().SetTimer(Handle, this, &APlayerCharacter::AttackCoolTime, CoolTime, false);
-	//bIsAttacking = false;
+	bIsAttacking = false;
 }
 
 bool APlayerCharacter::GetIsUpperSlash() const
@@ -419,8 +445,12 @@ void APlayerCharacter::OnHealthUpdate()
 
 void APlayerCharacter::StartFire_Implementation()
 {
-	UE_LOG(LogTemp,Log,TEXT("START RFIRE"));
+
 	if (bIsAttacking) return;
+	UE_LOG(LogTemp, Log, TEXT("START RFIRE"));
+
+	UseControllerRotationYaw_Toggle_Multi(true);
+
 	//UE_LOG(LogTemp, Display, TEXT("??????????????"));
 	bIsShoot = true;
 	bIsAttacking = true;
@@ -433,6 +463,11 @@ void APlayerCharacter::StartFire_Implementation()
 
 void APlayerCharacter::StopFire_Implementation()
 {
+	if (!bIsShoot) return;
+
+	UseControllerRotationYaw_Toggle_Multi(false);
+	UE_LOG(LogTemp, Display, TEXT("FALSE"));
+
 	bIsShoot = false;
 	//UWorld* World = GetWorld();
 	//World->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::AttackCoolTime, FireRate, false);
@@ -696,21 +731,21 @@ void APlayerCharacter::ShootAttack()
 {
 
 	//if (!HasAuthority()) return;
-	if(!HasLocalNetOwner()) return;
-	
+	//if(!HasLocalNetOwner()) return;
+	/*
 	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
 	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
-	
+
 	if(GetOwner())
 	{
 		UE_LOG(LogTemp,Log, TEXT(" Shoot 의 오우너 :  %s "), *GetOwner()->GetName())	;
 	}
 
 	if(GetNetOwner()){
-	
+
 		UE_LOG(LogTemp,Log, TEXT(" Shoot 의 넷 오우너 :  %s "), *GetNetOwner()->GetName())	;
-	
-	}
+
+	}*/
 	FVector Location = GetActorLocation();
 	FRotator Rotation = GetActorRotation();
 
@@ -790,17 +825,19 @@ void APlayerCharacter::UpperSlashAttack()
 	//DrawDebugBox(GetWorld(), MyGun->EffectSpawnPoint->GetComponentLocation(), FVector(10, 50, 50), FColor::Cyan, false, 3, 0, 1);
 
 	FVector AttackLocation = (Location + FVector(0, 0, -CollisionExtent.Z + UpperSlashEffectOffsetZ)) + Rotation.Vector() * UpperSlashAttackDistance;
-	FHitResult Hit;
+	TArray<FHitResult> Hits;
 	FCollisionQueryParams params;
 
 	params.AddIgnoredActor(this);
 	params.AddIgnoredActor(GetOwner());
 	params.AddIgnoredActor(MySword);
 
-	SpawnEmitterAtLocation_Multi(this, UpperSlashPaticles, AttackLocation, GetActorRotation(), FVector(UpperSlashEffectScale));
+	//UParticleSystemComponent* ParticleSystemComponent = nullptr;
+	SpawnEmitterAtLocation_Multi(this, UpperSlashPaticles, AttackLocation, GetActorRotation(), FVector(UpperSlashEffectScale), UpperSlashEffectDurationSec);
+	SpawnEmitterAtLocation_SetTimer_Multi(this, UpperSlashFinishPaticles, UpperSlashEffectDurationSec, AttackLocation, GetActorRotation(), FVector(UpperSlashEffectFinishScale));
 
-	bool bSuccess = GetWorld()->SweepSingleByChannel(
-		Hit,
+	bool bSuccess = GetWorld()->SweepMultiByChannel(
+		Hits,
 		AttackLocation,
 		AttackLocation,
 		FQuat::Identity,
@@ -813,27 +850,30 @@ void APlayerCharacter::UpperSlashAttack()
 	{
 		FVector ShotDirection = -Rotation.Vector();
 
-		AActor* HitActor = Hit.GetActor();
-		if (HitActor != nullptr && GetController()->LineOfSightTo(HitActor))
-		{
-			//SpawnDebugSphere(Hit.ImpactPoint, 30);
+		for (int i = 0; i < Hits.Num(); i++) {
+			AActor* HitActor = Hits[i].GetActor();
+			if (HitActor != nullptr && GetController()->LineOfSightTo(HitActor))
+			{
+				//SpawnDebugSphere(Hit.ImpactPoint, 30);
 
 
-			//피격 이펙트 생성
-			//UGameplayStatics::SpawnEmitterAtLocation(this, ShootHitPaticles, Hit.ImpactPoint, FRotator::ZeroRotator, FVector(ShootHitEffectScale));
+				//피격 이펙트 생성
+				//UGameplayStatics::SpawnEmitterAtLocation(this, ShootHitPaticles, Hit.ImpactPoint, FRotator::ZeroRotator, FVector(ShootHitEffectScale));
 
-			FPointDamageEvent DamageEvent(UpperSlashAttackDamage, Hit, ShotDirection, nullptr);
-			HitActor->TakeDamage(UpperSlashAttackDamage, DamageEvent, GetController(), this);
+				FPointDamageEvent DamageEvent(UpperSlashAttackDamage, Hits[i], ShotDirection, nullptr);
+				HitActor->TakeDamage(UpperSlashAttackDamage, DamageEvent, GetController(), this);
 
-			//화면 출력
-			FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), ShootAttackDamage);
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
-			UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
+				//화면 출력
+				FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), ShootAttackDamage);
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
+				UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
 
-			FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
-			UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+				FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
+				UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+			}
 		}
+
 
 		//DrawDebugLine(GetWorld(), Location, End, FColor::Red, false, 3, 0, 5);
 		//DrawDebugBox(GetWorld(), End, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Red, false, 3, 0, 5);
@@ -843,26 +883,33 @@ void APlayerCharacter::UpperSlashAttack()
 
 }
 
-void APlayerCharacter::SpawnEmitterAtLocation_Multi_Implementation(const UObject* WorldContextObject, UParticleSystem* Particle, FVector Location, FRotator Rotation, FVector Scale, UParticleSystemComponent* ParticleSystemComponent)
+void APlayerCharacter::SpawnEmitterAtLocation_Multi_Implementation(const UObject* WorldContextObject, UParticleSystem* Particle, FVector Location, FRotator Rotation, FVector Scale, float DurationSec)
 {
 	UE_LOG(LogTemp, Warning, TEXT("SpawnEmitterAtLocation"));
 	//피격 이펙트 생성
-	UGameplayStatics::SpawnEmitterAtLocation(WorldContextObject, Particle, Location, Rotation, Scale);
+	UParticleSystemComponent* ParticleSystemComponent;
+	ParticleSystemComponent = UGameplayStatics::SpawnEmitterAtLocation(WorldContextObject, Particle, Location, Rotation, Scale);
 
-	GetWorld()->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::StopFire, CoolTime, false);
+
+	//GetWorld()->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::test, CoolTime, false);
+
+	if (DurationSec > 0) {
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, ParticleSystemComponent]()
+			{
+				ParticleSystemComponent->DestroyComponent();
+			}, DurationSec, false);
+	}
 }
 
-//void APlayerCharacter::SpawnEmitterAtLocation_Multi_Implementation(UParticleSystemComponent& ParticleSystemComponent, const UObject* WorldContextObject, UParticleSystem* Particle, FVector Location, FRotator Rotation, FVector Scale)
-//{
-//	UE_LOG(LogTemp, Warning, TEXT("SpawnEmitterAtLocation"));
-//	//피격 이펙트 생성
-//	UGameplayStatics::SpawnEmitterAtLocation(WorldContextObject, Particle, Location, Rotation, Scale);
-//}
-//
-//void Test(UParticleSystemComponent& ParticleSystemComponent) {
-//
-//}
-
+void APlayerCharacter::SpawnEmitterAtLocation_SetTimer_Multi_Implementation(const UObject* WorldContextObject, UParticleSystem* Particle, float SetTime, FVector Location, FRotator Rotation, FVector Scale)
+{
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, WorldContextObject, Particle, Location, Rotation, Scale]()
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(WorldContextObject, Particle, Location, Rotation, Scale);
+		}, SetTime, false);
+}
 
 void APlayerCharacter::SpawnDebugSphere(FVector Location, float Radius)
 {
@@ -877,6 +924,11 @@ void APlayerCharacter::SpawnDebugSphere(FVector Location, float Radius)
 		0,
 		1
 	);
+}
+
+void APlayerCharacter::UseControllerRotationYaw_Toggle_Multi_Implementation(bool Val)
+{
+	bUseControllerRotationYaw = Val;
 }
 
 void APlayerCharacter::SpawnDebugCapsule(FVector Location, FVector CapsuleSize, FColor Color) {

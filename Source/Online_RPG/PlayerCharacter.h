@@ -72,6 +72,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Particle")
 	UParticleSystem* UpperSlashPaticles;
 
+	UPROPERTY(EditAnywhere, Category = "Particle")
+	UParticleSystem* UpperSlashFinishPaticles;
+
 	//Sword Å¬·¡½º
 	UPROPERTY(EditAnywhere, Category = "State")
 	TSubclassOf<class ASword> SwordClass;
@@ -287,7 +290,12 @@ private:
 	void UpperSlashAttack();
 
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
-	void SpawnEmitterAtLocation_Multi(const UObject* WorldContextObject, UParticleSystem* Particle, FVector Location, FRotator Rotation = FRotator::ZeroRotator, FVector Scale = FVector(1.f), UParticleSystemComponent* ParticleSystemComponent = nullptr);
+	void SpawnEmitterAtLocation_Multi(const UObject* WorldContextObject, UParticleSystem* Particle, FVector Location, FRotator Rotation = FRotator::ZeroRotator, FVector Scale = FVector(1.f), float DurationSec = 0.f);
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void SpawnEmitterAtLocation_SetTimer_Multi(const UObject* WorldContextObject, UParticleSystem* Particle, float SetTime, FVector Location, FRotator Rotation = FRotator::ZeroRotator, FVector Scale = FVector(1.f));
+
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void UseControllerRotationYaw_Toggle_Multi(bool Val);
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	float ShootAttackRange = 1000.f;
@@ -313,6 +321,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	float UpperSlashEffectScale = 1.f;
 	UPROPERTY(EditAnywhere, Category = "Attack")
+	float UpperSlashEffectFinishScale = 1.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
 	float UpperSlashEffectOffsetZ = 0.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float UpperSlashEffectDurationSec = 1.f;
 
 };

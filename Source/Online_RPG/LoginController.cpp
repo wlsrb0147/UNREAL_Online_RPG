@@ -3,9 +3,12 @@
 
 #include "LoginController.h"
 
+#include "Network_Manager_R.h"
 #include "PlayerCharacter.h"
+#include "Sound_Manager_R.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+
 
 ALoginController::ALoginController()
 {
@@ -123,7 +126,25 @@ void ALoginController::BeginPlay()
 
 	FInputModeGameOnly GameOnlyInputMode;
 	SetInputMode(GameOnlyInputMode);
-	
+
+	if(HasLocalNetOwner()  && GetGameInstance())
+	{
+		UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
+		Instance->Sound_Play(SOUND_TYPE::BGM_Login, 1, FVector(0,0,0), FRotator(0,0,0), GetPawn());
+		// if(Instance && Instance->Get_Sound_Instance())
+		// {
+		// 	UE_LOG(LogTemp,Log,TEXT("Flag2 %s"), *Instance->Get_Sound_Instance()->GetName());
+		// 	ASound_Manager_R* Sound_Manager = Cast<ASound_Manager_R>(Instance->Get_Sound_Instance());
+		// 	if(Sound_Manager)
+		// 	{
+		// 		UE_LOG(LogTemp,Log,TEXT("Flag3"));
+		// 		UGameplayStatics::PlaySoundAtLocation(this, Sound_Manager->Login_Sound, FVector(0,0,0), FRotator(0,0,0));
+		//
+		// 		
+		// 	}
+		// }
+		
+	}
 
 	// if(GetLocalRole() == ROLE_Authority)
 	// {
