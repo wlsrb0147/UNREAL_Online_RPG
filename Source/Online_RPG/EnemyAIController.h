@@ -24,6 +24,7 @@ public:
 	void SetPlayer(APawn* _pawn);
 
 	void PlayerRangeCheck();
+	void StopBehaviorTree();
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -33,7 +34,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UBehaviorTree* AIBehavior;
 
-	void StopBehaviorTree();
 
 	void StartBehaviorTree();
 

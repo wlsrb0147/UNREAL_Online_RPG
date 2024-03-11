@@ -47,7 +47,7 @@ private:
 	float Damage1 = 1.f;
 	UPROPERTY(VisibleAnywhere)
 	bool IsDead = false;
-
+	
 
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem *Attack1Particle;

@@ -29,6 +29,8 @@ void AEnemyDog::BeginPlay()
 	Super::BeginPlay();
 	Health = MaxHealth;
 	RangeCheck();
+	//AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
+
 	
 }
 
@@ -126,22 +128,23 @@ void AEnemyDog::Dead()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
 	}
-	SpawnSelf();
+	
+	//SpawnSelf();
 	this->SetLifeSpan(5.0f);
 }
 
 void AEnemyDog::SpawnSelf()
 {
-	SpawnLocation = this->GetActorLocation();
+	/*SpawnLocation = this->GetActorLocation();
 	SpawnRotation = { 0.f,0.f,0.f };
 	
-	SpawnLocation.X += 5;
-	if (EnemySelf)
-	{
-		ACMSpawnManager* Q = ACMSpawnManager::GetInstance();
+	SpawnLocation.X += 5;*/
+	//if (EnemySelf)
+	//{
+	//	ACMSpawnManager* Q = ACMSpawnManager::GetInstance();
 
-		Q->SpawnActor(EnemySelf, SpawnLocation, SpawnRotation);
+	//	Q->SpawnActor(EnemySelf, SpawnLocation, SpawnRotation);
 
-		//ACMSpawnManager::SpawnActor(GetWorld(), EnemySelf, SpawnLocation, SpawnRotation);
-	}
+	//	//ACMSpawnManager::SpawnActor(GetWorld(), EnemySelf, SpawnLocation, SpawnRotation);
+	//}
 }

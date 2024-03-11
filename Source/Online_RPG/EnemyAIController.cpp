@@ -67,6 +67,8 @@ void AEnemyAIController::StopBehaviorTree()
 	if (nullptr != BehaviorTreeComponent)
 	{
 		BehaviorTreeComponent->StopTree(EBTStopMode::Safe);
+		
+		
 	}
 }
 
