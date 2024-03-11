@@ -52,6 +52,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USoundBase* Boss_BGM;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* Shoot_Sound_queue;
 	
 	
 	//=====================================================

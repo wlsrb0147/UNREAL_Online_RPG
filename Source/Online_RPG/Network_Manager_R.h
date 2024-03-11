@@ -29,7 +29,8 @@ enum class SOUND_TYPE:uint8
 	BGM_Login,
 	BGM_Ingame,
 	Walk,
-	BGM_Boss
+	BGM_Boss,
+	Shoot_Sound_queue
 
 	
 };

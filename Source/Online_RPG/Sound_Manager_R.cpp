@@ -38,8 +38,6 @@ void ASound_Manager_R::BeginPlay()
 	Super::BeginPlay();
 
 	
-
-	
 	Sound_Map.Add(SOUND_TYPE::BGM_Login,Login_Sound);
 	Sound_Map.Add(SOUND_TYPE::BGM_Ingame,Ingame_Sound_queue);
 	Sound_Map.Add(SOUND_TYPE::Btn_Click,Btn_Click_Sound);
@@ -47,6 +45,7 @@ void ASound_Manager_R::BeginPlay()
 	Sound_Map.Add(SOUND_TYPE::Btn_Click_Fail,Btn_Fail_Sound);
 	Sound_Map.Add(SOUND_TYPE::Walk,Walk_Sound_queue);
 	Sound_Map.Add(SOUND_TYPE::BGM_Boss,Boss_BGM);
+	Sound_Map.Add(SOUND_TYPE::Shoot_Sound_queue,Shoot_Sound_queue);
 	
 	
 }
@@ -81,7 +80,9 @@ void ASound_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVecto
 	//Sound_For_Audio->SetPaused(true);
 	
 	Sound_For_Audio->SetSound(NeedSound);
+	Sound_For_Audio->SetWorldLocation(Location);
 	Sound_For_Audio->Play();
+	
 
 	
 		
