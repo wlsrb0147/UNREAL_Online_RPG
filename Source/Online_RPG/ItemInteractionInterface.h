@@ -27,7 +27,7 @@ struct FInteractionData
 	Quantity(0),
 	InteractionDuration(0.0f)
 	{
-		
+		UE_LOG(LogTemp,Warning,TEXT("생성자 %d"),Quantity)
 	}
 
 	UPROPERTY(EditInstanceOnly, Category ="ItemData")
