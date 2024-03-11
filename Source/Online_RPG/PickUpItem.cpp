@@ -3,6 +3,7 @@
 
 #include "PickUpItem.h"
 
+#include "InventoryComponent.h"
 #include "ItemBase.h"
 #include "ItemC.h"
 
@@ -33,7 +34,7 @@ APickUpItem::APickUpItem()
 	InstanceMesh = CreateDefaultSubobject<UStaticMeshComponent>("CurrentMesh");
 	InstanceMesh->SetSimulatePhysics(true);
 	SetRootComponent(InstanceMesh);
-	InstanceItemQuantity = 1;
+	
 	
 }
 
@@ -42,6 +43,7 @@ void APickUpItem::BeginPlay()
 {
 	Super::BeginPlay();
 	InitializeItem(UItemBase::StaticClass(),InstanceItemQuantity);
+	
 }
 
 void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
@@ -49,8 +51,6 @@ void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const i
 	if (InstanceItemDataTable && !InstanceItemID.IsNone())
 	{
 		const FItemData* ItemData = InstanceItemDataTable->FindRow<FItemData>(InstanceItemID,TEXT("Error"));
-		
-		UE_LOG(LogTemp,Warning,TEXT("%s"),*ItemData->ItemID.ToString())
 		
 		InstanceItemData = NewObject<UItemBase>(this,BaseClass);
 		
@@ -60,10 +60,11 @@ void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const i
 		InstanceItemData->BaseItemTextData = ItemData->ItemTextData;
 		InstanceItemData->BaseItemAssetData = ItemData->ItemAssetData;
 		InstanceItemData->BaseItemStatistics = ItemData->ItemStatistics;
+		
 
-		// 무슨 코드? 잘 모르겠음
-		// BaseItemQuantity의 용도가 지금 애매해짐
-		InQuantity <=0 ? InstanceItemData->BaseItemQuantity =1 : InstanceItemData->BaseItemQuantity =InQuantity ;
+		UE_LOG(LogTemp,Warning,TEXT("인스턴스 개수 : %d"), InstanceItemData->BaseItemQuantity)
+		if (InQuantity <=0) InstanceItemData->SetQuantity(1);
+		else InstanceItemData->BaseItemQuantity = InQuantity;
 
 		InstanceMesh->SetStaticMesh(ItemData->ItemAssetData.Mesh);
 		UpdateItemInteractionData();
@@ -102,8 +103,28 @@ void APickUpItem::PickUpItem(const AItemC* Taker)
 
 	if (!InstanceItemData) return;
 
-	Destroy();
-	
+	if (UInventoryComponent* PlayerInventory = Taker->GetInventory())
+	{
+		const FItemAddResult AddResult = PlayerInventory->HandleAddItem(InstanceItemData);
+
+		switch (AddResult.AddResult) {
+		case EItemAddResult::IAR_NoItemAdded:
+			UE_LOG(LogTemp,Error,TEXT("아이템 획득 실패"))
+			break;
+		case EItemAddResult::IAR_PartialAmountItemAdded:
+			UpdateItemInteractionData();
+			Taker->UpdateInteractionWidget();
+			UE_LOG(LogTemp,Error,TEXT("아이템 일부 획득"))
+			break;
+		case EItemAddResult::IAR_AllItemAdded:
+			UE_LOG(LogTemp,Error,TEXT("모든 아이템 추가"))
+			Destroy();
+			break;
+		default:
+			UE_LOG(LogTemp,Error,TEXT("디폴트 실행"))
+			;
+		}
+	}
 }
 
 void APickUpItem::InitializeDropItem(UItemBase* ItemToDrop, const int32 Quantity)

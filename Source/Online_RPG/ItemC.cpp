@@ -3,6 +3,7 @@
 
 #include "ItemC.h"
 
+#include "InventoryComponent.h"
 #include "InventoryHUD.h"
 #include "ItemInteractionInterface.h"
 
@@ -12,6 +13,9 @@ AItemC::AItemC(): HUD(nullptr)
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bUseControllerRotationYaw = false;
+
+	PlayerInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("인벤토리"));
+	PlayerInventory->SetInventoryCapacity(20);
 }
 
 void AItemC::FoundNoInteract()
@@ -32,8 +36,6 @@ void AItemC::FoundNoInteract()
 
 void AItemC::FoundInteract(AActor* NewInteract)
 {
-	
-	UE_LOG(LogTemp,Error,TEXT("%s"),*NewInteract->GetName());
 	
 	if (InteractionData.CurrentInteracting)
 	{
@@ -72,6 +74,19 @@ void AItemC::EndInteract()
 	if (!IsValid(InteractionTarget.GetObject())) return;
 
 	InteractionTarget->EndInteract();
+}
+
+void AItemC::OpenInventory()
+{
+	HUD->ToggleInventoryWidget();
+}
+
+void AItemC::UpdateInteractionWidget() const
+{
+	if (IsValid(InteractionTarget.GetObject()))
+	{
+		HUD->UpdateInteractionWidget(&InteractionTarget->InteractionData);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -132,5 +147,7 @@ void AItemC::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("Interact",IE_Pressed,this,&AItemC::BeginInteract);
 	PlayerInputComponent->BindAction("Interact",IE_Released,this,&AItemC::EndInteract);
+
+	PlayerInputComponent->BindAction("OpenInventory",IE_Pressed,this,&AItemC::OpenInventory);
 }
 
