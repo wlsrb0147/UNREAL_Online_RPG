@@ -32,12 +32,26 @@ void ASound_Manager_R::PostInitializeComponents()
 	
 }
 
+int32 ASound_Manager_R::Ground_Check(APawn* MyPawn)
+{
+	TArray<AActor*> Overrapping_Actors;
+	MyPawn->GetOverlappingActors(Overrapping_Actors);
+
+	for(auto AC : Overrapping_Actors)
+	{
+		if(AC->ActorHasTag("Water")) return 1;
+		else if(AC->ActorHasTag("Gress")) return 2;
+		else return 0;
+	}
+
+	return 0;
+}
+
 // Called when the game starts or when spawned
 void ASound_Manager_R::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
 	Sound_Map.Add(SOUND_TYPE::BGM_Login,Login_Sound);
 	Sound_Map.Add(SOUND_TYPE::BGM_Ingame,Ingame_Sound_queue);
 	Sound_Map.Add(SOUND_TYPE::Btn_Click,Btn_Click_Sound);
@@ -47,18 +61,25 @@ void ASound_Manager_R::BeginPlay()
 	Sound_Map.Add(SOUND_TYPE::BGM_Boss,Boss_BGM);
 	Sound_Map.Add(SOUND_TYPE::Shoot_Sound_queue,Shoot_Sound_queue);
 	
-	
 }
 
 // Called every frame
 void ASound_Manager_R::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-void ASound_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator)
+void ASound_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator, APawn* MyPawn)
 {
+	if(Sound_Type == SOUND_TYPE::Walk)
+	{
+		int GroundType = Ground_Check(MyPawn);
+		UE_LOG(LogTemp, Log, TEXT("Walk 긴해     %d  "), GroundType);
+		if(GroundType == 1) Sound_Type = SOUND_TYPE::Walk_Water;
+		else if(GroundType == 2) Sound_Type = SOUND_TYPE::Walk_Grass;
+	}
+	
+	
 	USoundBase* NeedSound = *Sound_Map.Find(Sound_Type);
 	if(!NeedSound) return;
 

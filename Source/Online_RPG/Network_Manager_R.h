@@ -30,7 +30,9 @@ enum class SOUND_TYPE:uint8
 	BGM_Ingame,
 	Walk,
 	BGM_Boss,
-	Shoot_Sound_queue
+	Shoot_Sound_queue,
+	Walk_Grass,
+	Walk_Water
 
 	
 };
@@ -53,7 +55,7 @@ public:
 	ASound_Manager_R* Get_Sound_Instance();
 	
 	UFUNCTION(BlueprintCallable)
-	void Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator);
+	void Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator, APawn* MyPawn = nullptr);
 
 	// // 함수들을 선언
 	// bool ConnectToServer(const FString& IP, int32 Port);
