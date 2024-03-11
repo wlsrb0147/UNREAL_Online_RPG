@@ -4,36 +4,37 @@
 #include "PickUpItem.h"
 
 #include "ItemBase.h"
+#include "ItemC.h"
 
 // Sets default values
-APickUpItem::APickUpItem()
+APickUpItem::APickUpItem(int32 InitialQuantity)
 {
+	// 드랍템
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	InstanceMesh = CreateDefaultSubobject<UStaticMeshComponent>("CurrentMesh");
 	InstanceMesh->SetSimulatePhysics(true);
 	SetRootComponent(InstanceMesh);
+
+    if (InitialQuantity <=0) InstanceItemQuantity = 1;
+    else InstanceItemQuantity = InitialQuantity;
+
+	InteractionData.InteractionType = EInteractionType::PickUp;
+	
 }
 
-void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
+APickUpItem::APickUpItem()
 {
-	if (InstanceItemDataTable && !InstanceItemID.IsNone())
-	{
-		const FItemData* ItemData = InstanceItemDataTable->FindRow<FItemData>(InstanceItemID,TEXT("Error"));
+	// 엔피씨
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = false;
 
-		InstanceItemData = NewObject<UItemBase>(this,BaseClass);
-		
-		InstanceItemData->BaseItemID = ItemData->ItemID;
-		InstanceItemData->BaseItemType = ItemData->ItemType;
-		InstanceItemData->BaseItemNumericData = ItemData->ItemNumericData;
-		InstanceItemData->BaseItemTextData = ItemData->ItemTextData;
-		InstanceItemData->BaseItemAssetData = ItemData->ItemAssetData;
-
-		InQuantity <=0 ? InstanceItemData->BaseItemQuantity =1 : InstanceItemData->BaseItemQuantity =InQuantity ;
-
-		InstanceMesh->SetStaticMesh(ItemData->ItemAssetData.Mesh);
-	}
+	InstanceMesh = CreateDefaultSubobject<UStaticMeshComponent>("CurrentMesh");
+	InstanceMesh->SetSimulatePhysics(true);
+	SetRootComponent(InstanceMesh);
+	InstanceItemQuantity = 1;
+	
 }
 
 // Called when the game starts or when spawned
@@ -41,6 +42,43 @@ void APickUpItem::BeginPlay()
 {
 	Super::BeginPlay();
 	InitializeItem(UItemBase::StaticClass(),InstanceItemQuantity);
+}
+
+void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
+{
+	if (InstanceItemDataTable && !InstanceItemID.IsNone())
+	{
+		const FItemData* ItemData = InstanceItemDataTable->FindRow<FItemData>(InstanceItemID,TEXT("Error"));
+		
+		UE_LOG(LogTemp,Warning,TEXT("%s"),*ItemData->ItemID.ToString())
+		
+		InstanceItemData = NewObject<UItemBase>(this,BaseClass);
+		
+		InstanceItemData->BaseItemID = ItemData->ItemID;
+		InstanceItemData->BaseItemType = ItemData->ItemType;
+		InstanceItemData->BaseItemNumericData = ItemData->ItemNumericData;
+		InstanceItemData->BaseItemTextData = ItemData->ItemTextData;
+		InstanceItemData->BaseItemAssetData = ItemData->ItemAssetData;
+		InstanceItemData->BaseItemStatistics = ItemData->ItemStatistics;
+
+		// 무슨 코드? 잘 모르겠음
+		// BaseItemQuantity의 용도가 지금 애매해짐
+		InQuantity <=0 ? InstanceItemData->BaseItemQuantity =1 : InstanceItemData->BaseItemQuantity =InQuantity ;
+
+		InstanceMesh->SetStaticMesh(ItemData->ItemAssetData.Mesh);
+		UpdateItemInteractionData();
+		
+	}
+}
+
+void APickUpItem::UpdateItemInteractionData()
+{
+	// InteractionData는 Interface에 있는 정보
+	// InstanceItemInteractData는 PickUpItem에 있는 정보
+	// 정보 탐색은 interface에서 하고있음
+	InstanceItemInteractData.Name = InstanceItemData->BaseItemTextData.NameText;
+	InstanceItemInteractData.Quantity = InstanceItemData->BaseItemQuantity;
+	InteractionData = InstanceItemInteractData;
 }
 
 void APickUpItem::BeginFocus()
@@ -53,19 +91,23 @@ void APickUpItem::EndFocus()
 	IItemInteractionInterface::EndFocus();
 }
 
-void APickUpItem::BeginInteract()
+void APickUpItem::Interact(AItemC* PlayerCharacter)
 {
-	IItemInteractionInterface::BeginInteract();
+	if (PlayerCharacter) PickUpItem(PlayerCharacter);
 }
 
-void APickUpItem::Interact(APlayerCharacter* PlayerCharacter)
+void APickUpItem::PickUpItem(const AItemC* Taker)
 {
-	IItemInteractionInterface::Interact(PlayerCharacter);
+	if (IsPendingKillPending()) return;
+
+	if (!InstanceItemData) return;
+
+	Destroy();
+	
 }
 
-void APickUpItem::EndInteract()
+void APickUpItem::InitializeDropItem(UItemBase* ItemToDrop, const int32 Quantity)
 {
-	IItemInteractionInterface::EndInteract();
 }
 
 void APickUpItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

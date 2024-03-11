@@ -17,7 +17,7 @@ void IItemInteractionInterface::BeginInteract()
 {
 }
 
-void IItemInteractionInterface::Interact(APlayerCharacter* PlayerCharacter)
+void IItemInteractionInterface::Interact(AItemC* PlayerCharacter)
 {
 }
 
