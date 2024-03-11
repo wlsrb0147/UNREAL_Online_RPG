@@ -25,8 +25,6 @@ APlayerCharacter::APlayerCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-
-
 	//마우스 이동시 캐릭터를 회전 시키지 않음
 	bUseControllerRotationYaw = false;
 
