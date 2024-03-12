@@ -32,14 +32,36 @@ void ASound_Manager_R::PostInitializeComponents()
 	
 }
 
+int32 ASound_Manager_R::Ground_Check(APawn* MyPawn)
+{
+		UE_LOG(LogTemp, Log, TEXT("ground checck... %s"), *MyPawn->GetName());
+	TArray<AActor*> Overrapping_Actors;
+	MyPawn->GetOverlappingActors(Overrapping_Actors);
+
+		UE_LOG(LogTemp, Log, TEXT("check... %s"), *MyPawn->GetName());
+	//겹치는 Actor가 없을 경우
+	if (Overrapping_Actors.Num() == 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("겹치는 액터가 없는거"));
+		return 0;
+	}
+	
+	for(auto AC : Overrapping_Actors)
+	{
+		UE_LOG(LogTemp, Log, TEXT("actor : %s"), *AC->GetName());
+		if(AC->ActorHasTag("Water")) return 1;
+		else if(AC->ActorHasTag("Grass")) return 2;
+		else return 0;
+	}
+	UE_LOG(LogTemp, Log, TEXT("check...777"));
+	return 0;
+}
+
 // Called when the game starts or when spawned
 void ASound_Manager_R::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
-
-	
 	Sound_Map.Add(SOUND_TYPE::BGM_Login,Login_Sound);
 	Sound_Map.Add(SOUND_TYPE::BGM_Ingame,Ingame_Sound_queue);
 	Sound_Map.Add(SOUND_TYPE::Btn_Click,Btn_Click_Sound);
@@ -47,7 +69,9 @@ void ASound_Manager_R::BeginPlay()
 	Sound_Map.Add(SOUND_TYPE::Btn_Click_Fail,Btn_Fail_Sound);
 	Sound_Map.Add(SOUND_TYPE::Walk,Walk_Sound_queue);
 	Sound_Map.Add(SOUND_TYPE::BGM_Boss,Boss_BGM);
-	
+	Sound_Map.Add(SOUND_TYPE::Shoot_Sound_queue,Shoot_Sound_queue);
+	Sound_Map.Add(SOUND_TYPE::Walk_Water,Walk_Sound_Water_queue);
+	Sound_Map.Add(SOUND_TYPE::Walk_Grass,Walk_Sound_Grass_queue);
 	
 }
 
@@ -55,18 +79,29 @@ void ASound_Manager_R::BeginPlay()
 void ASound_Manager_R::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-void ASound_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator)
+void ASound_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator, APawn* MyPawn)
 {
-	USoundBase* NeedSound = *Sound_Map.Find(Sound_Type);
-	if(!NeedSound) return;
-
+	if(Sound_Type == SOUND_TYPE::Walk)
+	{
+		int GroundType = Ground_Check(MyPawn);
+		UE_LOG(LogTemp, Log, TEXT("Walk 긴해     %d  "), GroundType);
+		if(GroundType == 1) Sound_Type = SOUND_TYPE::Walk_Water;
+		else if(GroundType == 2) Sound_Type = SOUND_TYPE::Walk_Grass;
+	}
+	
+	USoundBase* NeedSound = Sound_Map.FindRef(Sound_Type);
+	UE_LOG(LogTemp, Log, TEXT("flag0"));
+	if (NeedSound == nullptr)  return;
+	//USoundBase* NeedSound = *Sound_Map.Find(Sound_Type);
+	//if(!NeedSound) return;
+	UE_LOG(LogTemp, Log, TEXT("flag1"));
 	UAudioComponent* Sound_For_Audio = nullptr;
 	if(Audio_idx==1) Sound_For_Audio = BackgroundMusicComponent;
 	else
 	{
+		UE_LOG(LogTemp, Log, TEXT("flag2"));
 		for(auto AudioCompo : SoundEffectComponents)
 		{
 			if(!AudioCompo->IsPlaying())
@@ -79,9 +114,11 @@ void ASound_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVecto
 		if(!Sound_For_Audio) Sound_For_Audio = SoundEffectComponents[0];
 	}
 	//Sound_For_Audio->SetPaused(true);
-	
+	UE_LOG(LogTemp, Log, TEXT("flag3"));
 	Sound_For_Audio->SetSound(NeedSound);
+	Sound_For_Audio->SetWorldLocation(Location);
 	Sound_For_Audio->Play();
+	
 
 	
 		

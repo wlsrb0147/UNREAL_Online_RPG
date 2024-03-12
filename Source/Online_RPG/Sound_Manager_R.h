@@ -19,6 +19,9 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
+	UFUNCTION(BlueprintCallable)
+	int32 Ground_Check(APawn* MyPawn);
+
 	UPROPERTY(VisibleAnywhere, Category = "Audio")
 	UAudioComponent* BackgroundMusicComponent;
 
@@ -39,7 +42,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator);
+	void Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator, APawn* MyPawn);
 	
 	UPROPERTY()
 	TMap<SOUND_TYPE, USoundBase*> Sound_Map;
@@ -51,7 +54,16 @@ public:
 	USoundBase* Walk_Sound_queue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* Walk_Sound_Water_queue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* Walk_Sound_Grass_queue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USoundBase* Boss_BGM;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* Shoot_Sound_queue;
 	
 	
 	//=====================================================

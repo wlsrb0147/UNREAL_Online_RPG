@@ -52,10 +52,10 @@ ASound_Manager_R* UNetwork_Manager_R::Get_Sound_Instance()
 	return Sound_Instance;
 }
 
-void UNetwork_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator)
+void UNetwork_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator, APawn* MyPawn)
 {
 	if(!Sound_Instance) Get_Sound_Instance();
-	Sound_Instance->Sound_Play(Sound_Type, Audio_idx, Location, Rotator);
+	Sound_Instance->Sound_Play(Sound_Type, Audio_idx, Location, Rotator, MyPawn);
 	
 }
 

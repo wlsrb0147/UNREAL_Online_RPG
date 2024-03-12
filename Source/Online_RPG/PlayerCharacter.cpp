@@ -205,8 +205,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	else {
 		UE_LOG(LogTemp, Display, TEXT("bIsAttacking FALSE"));
 	}*/
-	
-	
 
 	//SpawnDebugCapsule(Location, FVector(UpperSlashAttackRadius, UpperSlashAttackRadius, UpperSlashAttackHeight));
 }
@@ -451,6 +449,8 @@ void APlayerCharacter::StartFire_Implementation()
 	if (bIsAttacking) return;
 	UE_LOG(LogTemp, Log, TEXT("START RFIRE"));
 
+	UseControllerRotationYaw_Toggle_Multi(true);
+
 	//UE_LOG(LogTemp, Display, TEXT("??????????????"));
 	bIsShoot = true;
 	bIsAttacking = true;
@@ -464,6 +464,9 @@ void APlayerCharacter::StartFire_Implementation()
 void APlayerCharacter::StopFire_Implementation()
 {
 	if (!bIsShoot) return;
+
+	UseControllerRotationYaw_Toggle_Multi(false);
+	UE_LOG(LogTemp, Display, TEXT("FALSE"));
 
 	bIsShoot = false;
 	//UWorld* World = GetWorld();
@@ -528,9 +531,6 @@ void APlayerCharacter::OnIsShootAnimUpdate()
 
 void APlayerCharacter::StartShootAnim()
 {
-	//마우스 이동시 캐릭터를 회전 시킴
-	bUseControllerRotationYaw = true;
-
 	bIsShootAnim = true;
 }
 
@@ -924,6 +924,11 @@ void APlayerCharacter::SpawnDebugSphere(FVector Location, float Radius)
 		0,
 		1
 	);
+}
+
+void APlayerCharacter::UseControllerRotationYaw_Toggle_Multi_Implementation(bool Val)
+{
+	bUseControllerRotationYaw = Val;
 }
 
 void APlayerCharacter::SpawnDebugCapsule(FVector Location, FVector CapsuleSize, FColor Color) {

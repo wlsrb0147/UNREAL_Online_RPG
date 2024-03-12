@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "ItemC.generated.h"
 
+class UInventoryComponent;
 class IItemInteractionInterface;
 class AInventoryHUD;
 
@@ -29,6 +30,8 @@ class ONLINE_RPG_API AItemC : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AItemC();
+	FORCEINLINE UInventoryComponent* GetInventory() const { return PlayerInventory;}
+	
 	UPROPERTY()
 	AInventoryHUD* HUD;
 
@@ -37,13 +40,18 @@ public:
 	
 	float InteractionDistance = 300.0f;
 
+	UPROPERTY(VisibleAnywhere, Category = "Character | Inventory")
+	UInventoryComponent* PlayerInventory;
+	
 	FInteractingData InteractionData;
 	void FoundNoInteract();
 	void FoundInteract(AActor* NewInteract);
 	void BeginInteract();
 	void Interact();
 	void EndInteract();
-
+	void OpenInventory();
+	void UpdateInteractionWidget() const;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

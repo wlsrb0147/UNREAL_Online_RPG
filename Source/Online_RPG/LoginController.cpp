@@ -130,7 +130,7 @@ void ALoginController::BeginPlay()
 	if(HasLocalNetOwner()  && GetGameInstance())
 	{
 		UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
-		Instance->Sound_Play(SOUND_TYPE::BGM_Login, 1, FVector(0,0,0), FRotator(0,0,0));
+		Instance->Sound_Play(SOUND_TYPE::BGM_Login, 1, FVector(0,0,0), FRotator(0,0,0), GetPawn());
 		// if(Instance && Instance->Get_Sound_Instance())
 		// {
 		// 	UE_LOG(LogTemp,Log,TEXT("Flag2 %s"), *Instance->Get_Sound_Instance()->GetName());

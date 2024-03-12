@@ -6,6 +6,7 @@
 #include "ItemStruct.h"
 #include "ItemBase.generated.h"
 
+class UInventoryComponent;
 /**
  * 
  */
@@ -14,6 +15,7 @@ class ONLINE_RPG_API UItemBase : public UObject
 {
 	GENERATED_BODY()
 public:
+	UItemBase();
 	// 인벤토리에서의 수량
 	UPROPERTY(EditAnywhere,Category = "Item Data")
 	int32 BaseItemQuantity;
@@ -36,6 +38,17 @@ public:
 	UPROPERTY(VisibleAnywhere,Category = "Item Data")
 	FItemAssetData BaseItemAssetData;
 
+	bool bIsCopy = false;
+	bool bIsPickUp = false;
+	void ResetItemFlags(){bIsCopy = false, bIsPickUp =false;}
+	UItemBase* CreateCopy() const;
+
+	UPROPERTY()
+	UInventoryComponent* OwningInventory;
+	
+	void SetQuantity(const int32 NewQuantity);
+
+	
 protected:
 
 	bool operator==(const FName& OtherID) const

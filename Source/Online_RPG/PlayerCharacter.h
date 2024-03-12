@@ -294,8 +294,8 @@ private:
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void SpawnEmitterAtLocation_SetTimer_Multi(const UObject* WorldContextObject, UParticleSystem* Particle, float SetTime, FVector Location, FRotator Rotation = FRotator::ZeroRotator, FVector Scale = FVector(1.f));
 
-	//UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
-	//void UseControllerRotationYaw_True_Multi
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void UseControllerRotationYaw_Toggle_Multi(bool Val);
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	float ShootAttackRange = 1000.f;
