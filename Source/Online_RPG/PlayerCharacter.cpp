@@ -129,7 +129,6 @@ void APlayerCharacter::BeginPlay()
 
 	if (GetController() != nullptr)
 	{
-
 		EnableInput(Cast<ALoginController>(GetController()));
 		UE_LOG(LogTemp, Log, TEXT("Controller is assigned: %s %s"), *GetController()->GetName(), *GetName());
 	}
