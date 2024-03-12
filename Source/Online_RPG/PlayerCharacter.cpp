@@ -463,6 +463,8 @@ void APlayerCharacter::StartFire_Implementation()
 
 void APlayerCharacter::StopFire_Implementation()
 {
+	
+	
 	if (!bIsShoot) return;
 
 	UseControllerRotationYaw_Toggle_Multi(false);
