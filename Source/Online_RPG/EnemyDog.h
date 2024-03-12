@@ -34,6 +34,10 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere)
+	FVector SpawnLocation;
+	UPROPERTY(VisibleAnywhere)
+	FRotator SpawnRotation;
+	UPROPERTY(VisibleAnywhere)
 	float Health;
 	UPROPERTY(EditAnywhere)
 	float MaxHealth = 100.f;
@@ -43,24 +47,20 @@ private:
 	float Damage1 = 1.f;
 	UPROPERTY(VisibleAnywhere)
 	bool IsDead = false;
-
+	
 
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem *Attack1Particle;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AActor> AttackProjectile;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AEnemyDog> EnemySelf;
+	void SpawnSelf();
+	FTimerHandle TimerHandle_MyFunction;
 
 	UPROPERTY(EditAnywhere)
 	float AttackRange = 500;
-	//void FireProjectile();
-
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", meta = (AllowPrivateAccess = "true"))
-	//class UProjectileMovementComponent* ProjectileComponent;
-
-	//// 프로젝타일 클래스 변수
-	//UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-	//TSubclassOf<class AEnemyProjectile> ProjectileClass;
-
+	
 	void SpawnDebugSphere(FVector Location, float Radius);
 	void SpawnProjectile();
 	void Dead();

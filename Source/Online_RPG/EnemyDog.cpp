@@ -13,13 +13,14 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "EnemyAIController.h"
+#include "CMSpawnManager.h"
 
 // Sets default values
 AEnemyDog::AEnemyDog()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -28,6 +29,9 @@ void AEnemyDog::BeginPlay()
 	Super::BeginPlay();
 	Health = MaxHealth;
 	RangeCheck();
+	//AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
+
+	
 }
 
 // Called every frame
@@ -58,7 +62,7 @@ float AEnemyDog::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	OwnerController->SetPlayer(Cast<APawn>(DamageCauser));
 	if (IsDead) return ActualDamage;
 
-	if(Health-ActualDamage<= 0)
+	if (Health - ActualDamage <= 0)
 	{
 		Dead();
 		return ActualDamage;
@@ -73,15 +77,15 @@ float AEnemyDog::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 void AEnemyDog::SpawnDebugSphere(FVector Location, float Radius)
 {
 	DrawDebugSphere(
-		GetWorld(), 
+		GetWorld(),
 		Location,
-		Radius, 
-		20, 
-		FColor::Red, 
-		false, 
+		Radius,
+		20,
+		FColor::Red,
+		false,
 		2, // 스피어를 유지할 시간(초)
-		0, 
-		1 
+		0,
+		1
 	);
 }
 
@@ -89,10 +93,10 @@ void AEnemyDog::SpawnProjectile()
 {
 	TSubclassOf<AEnemyProjectile> ActorClassToSpawn = AEnemyProjectile::StaticClass();
 
-	FVector SpawnLocation = this->GetActorLocation();
-	FRotator SpawnRotation = this->GetActorRotation();
+	FVector ProjectileSpawnLocation = this->GetActorLocation();
+	FRotator ProjectileSpawnRotation = this->GetActorRotation();
 
-	AActor * Projectile = GetWorld()->SpawnActor<AEnemyProjectile>(AttackProjectile, SpawnLocation, SpawnRotation);
+	AActor* Projectile = GetWorld()->SpawnActor<AEnemyProjectile>(AttackProjectile, ProjectileSpawnLocation, ProjectileSpawnRotation);
 
 }
 
@@ -101,7 +105,7 @@ bool AEnemyDog::RangeCheck()
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	float TargetDis = FVector::Dist(this->GetActorLocation(), PlayerPawn->GetActorLocation());
 
-	if(AttackRange>=TargetDis)
+	if (AttackRange >= TargetDis)
 	{
 		return true;
 	}
@@ -110,7 +114,7 @@ bool AEnemyDog::RangeCheck()
 }
 void AEnemyDog::Dead()
 {
-	if(IsDead) return;
+	if (IsDead) return;
 	Health = 0;
 	IsDead = true;
 	FRotator MyRotator(0.0f, 0.0f, 190.0f);
@@ -124,4 +128,23 @@ void AEnemyDog::Dead()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
 	}
+	
+	//SpawnSelf();
+	this->SetLifeSpan(5.0f);
+}
+
+void AEnemyDog::SpawnSelf()
+{
+	/*SpawnLocation = this->GetActorLocation();
+	SpawnRotation = { 0.f,0.f,0.f };
+	
+	SpawnLocation.X += 5;*/
+	//if (EnemySelf)
+	//{
+	//	ACMSpawnManager* Q = ACMSpawnManager::GetInstance();
+
+	//	Q->SpawnActor(EnemySelf, SpawnLocation, SpawnRotation);
+
+	//	//ACMSpawnManager::SpawnActor(GetWorld(), EnemySelf, SpawnLocation, SpawnRotation);
+	//}
 }
