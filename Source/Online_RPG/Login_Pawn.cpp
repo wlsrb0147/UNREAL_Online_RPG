@@ -3,6 +3,10 @@
 
 #include "Login_Pawn.h"
 
+#include "Network_Manager_R.h"
+#include "Sound_Manager_R.h"
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 ALogin_Pawn::ALogin_Pawn()
 {
@@ -15,6 +19,9 @@ ALogin_Pawn::ALogin_Pawn()
 void ALogin_Pawn::BeginPlay()
 {
 	Super::BeginPlay();
+
+	
+	
 	
 }
 

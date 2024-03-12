@@ -11,13 +11,30 @@
 #include "MovieSceneSequencePlaybackSettings.h"
 
 
+
 #include "Network_Manager_R.generated.h"
 
+class ASound_Manager_R;
 struct FMovieSceneSequencePlaybackSettings;
 class UWIdget_Login;
 /**
  * 
  */
+UENUM(BlueprintType)
+enum class SOUND_TYPE:uint8
+{
+	Btn_Click,
+	Btn_GameStart,
+	Btn_Click_Fail,
+	BGM_Login,
+	BGM_Ingame,
+	Walk,
+	BGM_Boss
+
+	
+};
+
+
 UCLASS()
 class ONLINE_RPG_API UNetwork_Manager_R : public UGameInstance
 {
@@ -29,7 +46,13 @@ class ONLINE_RPG_API UNetwork_Manager_R : public UGameInstance
 public:
 	UNetwork_Manager_R();
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ASound_Manager_R> Sound_Class;
+	ASound_Manager_R* Sound_Instance ;
+	ASound_Manager_R* Get_Sound_Instance();
 	
+	UFUNCTION(BlueprintCallable)
+	void Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator);
 
 	// // 함수들을 선언
 	// bool ConnectToServer(const FString& IP, int32 Port);
@@ -105,3 +128,5 @@ private:
 	//FSocket* Socket;
 	// 기타 필요한 변수 및 함수들
 };
+
+
