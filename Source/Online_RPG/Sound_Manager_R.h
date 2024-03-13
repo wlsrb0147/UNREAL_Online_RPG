@@ -85,6 +85,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USoundBase* Btn_Game_Start;
 
+
+	//잔디 스태틱메시
+	UPROPERTY(EditAnywhere)
+	UStaticMesh* Grass_Flower;
+
+	UPROPERTY(EditAnywhere)
+	UStaticMesh* Grass_1;
+	
+	UPROPERTY(EditAnywhere)
+	UStaticMesh* Grass_2;
+	
+	
 };
 
 
