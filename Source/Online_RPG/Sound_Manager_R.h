@@ -47,22 +47,22 @@ public:
 	UPROPERTY()
 	TMap<SOUND_TYPE, USoundBase*> Sound_Map;
 	//=============에셋매니저로 수동 로드 SOUND=============== 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Ingame_Sound_queue;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Walk_Sound_queue;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Walk_Sound_Water_queue;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Walk_Sound_Grass_queue;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Boss_BGM;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Shoot_Sound_queue;
 	
 	
