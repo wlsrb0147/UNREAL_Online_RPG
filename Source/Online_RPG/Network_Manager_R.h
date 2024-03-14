@@ -55,6 +55,13 @@ public:
 	TSubclassOf<ASound_Manager_R> Sound_Class;
 	ASound_Manager_R* Sound_Instance ;
 	ASound_Manager_R* Get_Sound_Instance();
+
+
+	//에셋 매니저 관련
+	UFUNCTION(BlueprintCallable)
+	void LoadStartAsset();
+	
+	
 	
 	UFUNCTION(BlueprintCallable)
 	void Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator, APawn* MyPawn = nullptr);

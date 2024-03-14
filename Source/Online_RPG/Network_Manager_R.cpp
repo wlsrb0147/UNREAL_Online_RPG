@@ -7,11 +7,14 @@
 #include "LevelSequencePlayer.h"
 #include "LoginController.h"
 #include "Networking.h"
+#include "PostLoadAsset.h"
 #include "Sockets.h"
 #include "SocketSubsystem.h"
 #include "Sound_Manager_R.h"
 #include "WIdget_Login.h"
 #include "Blueprint/UserWidget.h"
+#include "Engine/AssetManager.h"
+#include "Engine/StreamableManager.h"
 #include "GameFramework/GameMode.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -50,6 +53,91 @@ ASound_Manager_R* UNetwork_Manager_R::Get_Sound_Instance()
 	Sound_Instance = GetWorld()->SpawnActor<ASound_Manager_R>(Sound_Class, FVector(0,0,0), FRotator(0,0,0), SpawnParams);
 
 	return Sound_Instance;
+}
+
+void UNetwork_Manager_R::LoadStartAsset()
+{
+	UE_LOG(LogTemp, Error, TEXT("LoadStartAsset"));
+	// 사운드 에셋 비동기 로드
+	FPrimaryAssetId SoundAssetId("UPostLoadAsset", TEXT("BP_PostLoadAsset"));
+	FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
+
+	// FPrimaryAssetId에서 FSoftObjectPath 배열을 얻어내는 과정
+	TArray<FSoftObjectPath> AssetPaths;
+	FSoftObjectPath AssetPath = UAssetManager::Get().GetPrimaryAssetPath(SoundAssetId);
+	AssetPaths.Add(AssetPath);
+	if (!AssetPath.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("AssetPath is not valid."));
+	}else
+	{
+		UE_LOG(LogTemp, Error, TEXT("AssetPath is  valid. 777"));
+	}
+	// 비동기 로드 콜백
+	auto OnLoadComplete = [this]()
+	{
+		//UPostLoadAsset* SoundAsset = Cast<UPostLoadAsset>(LoadedAsset);
+		UE_LOG(LogTemp, Warning, TEXT("UPostLoadAsset Load 성공"));
+		// if (SoundAsset && SoundAsset->Sound1) // Sound1을 예로 듭니다. 필요에 따라 Sound2 등 다른 사운드 참조 가능
+		// {
+		// 	UGameplayStatics::PlaySoundAtLocation(this, SoundAsset->Sound1, GetActorLocation());
+		// }
+	};
+
+	// 비동기적으로 사운드 에셋 로드 요청
+	Streamable.RequestAsyncLoad(AssetPath, FStreamableDelegate::CreateLambda(OnLoadComplete));
+	//Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadComplete));
+	//Streamable.RequestAsyncLoad(SoundAssetId, FStreamableDelegate::CreateLambda(OnLoadComplete));
+	
+
+	/////////////////
+	
+	// UAssetManager& __Manager = UAssetManager::Get();
+	//
+	// TArray<FPrimaryAssetId> Assets;
+	// __Manager.GetPrimaryAssetIdList(TEXT("PostLoadAsset"), Assets);
+	//
+	//
+	// if(Assets.Num() > 0)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Asset Num > 0"));
+	//
+	// 	int32 AccessIdx = 2;
+	// 	FSoftObjectPtr AssetPtr(__Manager.GetPrimaryAssetPath(Assets[AccessIdx ]));
+	// 	// 3. 에셋의 경로를 통해 에셋에 대한 FSoftObjectPtr을 얻어온다.
+	//
+	// 	if(AssetPtr.IsPending())
+	// 	{
+	// 		AssetPtr.LoadSynchronous();
+	// 		// 4. 에셋을 로딩해온다.
+	// 	}
+	// 	UPostLoadAsset* Item = Cast<UPostLoadAsset>(AssetPtr.Get());
+	//
+	// 	if(Item)
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("Asset loaded successfully!"));
+	// 	}
+	// 	else UE_LOG(LogTemp, Warning, TEXT("Asset loaded fail..."));
+	// }
+	// else UE_LOG(LogTemp, Warning, TEXT("Asset Num = 0"));
+	//
+	//
+	
+	// StreamableManager 생성
+	// FStreamableManager StreamableManager;
+	//
+	// // 비동기적으로 로드할 에셋의 경로 지정
+	// FStringAssetReference AssetRef(TEXT("/Game/Path/To/YourAsset.YourAsset"));
+	//
+	// // 에셋을 로드할 때 실행될 콜백 함수 정의
+	// FStreamableDelegate Callback;
+	// Callback.BindLambda([]() {
+	// 	// 에셋 로딩이 완료되면 실행될 코드 작성
+	// 	UE_LOG(LogTemp, Warning, TEXT("Asset loaded successfully!"));
+	// });
+	//
+	// // 비동기적으로 에셋 로드
+	// StreamableManager.RequestAsyncLoad(AssetRef, Callback);
 }
 
 void UNetwork_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator, APawn* MyPawn)
@@ -573,13 +661,13 @@ void UNetwork_Manager_R::Spawn_Init()
 	{
 		UE_LOG(LogTemp, Error, TEXT("Nope"));
 	}
-	
-	
 }
 
 void UNetwork_Manager_R::OnSequenceFinished()
 {
 	UE_LOG(LogTemp, Error, TEXT("시퀀스 콜백"));
+
+	LoadStartAsset();
 	
 	// if(GetWorld()->GetFirstPlayerController())
 	// {
