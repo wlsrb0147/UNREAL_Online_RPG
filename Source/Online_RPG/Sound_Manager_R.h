@@ -64,6 +64,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Shoot_Sound_queue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* Fire_Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* Explosion_Sound;
 	
 	
 	//=====================================================

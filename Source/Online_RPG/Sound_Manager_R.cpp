@@ -89,6 +89,8 @@ void ASound_Manager_R::BeginPlay()
 	Sound_Map.Add(SOUND_TYPE::Walk,Walk_Sound_queue);
 	Sound_Map.Add(SOUND_TYPE::BGM_Boss,Boss_BGM);
 	Sound_Map.Add(SOUND_TYPE::Shoot_Sound_queue,Shoot_Sound_queue);
+	Sound_Map.Add(SOUND_TYPE::Fire_Sound, Fire_Sound);
+	Sound_Map.Add(SOUND_TYPE::Explosion_Sound,Explosion_Sound);
 	Sound_Map.Add(SOUND_TYPE::Walk_Water,Walk_Sound_Water_queue);
 	Sound_Map.Add(SOUND_TYPE::Walk_Grass,Walk_Sound_Grass_queue);
 	

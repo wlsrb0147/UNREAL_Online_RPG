@@ -31,6 +31,8 @@ enum class SOUND_TYPE:uint8
 	Walk,
 	BGM_Boss,
 	Shoot_Sound_queue,
+	Fire_Sound,
+	Explosion_Sound,
 	Walk_Grass,
 	Walk_Water
 
