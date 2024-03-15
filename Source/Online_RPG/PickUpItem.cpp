@@ -105,7 +105,7 @@ void APickUpItem::PickUpItem(const AItemC* Taker)
 
 	if (UInventoryComponent* PlayerInventory = Taker->GetInventory())
 	{
-		const FItemAddResult AddResult = PlayerInventory->HandleAddItem(InstanceItemData);
+		const FItemAddResultData AddResult = PlayerInventory->HandleAddItem(InstanceItemData);
 
 		switch (AddResult.AddResult) {
 		case EItemAddResult::IAR_NoItemAdded:

@@ -18,7 +18,7 @@ enum class EItemAddResult
 };
 
 USTRUCT(BlueprintType)
-struct FItemAddResult
+struct FItemAddResultData
 {
 	GENERATED_BODY()
 
@@ -31,27 +31,27 @@ struct FItemAddResult
 	UPROPERTY(BlueprintReadOnly, Category = "Item Add Result")
 	FText AddResultMessage;
 
-	static FItemAddResult AddNone(const FText& ErrorText)
+	static FItemAddResultData AddNone(const FText& ErrorText)
 	{
-		FItemAddResult AddNoneResult;
+		FItemAddResultData AddNoneResult;
 		AddNoneResult.AddAmount = 0;
 		AddNoneResult.AddResult = EItemAddResult::IAR_NoItemAdded;
 		AddNoneResult.AddResultMessage = ErrorText;
 		return AddNoneResult;
 	}
 
-	static FItemAddResult AddPartial(const int32 PartialAdded, const FText& Message)
+	static FItemAddResultData AddPartial(const int32 PartialAdded, const FText& Message)
 	{
-		FItemAddResult AddPartialResult;
+		FItemAddResultData AddPartialResult;
 		AddPartialResult.AddAmount = PartialAdded;
 		AddPartialResult.AddResult = EItemAddResult::IAR_PartialAmountItemAdded;
 		AddPartialResult.AddResultMessage = Message;
 		return AddPartialResult;
 	}
 
-	static FItemAddResult AddAll(const int32 AllAdded, const FText& Message)
+	static FItemAddResultData AddAll(const int32 AllAdded, const FText& Message)
 	{
-		FItemAddResult AddAllResult;
+		FItemAddResultData AddAllResult;
 		AddAllResult.AddAmount = AllAdded;
 		AddAllResult.AddResult = EItemAddResult::IAR_AllItemAdded;
 		AddAllResult.AddResultMessage = Message;
@@ -88,9 +88,9 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	FItemAddResult HandleAddItem(UItemBase* InputItem);
+	FItemAddResultData HandleAddItem(UItemBase* InputItem);
 	int32 AddStackableItem(UItemBase* InputItem, int32 AddAmount);
-	FItemAddResult AddNonStackableItem(UItemBase* InputItem);
+	FItemAddResultData AddNonStackableItem(UItemBase* InputItem);
 	void AddNewItem(UItemBase* Item,const int32 AmountToAdd);
 	void RemoveSingleItem(UItemBase* ItemToRemove);
 

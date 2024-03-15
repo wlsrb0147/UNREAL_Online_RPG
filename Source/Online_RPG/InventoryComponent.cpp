@@ -39,16 +39,16 @@ int32 UInventoryComponent::AddStackableItem(UItemBase* InputItem, int32 AddAmoun
 	return 1;
 }
 
-FItemAddResult UInventoryComponent::AddNonStackableItem(UItemBase* InputItem)
+FItemAddResultData UInventoryComponent::AddNonStackableItem(UItemBase* InputItem)
 {
 	if (InventoryContents.Num() + 1 > InventorySlotCapacity)
 	{
-		return FItemAddResult::AddNone(FText::FromString("인벤토리가 가득 찼습니다."));
+		return FItemAddResultData::AddNone(FText::FromString("인벤토리가 가득 찼습니다."));
 	}
 
 	AddNewItem(InputItem,1);
 	
-	return FItemAddResult::AddAll(1,FText::Format(
+	return FItemAddResultData::AddAll(1,FText::Format(
 	FText::FromString("Successfully added {1} to the inventory"),
 	InputItem->BaseItemTextData.NameText));
 	
@@ -91,7 +91,7 @@ void UInventoryComponent::RemoveSingleItem(UItemBase* ItemToRemove)
 }
 
 
-FItemAddResult UInventoryComponent::HandleAddItem(UItemBase* InputItem)
+FItemAddResultData UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 {
 	if (GetOwner())
 	{
@@ -106,7 +106,7 @@ FItemAddResult UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 
 		if (StackableAmountAdded == InitialRequestedAddAmount)
 		{
-			return FItemAddResult::AddAll
+			return FItemAddResultData::AddAll
 			(StackableAmountAdded,FText::Format(FText::FromString("{0} {1}개를 획득하였습니다"),
 				InputItem->BaseItemTextData.NameText,
 				StackableAmountAdded));
@@ -114,7 +114,7 @@ FItemAddResult UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 
 		if (StackableAmountAdded < InitialRequestedAddAmount)
 		{
-			return FItemAddResult::AddPartial
+			return FItemAddResultData::AddPartial
 			(StackableAmountAdded,FText::Format(FText::FromString("{0} {1}/{2}개를 획득하였습니다."),
 				InputItem->BaseItemTextData.NameText,
 				StackableAmountAdded,
@@ -124,11 +124,11 @@ FItemAddResult UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 
 		if (StackableAmountAdded <= 0)
 		{
-			return FItemAddResult::AddNone(FText::FromString("인벤토리가 가득 찼습니다"));
+			return FItemAddResultData::AddNone(FText::FromString("인벤토리가 가득 찼습니다"));
 		}
 		
 	}
-	return FItemAddResult::AddNone(FText::FromString("오류발생"));
+	return FItemAddResultData::AddNone(FText::FromString("오류발생"));
 }
 
 
