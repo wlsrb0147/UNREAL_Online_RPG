@@ -15,7 +15,8 @@ AEnemyProjectile::AEnemyProjectile()
     Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
     SphreComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Projectile"));
     RootComponent = SphreComponent;
-    Mesh->AttachToComponent(SphreComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    Mesh->SetupAttachment(SphreComponent);
+    //Mesh->AttachToComponent(SphreComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
     UProjectileMovementComponent* ProjectileComponent = this->FindComponentByClass<UProjectileMovementComponent>();
 
 }
