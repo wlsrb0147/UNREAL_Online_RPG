@@ -40,19 +40,38 @@ int32 ASound_Manager_R::Ground_Check(APawn* MyPawn)
 
 		UE_LOG(LogTemp, Log, TEXT("check... %s"), *MyPawn->GetName());
 	//겹치는 Actor가 없을 경우
-	if (Overrapping_Actors.Num() == 0)
+	if (Overrapping_Actors.Num() != 0)
 	{
-		UE_LOG(LogTemp, Log, TEXT("겹치는 액터가 없는거"));
-		return 0;
+		for(auto AC : Overrapping_Actors)
+		{
+			UE_LOG(LogTemp, Log, TEXT("actor : %s"), *AC->GetName());
+			if(AC->ActorHasTag("Water")) return 1;
+			else if(AC->ActorHasTag("Grass")) return 2;
+			else return 0;
+		}
 	}
 	
-	for(auto AC : Overrapping_Actors)
-	{
-		UE_LOG(LogTemp, Log, TEXT("actor : %s"), *AC->GetName());
-		if(AC->ActorHasTag("Water")) return 1;
-		else if(AC->ActorHasTag("Grass")) return 2;
-		else return 0;
+	FVector CenterPosition = MyPawn->GetActorLocation();
+	float Radius = 200.0f;  // 예: 반경 500 유닛
+	int32 Count = UGameplayStatics::GrassOverlappingSphereCount(this, Grass_Flower, CenterPosition, Radius);
+	if(Count > 0){
+		UE_LOG(LogTemp, Log, TEXT("꽃잔디 찾았다!!!"));
+		return 2;
 	}
+
+	Count = UGameplayStatics::GrassOverlappingSphereCount(this, Grass_1, CenterPosition, Radius);
+	if(Count > 0){
+		UE_LOG(LogTemp, Log, TEXT("잔디1 찾았다!!!"));
+		return 2;
+	}
+
+	Count = UGameplayStatics::GrassOverlappingSphereCount(this, Grass_2, CenterPosition, Radius);
+	if(Count > 0){
+		UE_LOG(LogTemp, Log, TEXT("잔디2 찾았다!!!"));
+		return 2;
+	}
+	
+	
 	UE_LOG(LogTemp, Log, TEXT("check...777"));
 	return 0;
 }
@@ -70,6 +89,8 @@ void ASound_Manager_R::BeginPlay()
 	Sound_Map.Add(SOUND_TYPE::Walk,Walk_Sound_queue);
 	Sound_Map.Add(SOUND_TYPE::BGM_Boss,Boss_BGM);
 	Sound_Map.Add(SOUND_TYPE::Shoot_Sound_queue,Shoot_Sound_queue);
+	Sound_Map.Add(SOUND_TYPE::Fire_Sound, Fire_Sound);
+	Sound_Map.Add(SOUND_TYPE::Explosion_Sound,Explosion_Sound);
 	Sound_Map.Add(SOUND_TYPE::Walk_Water,Walk_Sound_Water_queue);
 	Sound_Map.Add(SOUND_TYPE::Walk_Grass,Walk_Sound_Grass_queue);
 	

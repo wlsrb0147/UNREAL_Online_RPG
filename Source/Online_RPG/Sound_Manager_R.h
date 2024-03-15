@@ -47,23 +47,29 @@ public:
 	UPROPERTY()
 	TMap<SOUND_TYPE, USoundBase*> Sound_Map;
 	//=============에셋매니저로 수동 로드 SOUND=============== 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Ingame_Sound_queue;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Walk_Sound_queue;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Walk_Sound_Water_queue;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Walk_Sound_Grass_queue;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Boss_BGM;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Shoot_Sound_queue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* Fire_Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* Explosion_Sound;
 	
 	
 	//=====================================================
@@ -79,6 +85,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USoundBase* Btn_Game_Start;
 
+
+	//잔디 스태틱메시
+	UPROPERTY(EditAnywhere)
+	UStaticMesh* Grass_Flower;
+
+	UPROPERTY(EditAnywhere)
+	UStaticMesh* Grass_1;
+	
+	UPROPERTY(EditAnywhere)
+	UStaticMesh* Grass_2;
+	
+	
 };
 
 

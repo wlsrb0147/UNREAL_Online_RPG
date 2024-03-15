@@ -23,6 +23,5 @@ void AAAACTTTTOR::BeginPlay()
 void AAAACTTTTOR::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
