@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ItemBase.h"
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
@@ -10,7 +11,7 @@ class UItemBase;
 DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
 UENUM(BlueprintType)
-enum class EItemAddResult
+enum class EItemAddOperationResult
 {
 	IAR_NoItemAdded UMETA (DisplayName = "아이템 확득 실패"),
 	IAR_PartialAmountItemAdded UMETA (DisplayName = "아이템 일부 획득"),
@@ -23,10 +24,10 @@ struct FItemAddResultData
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly, Category = "Item Add Result")
-	int32 AddAmount;
+	int32 AddAmount = 0;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Item Add Result")
-	EItemAddResult AddResult;
+	EItemAddOperationResult AddResult = EItemAddOperationResult::IAR_NoItemAdded;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Item Add Result")
 	FText AddResultMessage;
@@ -35,7 +36,7 @@ struct FItemAddResultData
 	{
 		FItemAddResultData AddNoneResult;
 		AddNoneResult.AddAmount = 0;
-		AddNoneResult.AddResult = EItemAddResult::IAR_NoItemAdded;
+		AddNoneResult.AddResult = EItemAddOperationResult::IAR_NoItemAdded;
 		AddNoneResult.AddResultMessage = ErrorText;
 		return AddNoneResult;
 	}
@@ -44,7 +45,7 @@ struct FItemAddResultData
 	{
 		FItemAddResultData AddPartialResult;
 		AddPartialResult.AddAmount = PartialAdded;
-		AddPartialResult.AddResult = EItemAddResult::IAR_PartialAmountItemAdded;
+		AddPartialResult.AddResult = EItemAddOperationResult::IAR_PartialAmountItemAdded;
 		AddPartialResult.AddResultMessage = Message;
 		return AddPartialResult;
 	}
@@ -53,7 +54,7 @@ struct FItemAddResultData
 	{
 		FItemAddResultData AddAllResult;
 		AddAllResult.AddAmount = AllAdded;
-		AddAllResult.AddResult = EItemAddResult::IAR_AllItemAdded;
+		AddAllResult.AddResult = EItemAddOperationResult::IAR_AllItemAdded;
 		AddAllResult.AddResultMessage = Message;
 		return AddAllResult;
 	}
@@ -70,7 +71,7 @@ public:
 
 	// Sets default values for this component's properties
 	UInventoryComponent();
-	FORCEINLINE TArray<TObjectPtr<UItemBase>> GetInventory() const {return InventoryContents;}
+	FORCEINLINE TArray<UItemBase*> GetInventory() const {return InventoryContents;}
 	FORCEINLINE int32 GetInventoryCapacity() const {return InventorySlotCapacity;}
 	FORCEINLINE void SetInventoryCapacity(const int32 Capacity) {InventorySlotCapacity = Capacity;}
 
@@ -92,6 +93,9 @@ public:
 	int32 AddStackableItem(UItemBase* InputItem, int32 AddAmount);
 	FItemAddResultData AddNonStackableItem(UItemBase* InputItem);
 	void AddNewItem(UItemBase* Item,const int32 AmountToAdd);
-	void RemoveSingleItem(UItemBase* ItemToRemove);
+	void RemoveItemFromList(UItemBase* ItemToRemove);
+	int32 RemoveAmountOfItem(UItemBase* RemoveItem,int32 AmountToRemove) const;
+	UItemBase* FindNextPartial(UItemBase* ItemIn) const;
+	int32 CalculateNumberForFullStack(const UItemBase* StackableItem,int32 AddAmount);
 
 };

@@ -15,7 +15,7 @@ AItemC::AItemC(): HUD(nullptr)
 	bUseControllerRotationYaw = false;
 
 	PlayerInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("인벤토리"));
-	PlayerInventory->SetInventoryCapacity(20);
+	PlayerInventory->SetInventoryCapacity(24);
 }
 
 void AItemC::FoundNoInteract()
@@ -52,6 +52,7 @@ void AItemC::FoundInteract(AActor* NewInteract)
 
 void AItemC::BeginInteract()
 {
+	UE_LOG(LogTemp,Display,TEXT("%d"),PlayerInventory->GetInventoryCapacity())
 	CheckInteraction();
 
 	if (!InteractionData.CurrentInteracting) return;
@@ -67,6 +68,7 @@ void AItemC::Interact()
 	if (!IsValid(InteractionTarget.GetObject())) return;
 
 	InteractionTarget->Interact(this);
+	FoundNoInteract();
 }
 
 void AItemC::EndInteract()

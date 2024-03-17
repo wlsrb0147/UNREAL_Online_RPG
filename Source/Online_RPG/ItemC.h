@@ -26,7 +26,6 @@ UCLASS()
 class ONLINE_RPG_API AItemC : public ACharacter
 {
 	GENERATED_BODY()
-
 public:
 	// Sets default values for this character's properties
 	AItemC();
@@ -62,6 +61,6 @@ public:
 	void CheckInteraction();
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 };
