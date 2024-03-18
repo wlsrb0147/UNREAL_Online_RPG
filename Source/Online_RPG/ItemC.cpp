@@ -6,6 +6,7 @@
 #include "InventoryComponent.h"
 #include "InventoryHUD.h"
 #include "ItemInteractionInterface.h"
+#include "PickUpItem.h"
 
 // Sets default values
 AItemC::AItemC(): HUD(nullptr)
@@ -15,7 +16,7 @@ AItemC::AItemC(): HUD(nullptr)
 	bUseControllerRotationYaw = false;
 
 	PlayerInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("인벤토리"));
-	PlayerInventory->SetInventoryCapacity(20);
+	PlayerInventory->SetInventoryCapacity(24);
 }
 
 void AItemC::FoundNoInteract()
@@ -52,6 +53,7 @@ void AItemC::FoundInteract(AActor* NewInteract)
 
 void AItemC::BeginInteract()
 {
+	UE_LOG(LogTemp,Display,TEXT("%d"),PlayerInventory->GetInventoryCapacity())
 	CheckInteraction();
 
 	if (!InteractionData.CurrentInteracting) return;
@@ -67,6 +69,7 @@ void AItemC::Interact()
 	if (!IsValid(InteractionTarget.GetObject())) return;
 
 	InteractionTarget->Interact(this);
+	FoundNoInteract();
 }
 
 void AItemC::EndInteract()
@@ -87,6 +90,27 @@ void AItemC::UpdateInteractionWidget() const
 	{
 		HUD->UpdateInteractionWidget(&InteractionTarget->InteractionData);
 	}
+}
+
+void AItemC::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop)
+{
+	if (!PlayerInventory->FindMatchingItem(ItemToDrop))
+	{
+		return;
+	}
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Owner = this;
+	SpawnParameters.bNoFail = true;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	const FVector SpawnLocation{GetActorLocation() + GetActorForwardVector()*50.0f};
+	const FTransform SpawnTransform(GetActorRotation(),SpawnLocation);
+	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop,QuantityToDrop);
+
+	APickUpItem* Item = GetWorld()->SpawnActor<APickUpItem>(APickUpItem::StaticClass(),SpawnTransform,SpawnParameters);
+
+	Item->InitializeDropItem(ItemToDrop,RemovedQuantity);
 }
 
 // Called when the game starts or when spawned

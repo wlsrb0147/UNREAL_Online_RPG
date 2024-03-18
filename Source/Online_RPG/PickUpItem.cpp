@@ -20,7 +20,7 @@ APickUpItem::APickUpItem(int32 InitialQuantity)
 
     if (InitialQuantity <=0) InstanceItemQuantity = 1;
     else InstanceItemQuantity = InitialQuantity;
-
+	
 	InteractionData.InteractionType = EInteractionType::PickUp;
 	
 }
@@ -61,10 +61,13 @@ void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const i
 		InstanceItemData->BaseItemAssetData = ItemData->ItemAssetData;
 		InstanceItemData->BaseItemStatistics = ItemData->ItemStatistics;
 		
-
-		UE_LOG(LogTemp,Warning,TEXT("인스턴스 개수 : %d"), InstanceItemData->BaseItemQuantity)
 		if (InQuantity <=0) InstanceItemData->SetQuantity(1);
 		else InstanceItemData->BaseItemQuantity = InQuantity;
+
+		if (InstanceItemData->BaseItemNumericData.bIsStackable && InstanceItemData->BaseItemNumericData.MaxStackSize < 2 )
+		{
+			InstanceItemData->BaseItemNumericData.MaxStackSize = 2;
+		}
 
 		InstanceMesh->SetStaticMesh(ItemData->ItemAssetData.Mesh);
 		UpdateItemInteractionData();
@@ -105,19 +108,16 @@ void APickUpItem::PickUpItem(const AItemC* Taker)
 
 	if (UInventoryComponent* PlayerInventory = Taker->GetInventory())
 	{
-		const FItemAddResult AddResult = PlayerInventory->HandleAddItem(InstanceItemData);
+		const FItemAddResultData AddResult = PlayerInventory->HandleAddItem(InstanceItemData);
 
 		switch (AddResult.AddResult) {
-		case EItemAddResult::IAR_NoItemAdded:
-			UE_LOG(LogTemp,Error,TEXT("아이템 획득 실패"))
+		case EItemAddOperationResult::IAR_NoItemAdded:
 			break;
-		case EItemAddResult::IAR_PartialAmountItemAdded:
+		case EItemAddOperationResult::IAR_PartialAmountItemAdded:
 			UpdateItemInteractionData();
 			Taker->UpdateInteractionWidget();
-			UE_LOG(LogTemp,Error,TEXT("아이템 일부 획득"))
 			break;
-		case EItemAddResult::IAR_AllItemAdded:
-			UE_LOG(LogTemp,Error,TEXT("모든 아이템 추가"))
+		case EItemAddOperationResult::IAR_AllItemAdded:
 			Destroy();
 			break;
 		default:
@@ -129,6 +129,12 @@ void APickUpItem::PickUpItem(const AItemC* Taker)
 
 void APickUpItem::InitializeDropItem(UItemBase* ItemToDrop, const int32 Quantity)
 {
+	InstanceItemData = ItemToDrop;
+	InstanceItemData->SetQuantity(Quantity);
+	InstanceItemData->OwningInventory = nullptr;
+	InstanceMesh->SetStaticMesh(ItemToDrop->BaseItemAssetData.Mesh);
+
+	UpdateItemInteractionData();
 }
 
 void APickUpItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -150,7 +156,5 @@ void APickUpItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedE
 			}
 		}
 	}
-	
-	
 }
 

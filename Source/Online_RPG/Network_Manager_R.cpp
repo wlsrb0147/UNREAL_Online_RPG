@@ -19,38 +19,38 @@
 #include "Kismet/GameplayStatics.h"
 
 
-const char *host = "localhost";
-const char *user = "red";
-const char *pw = "red";
-const char *db = "mydb";
+const char* host = "localhost";
+const char* user = "red";
+const char* pw = "red";
+const char* db = "mydb";
 
 UNetwork_Manager_R::UNetwork_Manager_R()
 {
-	
+
 	//SelectUser(TEXT("fffl"),TEXT("fppp1"));
 
 	//InsertUser(TEXT("RED77"), TEXT("RED77"), TEXT("REDRED77"));
 	//ULevelSequence* LevelSequence = LoadObject<ULevelSequence>(nullptr, TEXT("/Game/Path/To/YourSequence.YourSequence"));
 
 	Level_Sequence = LoadObject<ULevelSequence>(nullptr, TEXT("/Game/MAIN/Sequence/SQ_GameStart.SQ_GameStart"));
-	if(Level_Sequence == nullptr)
+	if (Level_Sequence == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Nope11"));
 		// 에셋을 찾지 못한 경우 에러 처리
 		return;
 	}
-	
-	
-	
-	
+
+
+
+
 }
 
 
 ASound_Manager_R* UNetwork_Manager_R::Get_Sound_Instance()
 {
 	FActorSpawnParameters SpawnParams;
-	if(!Sound_Instance)
-	Sound_Instance = GetWorld()->SpawnActor<ASound_Manager_R>(Sound_Class, FVector(0,0,0), FRotator(0,0,0), SpawnParams);
+	if (!Sound_Instance)
+		Sound_Instance = GetWorld()->SpawnActor<ASound_Manager_R>(Sound_Class, FVector(0, 0, 0), FRotator(0, 0, 0), SpawnParams);
 
 	return Sound_Instance;
 }
@@ -289,11 +289,13 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 	// 비동기적으로 사운드 에셋 로드 요청
 	//Streamable.RequestAsyncLoad(AssetPath, FStreamableDelegate::CreateLambda(OnLoadComplete));
 	//Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadComplete));
+	TArray<FName> LoadBundles;
+	Manager.LoadPrimaryAssets(OutAssets, LoadBundles, FStreamableDelegate::CreateLambda(OnLoadComplete));
 	//Streamable.RequestAsyncLoad(SoundAssetId, FStreamableDelegate::CreateLambda(OnLoadComplete));
-	
+
 
 	/////////////////
-	
+
 	// UAssetManager& __Manager = UAssetManager::Get();
 	//
 	// TArray<FPrimaryAssetId> Assets;
@@ -324,7 +326,7 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 	// else UE_LOG(LogTemp, Warning, TEXT("Asset Num = 0"));
 	//
 	//
-	
+
 	// StreamableManager 생성
 	// FStreamableManager StreamableManager;
 	//
@@ -344,14 +346,14 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 
 void UNetwork_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator, APawn* MyPawn)
 {
-	if(!Sound_Instance) Get_Sound_Instance();
+	if (!Sound_Instance) Get_Sound_Instance();
 	Sound_Instance->Sound_Play(Sound_Type, Audio_idx, Location, Rotator, MyPawn);
-	
+
 }
 
 void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	
+
 	if (bWasSuccessful && Response.IsValid())
 	{
 		if (EHttpResponseCodes::IsOk(Response->GetResponseCode()))
@@ -369,7 +371,7 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 				for (auto& Item : JsonArray)
 				{
 					TSharedPtr<FJsonObject> JsonObject = Item->AsObject();
-					
+
 					if (JsonObject.IsValid())
 					{
 						if (JsonObject->HasField(TEXT("document")))
@@ -378,30 +380,31 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 							TSharedPtr<FJsonObject> DocumentObject = JsonObject->GetObjectField(TEXT("document"));
 							if (DocumentObject.IsValid())
 							{
-								if(1==2)
+								if (1 == 2)
 								{
 									//Join 시도
-									
-								}else
+
+								}
+								else
 								{
 									//이미 있는것이니 성공 띄우고 몇초 뒤에 로그인 시켜버리면됨
 									UE_LOG(LogTemp, Error, TEXT("성공창 "));
-									if(Current_Widget)
+									if (Current_Widget)
 									{
 										UE_LOG(LogTemp, Error, TEXT("성공해서 위젯 없애버려볼까 "));
 										Current_Widget->RemoveFromParent();
-										if(Success_Widget)
+										if (Success_Widget)
 										{
 											GetSpawnData();
-											Sound_Play(SOUND_TYPE::Btn_GameStart, 1, FVector(0,0,0), FRotator(0,0,0));
-											
+											Sound_Play(SOUND_TYPE::Btn_GameStart, 1, FVector(0, 0, 0), FRotator(0, 0, 0));
+
 											// UUserWidget* TmpWidget = CreateWidget<UUserWidget>(this, Success_Widget, TEXT("SuccessWidget"));
 											// if(TmpWidget)
 											// TmpWidget->AddToViewport();
 											// UE_LOG(LogTemp, Log, TEXT("성공창 띠ㅡ웠음"));
 										}
 									}
-								
+
 									// "name" 필드 값을 가져옵니다.
 									FString Name = DocumentObject->GetStringField(TEXT("name"));
 									UE_LOG(LogTemp, Log, TEXT("Document Name: %s"), *Name);
@@ -415,15 +418,16 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 										UE_LOG(LogTemp, Log, TEXT("ID: %s, PW: %s"), *ID, *PW);
 									}
 								}
-								
+
 
 								return;
 							}
-						}else
+						}
+						else
 						{
 							UE_LOG(LogTemp, Error, TEXT("이럼 없는 거임"));
 						}
-						
+
 					}
 				}
 			}
@@ -439,8 +443,8 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 			// ... rest of your code for JSON parsing
 			// Assuming the query results are in an array named "results"
 			 //TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-			
-			
+
+
 		}
 		else
 		{
@@ -456,7 +460,7 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 	//여기에 실패 띄우기
 	UE_LOG(LogTemp, Error, TEXT("실패창 "));
 	CreateWidget_OX(false);
-	
+
 }
 
 void UNetwork_Manager_R::OnResponseReceived_Join(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
@@ -491,13 +495,14 @@ void UNetwork_Manager_R::OnResponseReceived_Join(FHttpRequestPtr Request, FHttpR
 
 								return;
 							}
-						}else
+						}
+						else
 						{
-							
+
 							InsertUser(Join_ID, Join_PW, Join_NickName);
 							return;
 						}
-						
+
 					}
 				}
 			}
@@ -513,9 +518,9 @@ void UNetwork_Manager_R::OnResponseReceived_Join(FHttpRequestPtr Request, FHttpR
 			// ... rest of your code for JSON parsing
 			// Assuming the query results are in an array named "results"
 			 //TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-			
-			
-			
+
+
+
 		}
 		else
 		{
@@ -551,11 +556,11 @@ void UNetwork_Manager_R::SelectUser(const FString& Username, const FString& Pass
 			"{\"structuredQuery\":{\"where\":{\"compositeFilter\":{\"op\":\"AND\",\"filters\":["
 			"{\"fieldFilter\":{\"field\":{\"fieldPath\":\"ID\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"%s\"}}},"
 			"{\"fieldFilter\":{\"field\":{\"fieldPath\":\"PW\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"%s\"}}}"
-			"]}},\"from\":[{\"collectionId\":\"User\"}]}}"), 
+			"]}},\"from\":[{\"collectionId\":\"User\"}]}}"),
 			*Username, *Password);
 		Request->SetContentAsString(QueryJson);
 
-		
+
 		// Set any other necessary headers here, like Authorization if needed
 		Login_ID = Username;
 		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::OnResponseReceived);
@@ -579,14 +584,14 @@ void UNetwork_Manager_R::InsertUser(const FString& Username, const FString& Pass
 		Request->SetVerb("POST");
 		//FString Url = FString::Printf(TEXT("https://firestore.googleapis.com/v1/projects/unrealrpg-7a179/databases/(default)/documents/User"));
 		//Request->SetURL(Url);
-		Request->SetURL(TEXT("https://firestore.googleapis.com/v1/projects/unrealrpg-7a179/databases/(default)/documents/User")) ;
+		Request->SetURL(TEXT("https://firestore.googleapis.com/v1/projects/unrealrpg-7a179/databases/(default)/documents/User"));
 		Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
 		// Create JSON object for user data
 		//FString JsonData = FString::Printf(TEXT("{\"fields\": {\"ID\": {\"stringValue\": \"%s\"}, \"PW\": {\"stringValue\": \"%s\"}}}"), *Username, *Password);
 
 		// Create JSON object for user data
-		FString JsonData = FString::Printf(TEXT("{\"fields\": {\"ID\": {\"stringValue\": \"%s\"}, \"PW\": {\"stringValue\": \"%s\"}, \"NICK\" : {\"stringValue\" : \"%s\"}}}"),  *Username, *Password, *NickName);
+		FString JsonData = FString::Printf(TEXT("{\"fields\": {\"ID\": {\"stringValue\": \"%s\"}, \"PW\": {\"stringValue\": \"%s\"}, \"NICK\" : {\"stringValue\" : \"%s\"}}}"), *Username, *Password, *NickName);
 		//FString JsonData = FString::Printf(TEXT("{\"name\": \"projects/unrealrpg-7a179/databases/(default)/documents/User/%s\",\"fields\": {\"ID\": {\"stringValue\": \"%s\"}, \"PW\": {\"stringValue\": \"%s\"}}}"), *Username, *Username, *Password);
 
 		Request->SetContentAsString(JsonData);
@@ -604,11 +609,11 @@ void UNetwork_Manager_R::InsertUser(const FString& Username, const FString& Pass
 void UNetwork_Manager_R::ResistUser(const FString& Username, const FString& Password, const FString& NickName, UUserWidget* InputWidget)
 {
 	Current_Widget = InputWidget;
-	
+
 	Join_ID = Username;
 	Join_PW = Password;
 	Join_NickName = NickName;
-	
+
 	FHttpModule* Http = &FHttpModule::Get();
 	if (Http)
 	{
@@ -622,12 +627,12 @@ void UNetwork_Manager_R::ResistUser(const FString& Username, const FString& Pass
 
 		//FString QueryJson = TEXT("{\"structuredQuery\":{\"where\":{\"fieldFilter\":{\"field\":{\"fieldPath\":\"PW\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"fppp1\"}}},\"from\":[{\"collectionId\":\"User\"}]}}");
 		FString QueryJson = FString::Printf(TEXT(
-	"{\"structuredQuery\":{\"where\":{\"fieldFilter\":{\"field\":{\"fieldPath\":\"ID\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"%s\"}}},"
-	"\"from\":[{\"collectionId\":\"User\"}]}}"),
-	*Username);
+			"{\"structuredQuery\":{\"where\":{\"fieldFilter\":{\"field\":{\"fieldPath\":\"ID\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"%s\"}}},"
+			"\"from\":[{\"collectionId\":\"User\"}]}}"),
+			*Username);
 		Request->SetContentAsString(QueryJson);
 
-		
+
 		// Set any other necessary headers here, like Authorization if needed
 
 		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::OnResponseReceived_Join);
@@ -671,20 +676,20 @@ void UNetwork_Manager_R::OnInsertUserResponseReceived(FHttpRequestPtr Request, F
 void UNetwork_Manager_R::CreateWidget_OX(bool bIsSuccess)
 {
 
-	if(bIsSuccess) Sound_Play(SOUND_TYPE::Btn_GameStart, 2, FVector(0,0,0), FRotator(0,0,0));
-	else Sound_Play(SOUND_TYPE::Btn_Click_Fail, 2, FVector(0,0,0), FRotator(0,0,0));
+	if (bIsSuccess) Sound_Play(SOUND_TYPE::Btn_GameStart, 2, FVector(0, 0, 0), FRotator(0, 0, 0));
+	else Sound_Play(SOUND_TYPE::Btn_Click_Fail, 2, FVector(0, 0, 0), FRotator(0, 0, 0));
 
 	UUserWidget* TmpWidget;
 	FString UniqueID = FGuid::NewGuid().ToString();
 	FName UniqueName = FName(*(FString("SuccessWidget_") + UniqueID));
-	if(bIsSuccess)
+	if (bIsSuccess)
 		TmpWidget = CreateWidget<UUserWidget>(this, Success_Widget, UniqueName);
 	else
 		TmpWidget = CreateWidget<UUserWidget>(this, Fail_Widget, UniqueName);
 
-	if(TmpWidget)
+	if (TmpWidget)
 		TmpWidget->AddToViewport();
-	
+
 }
 
 void UNetwork_Manager_R::GetSpawnData()
@@ -706,7 +711,7 @@ void UNetwork_Manager_R::GetSpawnData()
 
 		Request->SetContentAsString(QueryJson);
 
-		
+
 		// Set any other necessary headers here, like Authorization if needed
 
 		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::GetSpawnData_CallBack);
@@ -719,7 +724,7 @@ void UNetwork_Manager_R::GetSpawnData()
 	{
 		UE_LOG(LogTemp, Log, TEXT("Flag9"));
 	}
-	
+
 }
 
 void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
@@ -742,7 +747,7 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 				for (auto& Item : JsonArray)
 				{
 					TSharedPtr<FJsonObject> JsonObject = Item->AsObject();
-					
+
 					if (JsonObject.IsValid())
 					{
 						if (JsonObject->HasField(TEXT("document")))
@@ -770,14 +775,14 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 									double SpawnLocation_Y = SpawnLocation_Y_Object->GetNumberField(TEXT("doubleValue"));
 									double SpawnLocation_Z = SpawnLocation_Z_Object->GetNumberField(TEXT("doubleValue"));
 
-									SpawnLocation = FVector(SpawnLocation_X,SpawnLocation_Y,SpawnLocation_Z);
+									SpawnLocation = FVector(SpawnLocation_X, SpawnLocation_Y, SpawnLocation_Z);
 
 									// SpawnRotator 값을 double로 가져옵니다.
 									double SpawnRotator_Pitch = SpawnRotator_Pitch_Object->GetNumberField(TEXT("doubleValue"));
 									double SpawnRotator_Roll = SpawnRotator_Roll_Object->GetNumberField(TEXT("doubleValue"));
 									double SpawnRotator_Yaw = SpawnRotator_Yaw_Object->GetNumberField(TEXT("doubleValue"));
 
-									SpawnRotator = FRotator(SpawnRotator_Pitch,SpawnRotator_Yaw,SpawnRotator_Roll);
+									SpawnRotator = FRotator(SpawnRotator_Pitch, SpawnRotator_Yaw, SpawnRotator_Roll);
 
 									// SwordName 값을 FString으로 가져옵니다.
 									SwordName = SwordNameObject->GetStringField(TEXT("stringValue"));
@@ -787,18 +792,19 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 
 									// ID 값을 FString으로 가져옵니다.
 									FString ID = IDObject->GetStringField(TEXT("stringValue"));
-									
+
 
 								}
 							}
-						}else
+						}
+						else
 						{
 							UE_LOG(LogTemp, Error, TEXT("이럼 없는 거임"));
-							
+
 						}
 					}
 					Spawn_Init();
-					
+
 				}
 			}
 			else
@@ -813,8 +819,8 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 			// ... rest of your code for JSON parsing
 			// Assuming the query results are in an array named "results"
 			 //TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-			
-			
+
+
 		}
 		else
 		{
@@ -835,15 +841,16 @@ void UNetwork_Manager_R::Spawn_Init()
 	{
 		// 변수가 '초기화되지 않았다'고 가정하고 처리
 		UE_LOG(LogTemp, Error, TEXT("ITS NEWB"));
-	}else
+	}
+	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("ITS OLDB %s %s %s %s %s"),*SpawnLocation.ToCompactString(), *SpawnRotator.ToCompactString(), *GunName, *Login_ID, *SwordName);
+		UE_LOG(LogTemp, Error, TEXT("ITS OLDB %s %s %s %s %s"), *SpawnLocation.ToCompactString(), *SpawnRotator.ToCompactString(), *GunName, *Login_ID, *SwordName);
 	}
 
 	// 현재 월드를 가져옵니다.
 	UWorld* World = GetWorld();
 	UE_LOG(LogTemp, Error, TEXT("Nope22"));
-	if(World != nullptr)
+	if (World != nullptr)
 	{
 		// 레벨 시퀀스 플레이어를 생성합니다.
 		Player_Sequence = ULevelSequencePlayer::CreateLevelSequencePlayer(World, Level_Sequence, MovieSceneSequencePlaybackSettings, SequenceActor);
@@ -852,14 +859,15 @@ void UNetwork_Manager_R::Spawn_Init()
 	UE_LOG(LogTemp, Error, TEXT("Nope44"));
 
 	// 시퀀스 플레이어가 성공적으로 생성되었는지 확인하고 재생합니다.
-	if(Player_Sequence != nullptr)
+	if (Player_Sequence != nullptr)
 	{
 		Player_Sequence->SetPlayRate(0.7f); // 재생 속도를 0.5로 설정
 		Player_Sequence->OnFinished.AddDynamic(this, &UNetwork_Manager_R::OnSequenceFinished);
 		Player_Sequence->Play();
 		UE_LOG(LogTemp, Error, TEXT("Play!!!"));
-		
-	}else
+
+	}
+	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Nope"));
 	}
@@ -1096,7 +1104,7 @@ void UNetwork_Manager_R::OnSequenceFinished()
 	UE_LOG(LogTemp, Error, TEXT("시퀀스 콜백"));
 
 	LoadStartAsset();
-	
+
 	// if(GetWorld()->GetFirstPlayerController())
 	// {
 	// 	ALoginController* MyController = Cast<ALoginController>(GetWorld()->GetFirstPlayerController());
@@ -1104,8 +1112,8 @@ void UNetwork_Manager_R::OnSequenceFinished()
 	// 	MyController->ChangePawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 	// 	//CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 	// }
-		
-	if(GetFirstLocalPlayerController())
+
+	if (GetFirstLocalPlayerController())
 	{
 		ALoginController* MyController = Cast<ALoginController>(GetFirstLocalPlayerController());
 		UE_LOG(LogTemp, Error, TEXT("얘 컨트롤러꺼를 바꿔야되는게 맞아 : %s" ), *GetFirstLocalPlayerController()->GetName());
@@ -1117,10 +1125,10 @@ void UNetwork_Manager_R::OnSequenceFinished()
 
 		//TODO : 색깔이 번쩍번쩍 하게 변합니다. 찾아보면 알림도 있음
 		//Ingame BGM ON
-		Sound_Play(SOUND_TYPE::BGM_Ingame, 1, FVector(0,0,0), FRotator(0,0,0));
-		
+		Sound_Play(SOUND_TYPE::BGM_Ingame, 1, FVector(0, 0, 0), FRotator(0, 0, 0));
+
 	}
-	
+
 }
 
 void UNetwork_Manager_R::CallSpawn_Implementation(int Player_Idx)
@@ -1149,12 +1157,12 @@ void UNetwork_Manager_R::CallSpawn_Implementation(int Player_Idx)
 		}
 	}
 
-	
+
 	return;
 
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 1);
-	
-	
+
+
 	// 여기서 폰 생성 로직을 구현합니다.
 	APawn* NewPawn = GetWorld()->SpawnActor<APawn>(SpawnPawn, SpawnLocation, FQuat::Identity.Rotator());
 	if (NewPawn)
@@ -1165,7 +1173,7 @@ void UNetwork_Manager_R::CallSpawn_Implementation(int Player_Idx)
 	}
 
 	UE_LOG(LogTemp, Error, TEXT("Call Spawn 서버에서 했겠지."));
-	
+
 	// if (PlayerController != nullptr)
 	// {
 	// 	UE_LOG(LogTemp, Error, TEXT("CallSpawn init"));
