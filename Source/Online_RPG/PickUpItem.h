@@ -23,7 +23,6 @@ public:
 	void InitializeItem(const TSubclassOf<UItemBase> BaseClass,const int32 InQuantity);
 	void PickUpItem(const AItemC* Taker);
 	void InitializeDropItem(UItemBase* ItemToDrop,const int32 Quantity);
-	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,7 +57,7 @@ protected:
 	virtual void Interact(AItemC* PlayerCharacter) override;
 
 
-//#if WITH_EDITOR
-	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-//#endif
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 };

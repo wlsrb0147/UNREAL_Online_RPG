@@ -42,4 +42,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetDestroy();
+
+	UFUNCTION(BlueprintCallable)
+	void DoLogout();
 };

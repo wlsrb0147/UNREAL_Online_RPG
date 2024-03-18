@@ -28,17 +28,27 @@ UItemBase* UItemBase::CreateCopy() const
 // 아이템 수량이 변경됐을 때 사용함
 void UItemBase::SetQuantity(const int32 NewQuantity)
 {
-	if (NewQuantity != BaseItemQuantity)
-	{
-		BaseItemQuantity = FMath::Clamp(NewQuantity,0,
-			BaseItemNumericData.bIsStackable? BaseItemNumericData.MaxStackSize:1);
+	if (NewQuantity == BaseItemQuantity) return;
+	
+	BaseItemQuantity = FMath::Clamp(NewQuantity,0,
+		BaseItemNumericData.bIsStackable? BaseItemNumericData.MaxStackSize:1);
 
+	if (BaseItemQuantity <= 0)
+	{
 		if (OwningInventory)
 		{
-			if (BaseItemQuantity <= 0)
-			{
-				OwningInventory->RemoveSingleItem(this);
-			}
+			OwningInventory->RemoveItemFromList(this);
+		}
+		else
+		{
+			BaseItemQuantity = 1;
 		}
 	}
+	
+}
+
+void UItemBase::Use(AItemC* UsingCharacter)
+{
+	OwningInventory->RemoveAmountOfItem(this,1);
+	UE_LOG(LogTemp,Display,TEXT("Use 실행"))
 }

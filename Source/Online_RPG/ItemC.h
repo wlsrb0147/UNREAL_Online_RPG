@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "ItemC.generated.h"
 
+class UItemBase;
 class UInventoryComponent;
 class IItemInteractionInterface;
 class AInventoryHUD;
@@ -26,7 +27,6 @@ UCLASS()
 class ONLINE_RPG_API AItemC : public ACharacter
 {
 	GENERATED_BODY()
-
 public:
 	// Sets default values for this character's properties
 	AItemC();
@@ -51,6 +51,7 @@ public:
 	void EndInteract();
 	void OpenInventory();
 	void UpdateInteractionWidget() const;
+	void DropItem(UItemBase* ItemToDrop,const int32 QuantityToDrop);
 	
 protected:
 	// Called when the game starts or when spawned
@@ -62,6 +63,6 @@ public:
 	void CheckInteraction();
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 };

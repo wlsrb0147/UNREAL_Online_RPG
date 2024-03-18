@@ -8,28 +8,32 @@
 
 void AInventoryHUD::OpenInventoryWidget()
 {
-	InventoryMainMenuWidget->SetVisibility(ESlateVisibility::Visible);
-	GetOwningPlayerController()->SetShowMouseCursor(true);
 	bIsInventoryOpen = !bIsInventoryOpen;
+	InventoryMainMenuWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void AInventoryHUD::CloseInventoryWidget()
 {
-	InventoryMainMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
-	GetOwningPlayerController()->SetShowMouseCursor(false);
 	bIsInventoryOpen = !bIsInventoryOpen;
+	InventoryMainMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 
 void AInventoryHUD::ToggleInventoryWidget()
 {
-	if (!bIsInventoryOpen)
+	if (bIsInventoryOpen)
 	{
-		OpenInventoryWidget();
+		CloseInventoryWidget();
+		const FInputModeGameOnly InputMode;
+		GetOwningPlayerController()->SetInputMode(InputMode);
+		GetOwningPlayerController()->SetShowMouseCursor(false);
 	}
 	else
 	{
-		CloseInventoryWidget();
+		OpenInventoryWidget();
+		const FInputModeGameAndUI InputMode;
+		GetOwningPlayerController()->SetInputMode(InputMode);
+		GetOwningPlayerController()->SetShowMouseCursor(true);
 	}
 }
 

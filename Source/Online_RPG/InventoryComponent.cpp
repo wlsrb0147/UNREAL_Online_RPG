@@ -16,6 +16,18 @@ UInventoryComponent::UInventoryComponent(): InventorySlotCapacity(0)
 }
 
 
+UItemBase* UInventoryComponent::FindMatchingItem(UItemBase* ItemIn) const
+{
+	if (!ItemIn) return nullptr;
+
+	if (InventoryContents.Contains(ItemIn))
+	{
+		return ItemIn;
+	}
+
+	return nullptr;
+}
+
 // Called when the game starts
 void UInventoryComponent::BeginPlay()
 {
@@ -36,11 +48,44 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 int32 UInventoryComponent::AddStackableItem(UItemBase* InputItem, int32 AddAmount)
 {
-	return 1;
+	if (AddAmount <=0) return 0;
+
+	int32 AmountToDistribute = AddAmount;
+	
+	UItemBase* CurrentStackingItem = FindNextPartial(InputItem);
+
+	
+	while (CurrentStackingItem)
+	{
+		if (AmountToDistribute == 0) break;
+		
+		const int32 AmountToMakeFullStack = CalculateNumberForFullStack(InputItem,AmountToDistribute);
+		
+		CurrentStackingItem->SetQuantity(CurrentStackingItem->BaseItemQuantity + AmountToMakeFullStack);
+		
+		AmountToDistribute -= AmountToMakeFullStack;
+
+		CurrentStackingItem = FindNextPartial(InputItem);
+	}
+	
+	// 슬롯이 남아있고, 남은 양이 0개 초과일 경우
+	while (InventoryContents.Num()+1 <= InventorySlotCapacity )
+	{
+		if (AmountToDistribute == 0) break;
+		
+		const int32 AmountToAdd = FMath::Clamp(AmountToDistribute,0,InputItem->BaseItemNumericData.MaxStackSize);
+		AddNewItem(InputItem->CreateCopy(),AmountToAdd);
+		AmountToDistribute -= AmountToAdd;
+	}
+
+	InputItem->SetQuantity(AddAmount - AmountToDistribute);
+	OnInventoryUpdated.Broadcast();
+	 return AddAmount - AmountToDistribute;
 }
 
 FItemAddResultData UInventoryComponent::AddNonStackableItem(UItemBase* InputItem)
 {
+	UE_LOG(LogTemp,Warning,TEXT("논 스택"))
 	if (InventoryContents.Num() + 1 > InventorySlotCapacity)
 	{
 		return FItemAddResultData::AddNone(FText::FromString("인벤토리가 가득 찼습니다."));
@@ -57,6 +102,8 @@ FItemAddResultData UInventoryComponent::AddNonStackableItem(UItemBase* InputItem
 // AddNewItem, 납득이 잘 안됨
 void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd)
 {
+	if (AmountToAdd == 0) return;
+	
 	UItemBase* NewItem;
 
 	// 각각의 아이템은 각각의 bIsPickUp, bIsCopy를 가짐
@@ -81,54 +128,95 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd)
 
 	InventoryContents.Add(NewItem);
 	OnInventoryUpdated.Broadcast();
-	
 }
 
-void UInventoryComponent::RemoveSingleItem(UItemBase* ItemToRemove)
+void UInventoryComponent::RemoveItemFromList(UItemBase* ItemToRemove)
 {
 	InventoryContents.RemoveSingle(ItemToRemove);
 	OnInventoryUpdated.Broadcast();
 }
 
+int32 UInventoryComponent::RemoveAmountOfItem(UItemBase* RemoveItem, const int32 AmountToRemove) const
+{
+	const int32 ActualAmountToRemove = FMath::Min(AmountToRemove,RemoveItem->BaseItemQuantity);
+	RemoveItem->SetQuantity(RemoveItem->BaseItemQuantity-ActualAmountToRemove);
+
+	OnInventoryUpdated.Broadcast();
+	return ActualAmountToRemove;
+}
+
+UItemBase* UInventoryComponent::FindNextPartial(UItemBase* ItemIn) const
+{
+	const TArray<TObjectPtr<UItemBase>>::ElementType* Result;
+
+	Result = InventoryContents.FindByPredicate
+	([&ItemIn](const UItemBase* InventoryItem){
+	return InventoryItem->BaseItemID == ItemIn->BaseItemID && !InventoryItem->IsFullItemStack();
+});
+	if (Result)
+	{
+		return *Result;
+	}
+
+	return nullptr;
+}
+
+int32 UInventoryComponent::CalculateNumberForFullStack(const UItemBase* StackableItem, const int32 AddAmount)
+{
+	const int32 AddAmountToMakeFullStack = StackableItem->BaseItemNumericData.MaxStackSize - StackableItem->BaseItemQuantity;
+
+	UE_LOG(LogTemp,Warning,TEXT("item: %d, addamount = %d, FullStack = %d" ),StackableItem->BaseItemQuantity,AddAmount,AddAmountToMakeFullStack)
+	
+	return FMath::Min(AddAmount,AddAmountToMakeFullStack);
+}
+
 
 FItemAddResultData UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 {
-	if (GetOwner())
+	if (!GetOwner()) return FItemAddResultData::AddNone(FText::FromString("오류발생"));
+
+	const int32 InitialRequestedAddAmount = InputItem->BaseItemQuantity;
+
+	if (!InputItem->BaseItemNumericData.bIsStackable)
 	{
-		const int32 InitialRequestedAddAmount = InputItem->BaseItemQuantity;
-
-		if (!InputItem->BaseItemNumericData.bIsStackable)
-		{
-			return AddNonStackableItem(InputItem);
-		}
-
-		const int32 StackableAmountAdded = AddStackableItem(InputItem,InitialRequestedAddAmount);
-
-		if (StackableAmountAdded == InitialRequestedAddAmount)
-		{
-			return FItemAddResultData::AddAll
-			(StackableAmountAdded,FText::Format(FText::FromString("{0} {1}개를 획득하였습니다"),
-				InputItem->BaseItemTextData.NameText,
-				StackableAmountAdded));
-		}
-
-		if (StackableAmountAdded < InitialRequestedAddAmount)
-		{
-			return FItemAddResultData::AddPartial
-			(StackableAmountAdded,FText::Format(FText::FromString("{0} {1}/{2}개를 획득하였습니다."),
-				InputItem->BaseItemTextData.NameText,
-				StackableAmountAdded,
-				InitialRequestedAddAmount
-			));
-		}
-
-		if (StackableAmountAdded <= 0)
-		{
-			return FItemAddResultData::AddNone(FText::FromString("인벤토리가 가득 찼습니다"));
-		}
-		
+		return AddNonStackableItem(InputItem);
 	}
-	return FItemAddResultData::AddNone(FText::FromString("오류발생"));
+
+	if (InputItem->BaseItemType == EItemType::Money)
+	{
+		AddMoney(InitialRequestedAddAmount);
+		OnInventoryUpdated.Broadcast();
+		
+		return FItemAddResultData::AddAll(InitialRequestedAddAmount,
+			FText::Format(FText::FromString("{0}원을 획득하였습니다"),InitialRequestedAddAmount));
+	}
+	
+	const int32 StackableAmountAdded = AddStackableItem(InputItem,InitialRequestedAddAmount);
+
+	if (StackableAmountAdded == InitialRequestedAddAmount)
+	{
+		return FItemAddResultData::AddAll
+		(InitialRequestedAddAmount,FText::Format(FText::FromString("{0} {1}개를 획득하였습니다"),
+			InputItem->BaseItemTextData.NameText,
+			StackableAmountAdded));
+	}
+
+	if (StackableAmountAdded < InitialRequestedAddAmount)
+	{
+		return FItemAddResultData::AddPartial
+		(StackableAmountAdded,FText::Format(FText::FromString("{0} {1}/{2}개를 획득하였습니다."),
+			InputItem->BaseItemTextData.NameText,
+			StackableAmountAdded,
+			InitialRequestedAddAmount
+		));
+	}
+
+	if (StackableAmountAdded <= 0)
+	{
+		return FItemAddResultData::AddNone(FText::FromString("인벤토리가 가득 찼습니다"));
+	}
+
+	return FItemAddResultData::AddNone(FText::FromString("에러발생"));
 }
 
 

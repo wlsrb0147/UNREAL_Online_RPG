@@ -12,7 +12,7 @@ enum class EItemType:uint8
 {
 	LeftHand UMETA(DisplayName = "LeftHand" ),
 	RightHand UMETA(DisplayName = "RightHand" ),
-	Clothes UMETA(DisplayName = "RightHand" ),
+	Clothes UMETA(DisplayName = "Clothes" ),
 	Consume UMETA(DisplayName = "Consume" ),
 	Quest UMETA(DisplayName = "Quest" ),
 	Event UMETA(DisplayName = "Event" ),
@@ -46,13 +46,13 @@ struct FItemTextData
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	FText NameText;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	FText ItemTypeText;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	FText DescriptionText;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	FText InteractionText;
 	
 };
@@ -62,10 +62,10 @@ struct FItemNumericData
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	int32 MaxStackSize = 0;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	bool bIsStackable = false;
 	
 };
