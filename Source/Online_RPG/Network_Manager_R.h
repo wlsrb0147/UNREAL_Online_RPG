@@ -139,12 +139,16 @@ public:
 	
 	
 	
-	
+	bool CreateSession(ULocalPlayer* Player, int32 NumPublicConnections, bool bIsLAN);
+	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
+	/*void FindSessions(APlayerController* PlayerController, bool bIsLAN, int32 MaxSearchResults);
+	void OnFindSessionsComplete(bool bWasSuccessful);*/
 	
 	
 private:
 	//FSocket* Socket;
 	// 기타 필요한 변수 및 함수들
+	//TSharedPtr<FOnlineSessionSearch> SessionSearch;
 };
 
 

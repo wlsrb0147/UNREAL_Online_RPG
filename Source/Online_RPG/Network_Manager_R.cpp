@@ -17,6 +17,9 @@
 #include "Engine/StreamableManager.h"
 #include "GameFramework/GameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "OnlineSubsystem.h"
+#include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSessionSettings.h"
 
 
 const char* host = "localhost";
@@ -1104,7 +1107,7 @@ void UNetwork_Manager_R::OnSequenceFinished()
 {
 	UE_LOG(LogTemp, Error, TEXT("시퀀스 콜백"));
 
-	LoadStartAsset();
+	//LoadStartAsset();
 
 	// if(GetWorld()->GetFirstPlayerController())
 	// {
@@ -1128,9 +1131,117 @@ void UNetwork_Manager_R::OnSequenceFinished()
 		//Ingame BGM ON
 		Sound_Play(SOUND_TYPE::BGM_Ingame, 1, FVector(0, 0, 0), FRotator(0, 0, 0));
 
+		
+		////서버 전용 함수 기능
+		//if (MyController->GetPawn()->GetLocalRole() == ROLE_Authority)
+		//{
+		//	CreateSession(MyController->GetLocalPlayer(), 100, false);
+		//}
+		////클라이언트 전용 함수 기능
+		//if (MyController->GetPawn()->IsLocallyControlled())
+		//{
+		//	UE_LOG(LogTemp, Display, TEXT("아직이야"));
+		//}
+		
+
 	}
 
 }
+
+bool UNetwork_Manager_R::CreateSession(ULocalPlayer* Player, int32 NumPublicConnections, bool bIsLAN)
+{
+	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
+	if (OnlineSubsystem)
+	{
+		IOnlineSessionPtr Sessions = OnlineSubsystem->GetSessionInterface();
+		if (Sessions.IsValid() && Player)
+		{
+			FOnlineSessionSettings SessionSettings;
+			SessionSettings.bIsLANMatch = bIsLAN;
+			SessionSettings.NumPublicConnections = NumPublicConnections;
+			SessionSettings.bShouldAdvertise = true;
+			SessionSettings.bAllowJoinInProgress = true;
+			SessionSettings.bUsesPresence = true;
+			SessionSettings.bUseLobbiesIfAvailable = true;
+
+			SessionSettings.Set(TEXT("MapName"), FString("L_greek_island"), EOnlineDataAdvertisementType::ViaOnlineService);
+
+			FOnCreateSessionCompleteDelegate SessionCompleteDelegate = FOnCreateSessionCompleteDelegate::CreateUObject(this, &UNetwork_Manager_R::OnCreateSessionComplete);
+			Sessions->AddOnCreateSessionCompleteDelegate_Handle(SessionCompleteDelegate);
+
+			return Sessions->CreateSession(*Player->GetPreferredUniqueNetId(), NAME_GameSession, SessionSettings);
+		}
+	}
+	return false;
+}
+
+void UNetwork_Manager_R::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
+{
+	// 여기에서 세션 생성 완료 후 처리할 로직을 구현합니다.
+	if (bWasSuccessful)
+	{
+		// 세션 생성 성공 처리
+		UE_LOG(LogTemp, Log, TEXT("Create Success!!"));
+	}
+	else
+	{
+		// 세션 생성 실패 처리
+		UE_LOG(LogTemp, Log, TEXT("Create Fail"));
+	}
+}
+
+//void UNetwork_Manager_R::FindSessions(APlayerController* PlayerController, bool bIsLAN, int32 MaxSearchResults)
+//{
+//	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
+//
+//	if (OnlineSubsystem)
+//	{
+//		IOnlineSessionPtr Sessions = OnlineSubsystem->GetSessionInterface();
+//		if (Sessions.IsValid() && PlayerController)
+//		{
+//			SessionSearch = MakeShareable(new FOnlineSessionSearch());
+//			SessionSearch->bIsLanQuery = bIsLAN;
+//			SessionSearch->MaxSearchResults = MaxSearchResults;
+//			SessionSearch->PingBucketSize = 50;
+//			SessionSearch->QuerySettings.Set(TEXT("MapName"), true, EOnlineComparisonOp::Equals);
+//
+//			Sessions->AddOnFindSessionsCompleteDelegate_Handle(FOnFindSessionsCompleteDelegate::CreateUObject(this, &UNetwork_Manager_R::OnFindSessionsComplete));
+//			Sessions->FindSessions(*PlayerController->GetPlayerState()->GetUniqueId(), SessionSearch.ToSharedRef());
+//		}
+//	}
+//}
+//
+//void UNetwork_Manager_R::OnFindSessionsComplete(bool bWasSuccessful)
+//{
+//	if (bWasSuccessful && SessionSearch.IsValid())
+//	{
+//		for (const FOnlineSessionSearchResult& SearchResult : SessionSearch->SearchResults)
+//		{
+//			// 여기에서 각 세션 결과를 처리합니다. 예를 들면, 결과를 UI에 표시할 수 있습니다.
+//		}
+//	}
+//
+//	// 세션 검색이 완료된 후 필요한 정리 작업을 수행합니다.
+//}
+
+//void JoinSession(APlayerController* PlayerController, const FOnlineSessionSearchResult& SearchResult)
+//{
+//	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+//	if (OnlineSub)
+//	{
+//		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
+//		if (Sessions.IsValid() && PlayerController)
+//		{
+//			Sessions->AddOnJoinSessionCompleteDelegate_Handle(FOnJoinSessionCompleteDelegate::CreateUObject(this, &UMyGameSession::OnJoinSessionComplete));
+//			Sessions->JoinSession(*PlayerController->GetPlayerId(), NAME_GameSession, SearchResult);
+//		}
+//	}
+//}
+//
+//void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+//{
+//	// Handle session join result
+//}
 
 void UNetwork_Manager_R::CallSpawn_Implementation(int Player_Idx)
 {
