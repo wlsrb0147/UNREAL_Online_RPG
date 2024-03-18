@@ -50,6 +50,13 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 
 void UItemBase::Use(APlayerCharacter* UsingCharacter)
 {
-	OwningInventory->RemoveAmountOfItem(this,1);
-	UE_LOG(LogTemp,Display,TEXT("Use 실행"))
+	if (this->BaseItemType == EItemType::Consume)
+	{
+		UsingCharacter->SetCurrentHealth(UsingCharacter->GetCurrentHealth()+this->BaseItemStatistics.HealAmount); 
+		OwningInventory->RemoveAmountOfItem(this,1);
+	}
+	else
+	{
+		UE_LOG(LogTemp,Display,TEXT("Use 실행"))
+	}
 }
