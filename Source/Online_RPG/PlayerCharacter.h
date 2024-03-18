@@ -229,7 +229,7 @@ protected:
 	void StopUpperSlash();
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool GetIsUpperSlash() const;
+	FORCEINLINE bool GetIsUpperSlash() const { return bIsUpperSlash; }
 
 	UFUNCTION()
 	void OnRep_IsUpperSlash();

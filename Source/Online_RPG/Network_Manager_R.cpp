@@ -236,7 +236,7 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 	///////////////////////////////////////////////////////////////////////
 	///
 	
-	UAssetManager::Get().ReinitializeFromConfig();
+	//UAssetManager::Get().ReinitializeFromConfig();
 	FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
 	
 	// 비동기 로드 콜백
@@ -1142,6 +1142,9 @@ void UNetwork_Manager_R::OnSequenceFinished()
 		//Ingame BGM ON
 		Sound_Play(SOUND_TYPE::BGM_Ingame, 1, FVector(0, 0, 0), FRotator(0, 0, 0));
 
+		//플레이어 위젯 생성
+		CreateWidget(this, Player_Widget)->AddToViewport();
+		
 		
 		////서버 전용 함수 기능
 		//if (MyController->GetPawn()->GetLocalRole() == ROLE_Authority)

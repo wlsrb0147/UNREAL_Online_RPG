@@ -57,7 +57,7 @@ protected:
 	virtual void Interact(AItemC* PlayerCharacter) override;
 
 
-#if WITH_EDITOR
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-#endif
+//#if WITH_EDITOR
+	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+//#endif
 };
