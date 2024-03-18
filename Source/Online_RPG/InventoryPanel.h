@@ -8,8 +8,9 @@
 #include "InventoryPanel.generated.h"
 
 
+class AInventoryHUD;
 class UInventoryComponent;
-class AItemC;
+class APlayerCharacter;
 class UTextBlock;
 class UWrapBox;
 class UItemSlot;
@@ -30,18 +31,18 @@ public:
 	UTextBlock* MoneyText;
 
 	UPROPERTY()
-	AItemC* PlayerCharacter;
+	APlayerCharacter* PlayerCharacter;
 	UPROPERTY()
 	UInventoryComponent* Inventory;
 	UPROPERTY(EditDefaultsOnly, Category = "InventorySlot")
 	TSubclassOf<UItemSlot> InventorySlotClass;
 
-
+	bool ActiveInitialize = false;
+	void InitializePanel(APlayerCharacter* Player);
 	
 	void RefreshInventory();
 protected:
 	void WriteInfoText() const;
-	virtual void NativeOnInitialized() override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 		UDragDropOperation* InOperation) override;
 };

@@ -6,7 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "InventoryMainMenu.generated.h"
 
-class AItemC;
+class UInventoryPanel;
+class APlayerCharacter;
 /**
  * 
  */
@@ -22,8 +23,13 @@ protected:
 		UDragDropOperation* InOperation) override;
 
 public:
+	UInventoryPanel* GetInventoryPanel() const {return InventoryPanel;}
+	
 	UPROPERTY()
-	AItemC* PlayerCharacter;
+	APlayerCharacter* PlayerCharacter;
+
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	UInventoryPanel* InventoryPanel;
 
 protected:
 	

@@ -7,7 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "PickUpItem.generated.h"
 
-class AItemC;
+class APlayerCharacter;
 class UItemBase;
 
 UCLASS()
@@ -21,7 +21,7 @@ public:
 	APickUpItem();
 
 	void InitializeItem(const TSubclassOf<UItemBase> BaseClass,const int32 InQuantity);
-	void PickUpItem(const AItemC* Taker);
+	void PickUpItem(const APlayerCharacter* Taker);
 	void InitializeDropItem(UItemBase* ItemToDrop,const int32 Quantity);
 protected:
 	// Called when the game starts or when spawned
@@ -54,7 +54,7 @@ protected:
 	virtual void BeginFocus() override;
 	virtual void EndFocus() override;
 	
-	virtual void Interact(AItemC* PlayerCharacter) override;
+	virtual void Interact(APlayerCharacter* PlayerCharacter) override;
 
 
 #if WITH_EDITOR

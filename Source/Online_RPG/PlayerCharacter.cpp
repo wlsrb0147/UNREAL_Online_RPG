@@ -17,13 +17,165 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "CollisionShape.h"
+#include "InventoryComponent.h"
+#include "InventoryHUD.h"
+#include "InventoryPanel.h"
+#include "ItemInteractionInterface.h"
 #include "LoginController.h"
+#include "PickUpItem.h"
 #include "Particles/ParticleSystemComponent.h"
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void APlayerCharacter::CheckInteraction()
+{
+	FVector TraceStart{GetPawnViewLocation()};
+	FVector TraceEnd{TraceStart + GetViewRotation().Vector() * InteractionDistance};
+	
+	DrawDebugLine(GetWorld(),TraceStart,TraceEnd,FColor::Red,false,-1,0,2);
+
+	//FCollisionQueryParams
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	
+	if (!GetWorld()->LineTraceSingleByChannel(HitResult,TraceStart,TraceEnd,
+		ECC_Visibility,
+		QueryParams)
+		)
+	{
+		FoundNoInteract();
+		return;
+	}
+
+	if (!HitResult.GetActor()->GetClass()->ImplementsInterface(UItemInteractionInterface::StaticClass())) return;
+
+	if (HitResult.GetActor() != InteractionData.CurrentInteracting)
+	{
+		FoundInteract(HitResult.GetActor());
+		return;
+	}
+
+	if (HitResult.GetActor() == InteractionData.CurrentInteracting)
+	{
+		return;
+	}
+}
+
+void APlayerCharacter::FoundNoInteract()
+{
+	if (InteractionData.CurrentInteracting)
+	{
+		if (IsValid(InteractionTarget.GetObject()))
+		{
+			InteractionTarget->EndFocus();
+		}
+
+		HUD->CloseInteractionWidget();
+
+		InteractionData.CurrentInteracting = nullptr;
+		InteractionTarget = nullptr;
+	}
+}
+
+void APlayerCharacter::FoundInteract(AActor* NewInteract)
+{
+	
+	if (InteractionData.CurrentInteracting)
+	{
+		InteractionTarget = InteractionData.CurrentInteracting;
+		InteractionTarget->EndFocus();
+	}
+	
+	InteractionData.CurrentInteracting = NewInteract;
+	InteractionTarget = NewInteract;
+	
+	HUD->UpdateInteractionWidget(&InteractionTarget->InteractionData);
+	InteractionTarget->BeginFocus();
+}
+
+void APlayerCharacter::BeginInteract()
+{
+	UE_LOG(LogTemp,Display,TEXT("%d"),PlayerInventory->GetInventoryCapacity())
+	CheckInteraction();
+
+	if (!InteractionData.CurrentInteracting) return;
+
+	if (!IsValid(InteractionTarget.GetObject())) return;
+
+	InteractionTarget->BeginInteract();
+	Interact();
+}
+
+void APlayerCharacter::Interact()
+{
+	if (!IsValid(InteractionTarget.GetObject())) return;
+
+	InteractionTarget->Interact(this);
+	FoundNoInteract();
+}
+
+void APlayerCharacter::EndInteract()
+{
+	if (!IsValid(InteractionTarget.GetObject())) return;
+
+	InteractionTarget->EndInteract();
+}
+
+void APlayerCharacter::OpenInventory()
+{
+	HUD->ToggleInventoryWidget();
+}
+
+void APlayerCharacter::UpdateInteractionWidget() const
+{
+	if (IsValid(InteractionTarget.GetObject()))
+	{
+		HUD->UpdateInteractionWidget(&InteractionTarget->InteractionData);
+	}
+}
+
+void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop)
+{
+	UE_LOG(LogTemp,Warning,TEXT("드롭1"))
+	if (!PlayerInventory->FindMatchingItem(ItemToDrop))
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp,Warning,TEXT("아이템 찾음"))
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Owner = this;
+	SpawnParameters.bNoFail = true;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	const FVector SpawnLocation{GetActorLocation() + GetActorForwardVector()*50.0f};
+	const FTransform SpawnTransform(GetActorRotation(),SpawnLocation);
+	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop,QuantityToDrop);
+
+	APickUpItem* Item = GetWorld()->SpawnActor<APickUpItem>(APickUpItem::StaticClass(),SpawnTransform,SpawnParameters);
+
+	Item->InitializeDropItem(ItemToDrop,RemovedQuantity);
+
+	UE_LOG(LogTemp,Warning,TEXT("끝"))
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 // Sets default values
-APlayerCharacter::APlayerCharacter()
+APlayerCharacter::APlayerCharacter(): HUD(nullptr)
 {
+	
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -54,6 +206,17 @@ APlayerCharacter::APlayerCharacter()
 	bIsUpperSlash = false;
 
 	//bReplicates = true;
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	PlayerInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("인벤토리"));
+	PlayerInventory->SetInventoryCapacity(24);
+
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 void APlayerCharacter::PossessedBy(AController* NewController)
@@ -115,6 +278,9 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	HUD = Cast<AInventoryHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	HUD->InventoryPanel->InitializePanel(this);
+	
 	// 현재 실행 환경이 서버인지 클라이언트인지 확인
 	// FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
 	// //UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
@@ -192,7 +358,23 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+	CheckInteraction();
 	
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 	
 	/*if (GetMovementComponent()->IsFalling()) {
 		//UE_LOG(LogTemp, Warning, TEXT("IsFalling : True"));
@@ -272,6 +454,19 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	//Input->BindAction(FireUpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StopFire);
 
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	PlayerInputComponent->BindAction("Interact",IE_Pressed,this,&APlayerCharacter::BeginInteract);
+	PlayerInputComponent->BindAction("Interact",IE_Released,this,&APlayerCharacter::EndInteract);
+
+	PlayerInputComponent->BindAction("OpenInventory",IE_Pressed,this,&APlayerCharacter::OpenInventory);
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 void APlayerCharacter::Move(const FInputActionInstance& Instance)
