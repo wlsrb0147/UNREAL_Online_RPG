@@ -1102,29 +1102,29 @@ void UNetwork_Manager_R::Callback_ForceExit(FHttpRequestPtr Request, FHttpRespon
 
 void UNetwork_Manager_R::OnSequenceFinished()
 {
-	//UE_LOG(LogTemp, Error, TEXT("시퀀스 콜백"));
+	UE_LOG(LogTemp, Error, TEXT("시퀀스 콜백"));
 
 	LoadStartAsset();
 
 	// if(GetWorld()->GetFirstPlayerController())
 	// {
-	// 	ALoginController* MyController = Cast<ALoginController>(GetWorld()->GetFirstPlayerController());
-	// 	UE_LOG(LogTemp, Error, TEXT("얘 컨트롤러꺼를 바꿔야되는게 맞아 : %s" ), *GetWorld()->GetFirstPlayerController()->GetName());
-	// 	MyController->ChangePawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
-	// 	//CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
+	//     ALoginController* MyController = Cast<ALoginController>(GetWorld()->GetFirstPlayerController());
+	//     UE_LOG(LogTemp, Error, TEXT("얘 컨트롤러꺼를 바꿔야되는게 맞아 : %s" ), GetWorld()->GetFirstPlayerController()->GetName());
+	//     MyController->ChangePawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
+	//     //CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 	// }
 
 	if (GetFirstLocalPlayerController())
 	{
 		ALoginController* MyController = Cast<ALoginController>(GetFirstLocalPlayerController());
 		UE_LOG(LogTemp, Error, TEXT("얘 컨트롤러꺼를 바꿔야되는게 맞아 : %s"), *GetFirstLocalPlayerController()->GetName());
-		MyController->ChangePawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
+		UE_LOG(LogTemp, Error, TEXT("ITS OLDB %s %s %s %s %s"), *SpawnLocation.ToCompactString(), *SpawnRotator.ToCompactString(), *GunName, *Login_ID, *SwordName);
+		MyController->ChangePawn(MyController->INDEX_OF_PLAYER_CONTROLLER, SpawnLocation, SpawnRotator);
+		//MyController->Login_ID = Login_ID;
+		MyController->SetLoginID(Login_ID);
 		//CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 
 		//TODO : 색깔이 번쩍번쩍 하게 변합니다. 찾아보면 알림도 있음
-		//Ingame BGM ON
-		Sound_Play(SOUND_TYPE::BGM_Ingame, 1, FVector(0, 0, 0), FRotator(0, 0, 0));
-
 		//Ingame BGM ON
 		Sound_Play(SOUND_TYPE::BGM_Ingame, 1, FVector(0, 0, 0), FRotator(0, 0, 0));
 
