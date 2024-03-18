@@ -50,5 +50,5 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 void UItemBase::Use(AItemC* UsingCharacter)
 {
 	OwningInventory->RemoveAmountOfItem(this,1);
-	UE_LOG(LogTemp,Display,TEXT("Use 실행"))
+	//UE_LOG(LogTemp,Display,TEXT("Use 실행"))
 }

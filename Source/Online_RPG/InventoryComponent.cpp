@@ -85,7 +85,7 @@ int32 UInventoryComponent::AddStackableItem(UItemBase* InputItem, int32 AddAmoun
 
 FItemAddResultData UInventoryComponent::AddNonStackableItem(UItemBase* InputItem)
 {
-	UE_LOG(LogTemp,Warning,TEXT("논 스택"))
+	//UE_LOG(LogTemp,Warning,TEXT("논 스택"))
 	if (InventoryContents.Num() + 1 > InventorySlotCapacity)
 	{
 		return FItemAddResultData::AddNone(FText::FromString("인벤토리가 가득 찼습니다."));
@@ -165,7 +165,7 @@ int32 UInventoryComponent::CalculateNumberForFullStack(const UItemBase* Stackabl
 {
 	const int32 AddAmountToMakeFullStack = StackableItem->BaseItemNumericData.MaxStackSize - StackableItem->BaseItemQuantity;
 
-	UE_LOG(LogTemp,Warning,TEXT("item: %d, addamount = %d, FullStack = %d" ),StackableItem->BaseItemQuantity,AddAmount,AddAmountToMakeFullStack)
+	//UE_LOG(LogTemp,Warning,TEXT("item: %d, addamount = %d, FullStack = %d" ),StackableItem->BaseItemQuantity,AddAmount,AddAmountToMakeFullStack)
 	
 	return FMath::Min(AddAmount,AddAmountToMakeFullStack);
 }

@@ -121,7 +121,7 @@ void APickUpItem::PickUpItem(const AItemC* Taker)
 			Destroy();
 			break;
 		default:
-			UE_LOG(LogTemp,Error,TEXT("디폴트 실행"))
+			//UE_LOG(LogTemp,Error,TEXT("디폴트 실행"))
 			;
 		}
 	}

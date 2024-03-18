@@ -34,17 +34,17 @@ void ASound_Manager_R::PostInitializeComponents()
 
 int32 ASound_Manager_R::Ground_Check(APawn* MyPawn)
 {
-		UE_LOG(LogTemp, Log, TEXT("ground checck... %s"), *MyPawn->GetName());
+		//UE_LOG(LogTemp, Log, TEXT("ground checck... %s"), *MyPawn->GetName());
 	TArray<AActor*> Overrapping_Actors;
 	MyPawn->GetOverlappingActors(Overrapping_Actors);
 
-		UE_LOG(LogTemp, Log, TEXT("check... %s"), *MyPawn->GetName());
+		//UE_LOG(LogTemp, Log, TEXT("check... %s"), *MyPawn->GetName());
 	//겹치는 Actor가 없을 경우
 	if (Overrapping_Actors.Num() != 0)
 	{
 		for(auto AC : Overrapping_Actors)
 		{
-			UE_LOG(LogTemp, Log, TEXT("actor : %s"), *AC->GetName());
+			//UE_LOG(LogTemp, Log, TEXT("actor : %s"), *AC->GetName());
 			if(AC->ActorHasTag("Water")) return 1;
 			else if(AC->ActorHasTag("Grass")) return 2;
 			else return 0;
@@ -55,24 +55,24 @@ int32 ASound_Manager_R::Ground_Check(APawn* MyPawn)
 	float Radius = 200.0f;  // 예: 반경 500 유닛
 	int32 Count = UGameplayStatics::GrassOverlappingSphereCount(this, Grass_Flower, CenterPosition, Radius);
 	if(Count > 0){
-		UE_LOG(LogTemp, Log, TEXT("꽃잔디 찾았다!!!"));
+		//UE_LOG(LogTemp, Log, TEXT("꽃잔디 찾았다!!!"));
 		return 2;
 	}
 
 	Count = UGameplayStatics::GrassOverlappingSphereCount(this, Grass_1, CenterPosition, Radius);
 	if(Count > 0){
-		UE_LOG(LogTemp, Log, TEXT("잔디1 찾았다!!!"));
+		//UE_LOG(LogTemp, Log, TEXT("잔디1 찾았다!!!"));
 		return 2;
 	}
 
 	Count = UGameplayStatics::GrassOverlappingSphereCount(this, Grass_2, CenterPosition, Radius);
 	if(Count > 0){
-		UE_LOG(LogTemp, Log, TEXT("잔디2 찾았다!!!"));
+		//UE_LOG(LogTemp, Log, TEXT("잔디2 찾았다!!!"));
 		return 2;
 	}
 	
 	
-	UE_LOG(LogTemp, Log, TEXT("check...777"));
+	//UE_LOG(LogTemp, Log, TEXT("check...777"));
 	return 0;
 }
 
@@ -107,22 +107,22 @@ void ASound_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVecto
 	if(Sound_Type == SOUND_TYPE::Walk)
 	{
 		int GroundType = Ground_Check(MyPawn);
-		UE_LOG(LogTemp, Log, TEXT("Walk 긴해     %d  "), GroundType);
+		//UE_LOG(LogTemp, Log, TEXT("Walk 긴해     %d  "), GroundType);
 		if(GroundType == 1) Sound_Type = SOUND_TYPE::Walk_Water;
 		else if(GroundType == 2) Sound_Type = SOUND_TYPE::Walk_Grass;
 	}
 	
 	USoundBase* NeedSound = Sound_Map.FindRef(Sound_Type);
-	UE_LOG(LogTemp, Log, TEXT("flag0"));
+	//UE_LOG(LogTemp, Log, TEXT("flag0"));
 	if (NeedSound == nullptr)  return;
 	//USoundBase* NeedSound = *Sound_Map.Find(Sound_Type);
 	//if(!NeedSound) return;
-	UE_LOG(LogTemp, Log, TEXT("flag1"));
+	//UE_LOG(LogTemp, Log, TEXT("flag1"));
 	UAudioComponent* Sound_For_Audio = nullptr;
 	if(Audio_idx==1) Sound_For_Audio = BackgroundMusicComponent;
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("flag2"));
+		//UE_LOG(LogTemp, Log, TEXT("flag2"));
 		for(auto AudioCompo : SoundEffectComponents)
 		{
 			if(!AudioCompo->IsPlaying())
@@ -135,7 +135,7 @@ void ASound_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVecto
 		if(!Sound_For_Audio) Sound_For_Audio = SoundEffectComponents[0];
 	}
 	//Sound_For_Audio->SetPaused(true);
-	UE_LOG(LogTemp, Log, TEXT("flag3"));
+	//UE_LOG(LogTemp, Log, TEXT("flag3"));
 	Sound_For_Audio->SetSound(NeedSound);
 	Sound_For_Audio->SetWorldLocation(Location);
 	Sound_For_Audio->Play();

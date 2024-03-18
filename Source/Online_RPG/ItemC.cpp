@@ -53,7 +53,7 @@ void AItemC::FoundInteract(AActor* NewInteract)
 
 void AItemC::BeginInteract()
 {
-	UE_LOG(LogTemp,Display,TEXT("%d"),PlayerInventory->GetInventoryCapacity())
+	//UE_LOG(LogTemp,Display,TEXT("%d"),PlayerInventory->GetInventoryCapacity())
 	CheckInteraction();
 
 	if (!InteractionData.CurrentInteracting) return;
