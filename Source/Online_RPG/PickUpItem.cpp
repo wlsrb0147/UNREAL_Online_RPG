@@ -95,12 +95,12 @@ void APickUpItem::EndFocus()
 	IItemInteractionInterface::EndFocus();
 }
 
-void APickUpItem::Interact(AItemC* PlayerCharacter)
+void APickUpItem::Interact(APlayerCharacter* PlayerCharacter)
 {
 	if (PlayerCharacter) PickUpItem(PlayerCharacter);
 }
 
-void APickUpItem::PickUpItem(const AItemC* Taker)
+void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 {
 	if (IsPendingKillPending()) return;
 

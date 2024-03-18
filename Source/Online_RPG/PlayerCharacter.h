@@ -3,18 +3,93 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameDelegates.h"
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
+
+
+class UItemBase;
+class IItemInteractionInterface;
+class AInventoryHUD;
+class UInventoryComponent;
+
+USTRUCT()
+struct FInteractingData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	AActor* CurrentInteracting;
+
+	FInteractingData():CurrentInteracting(nullptr){}
+	
+};
+
+
+
 
 UCLASS()
 class ONLINE_RPG_API APlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
-public:
+public: // 디폴트
 	// Sets default values for this character's properties
 	APlayerCharacter();
+	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+protected: // 디폴트
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+public:
+
+	FORCEINLINE UInventoryComponent* GetInventory() const { return PlayerInventory;}
+	
+	UPROPERTY()
+	AInventoryHUD* HUD;
+
+	UPROPERTY(VisibleAnywhere,Category = "Character | Interaction")
+	TScriptInterface<IItemInteractionInterface> InteractionTarget;
+	
+	float InteractionDistance = 300.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Character | Inventory")
+	UInventoryComponent* PlayerInventory;
+	
+	FInteractingData InteractionData;
+	void FoundNoInteract();
+	void FoundInteract(AActor* NewInteract);
+	void BeginInteract();
+	void Interact();
+	void EndInteract();
+	void OpenInventory();
+	void UpdateInteractionWidget() const;
+	void DropItem(UItemBase* ItemToDrop,const int32 QuantityToDrop);
+	void CheckInteraction();
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+	
+public:
+	
+	
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_Owner() override;
 
@@ -91,8 +166,7 @@ public:
 
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+
 
 	/** ?÷?????? ??? ???. ????? ???????. ?? ???? ???? ?? ?????? ĳ?????? ??? ??????.*/
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
@@ -233,15 +307,6 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void HandleUpperSlash();
 
-
-
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
 
