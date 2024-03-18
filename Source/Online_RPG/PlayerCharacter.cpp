@@ -182,6 +182,8 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	
 	/*if (GetMovementComponent()->IsFalling()) {
 		UE_LOG(LogTemp, Warning, TEXT("IsFalling : True"));
 	}
@@ -193,6 +195,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 	FVector Location = GetActorLocation();
 	FRotator Rotation = GetActorRotation();
 	FVector End = Location + Rotation.Vector() * ShootAttackRange;
+
+	if(GetController())
+	{
+		Cast<ALoginController>(GetController())->Current_Location = Location;
+		Cast<ALoginController>(GetController())->Current_Rotatation = Rotation;
+	}
 
 	DrawDebugLine(GetWorld(), Location, End, FColor::Cyan, false);
 	DrawDebugBox(GetWorld(), End, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Cyan, false);
