@@ -18,7 +18,7 @@ void UItemInteractWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	ItemBut->SetText(FText::FromString(TEXT("버튼을")));
-	
+
 }
 
 void UItemInteractWidget::UpdateWidget(const FInteractionData* InteractionData) const
@@ -33,14 +33,14 @@ void UItemInteractWidget::UpdateWidget(const FInteractionData* InteractionData) 
 		ItemNum->SetVisibility(ESlateVisibility::Visible);
 
 		break;
-		
+
 	case EInteractionType::NPC:
 		ItemX->SetVisibility(ESlateVisibility::Collapsed);
 		ItemNum->SetVisibility(ESlateVisibility::Collapsed);
 		ItemInteractionMethod->SetText(FText::FromString(TEXT("대화하기")));
 
 		break;
-		
+
 	case EInteractionType::Button:
 		ItemX->SetText(FText::FromString(TEXT("버튼")));
 		ItemNum->SetVisibility(ESlateVisibility::Collapsed);
@@ -49,8 +49,8 @@ void UItemInteractWidget::UpdateWidget(const FInteractionData* InteractionData) 
 		ItemX->SetVisibility(ESlateVisibility::Visible);
 
 		break;
-	default:
-		UE_LOG(LogTemp,Error,TEXT("default"));
+	default:;
+		//UE_LOG(LogTemp,Error,TEXT("default"));
 	}
 	ItemName->SetText(InteractionData->Name);
 	ItemButton->SetText(FText::FromString("F"));

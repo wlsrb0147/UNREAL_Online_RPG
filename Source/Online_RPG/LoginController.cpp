@@ -90,7 +90,7 @@ void ALoginController::ChangePawn_Implementation(int PlayerIdx, FVector _SpawnLo
 			
 			if (PlayerController != nullptr && PlayerController->INDEX_OF_PLAYER_CONTROLLER == PlayerIdx)
 			{
-				UE_LOG(LogTemp, Error, TEXT("CallSpawn init %s "),*PC->GetName());
+				//UE_LOG(LogTemp, Error, TEXT("CallSpawn init %s "),*PC->GetName());
 				// 새 Pawn 클래스의 인스턴스를 생성합니다.
 				if(_SpawnLocation.IsNearlyZero()) _SpawnLocation = FVector(-2712.000000,-1030.000000,1187.000000);
 				//SpawnLocation = FVector(-2712.000000,-1030.000000,1187.000000);
