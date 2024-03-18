@@ -290,7 +290,7 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 	//Streamable.RequestAsyncLoad(AssetPath, FStreamableDelegate::CreateLambda(OnLoadComplete));
 	//Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadComplete));
 	TArray<FName> LoadBundles;
-	Manager.LoadPrimaryAssets(OutAssets, LoadBundles, FStreamableDelegate::CreateLambda(OnLoadComplete));
+	//Manager.LoadPrimaryAssets(OutAssets, LoadBundles, FStreamableDelegate::CreateLambda(OnLoadComplete));
 	//Streamable.RequestAsyncLoad(SoundAssetId, FStreamableDelegate::CreateLambda(OnLoadComplete));
 
 
