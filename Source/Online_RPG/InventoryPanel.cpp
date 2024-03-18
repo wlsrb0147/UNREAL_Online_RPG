@@ -5,6 +5,7 @@
 #include "ItemSlot.h"
 #include "InventoryComponent.h"
 #include "ItemC.h"
+#include "Components/TextBlock.h"
 #include "Components/WrapBox.h"
 
 void UInventoryPanel::NativeOnInitialized()
@@ -33,8 +34,6 @@ void UInventoryPanel::RefreshInventory()
 		ItemSlot->SetItem(InventoryItem);
 		ItemSlot->SetPlayer(PlayerCharacter);
 		InventoryContents->AddChildToWrapBox(ItemSlot);
-
-		
 	}
 
 	WriteInfoText();
@@ -42,7 +41,7 @@ void UInventoryPanel::RefreshInventory()
 
 void UInventoryPanel::WriteInfoText() const
 {
-	// 돈 갱신
+	MoneyText->SetText(FText::AsNumber(Inventory->GetMoney()));
 }
 
 bool UInventoryPanel::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,

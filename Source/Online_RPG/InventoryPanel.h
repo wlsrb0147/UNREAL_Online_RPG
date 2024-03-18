@@ -36,6 +36,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "InventorySlot")
 	TSubclassOf<UItemSlot> InventorySlotClass;
 
+
+	
 	void RefreshInventory();
 protected:
 	void WriteInfoText() const;

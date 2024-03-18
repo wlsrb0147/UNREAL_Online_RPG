@@ -13,21 +13,45 @@ void UItemTooltip::NativeConstruct()
 
 	const UItemBase* HoveredItem = HoveredInventorySlot->GetItem();
 
+	FText AtkText;
+	FText DefText;
+	
+	TooltipAtk->SetVisibility(ESlateVisibility::Collapsed);
+	TooltipDef->SetVisibility(ESlateVisibility::Collapsed);
+	
 	switch (HoveredItem->BaseItemType) {
 	case EItemType::LeftHand:
 		TooltipUsage->SetText(FText::FromString(TEXT("왼손 장비")));
-		TooltipAtk->SetText( FText::AsNumber(HoveredItem->BaseItemStatistics.AttackPoint));
-		TooltipDef->SetText( FText::AsNumber(HoveredItem->BaseItemStatistics.ArmorPoint));
+		AtkText = FText::Format(NSLOCTEXT("ItemTooltip","AtkText","공격력 : {0}"),
+												 FText::AsNumber(HoveredItem->BaseItemStatistics.AttackPoint));
+		DefText = FText::Format(NSLOCTEXT("ItemTooltip","AtkText","방어력 : {0}"),
+												 FText::AsNumber(HoveredItem->BaseItemStatistics.ArmorPoint));
+		TooltipAtk->SetText(AtkText);
+		TooltipDef->SetText(DefText);
+		TooltipAtk->SetVisibility(ESlateVisibility::Visible);
+		TooltipDef->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EItemType::RightHand:
 		TooltipUsage->SetText(FText::FromString(TEXT("오른손 장비")));
-		TooltipAtk->SetText( FText::AsNumber(HoveredItem->BaseItemStatistics.AttackPoint));
-		TooltipDef->SetText( FText::AsNumber(HoveredItem->BaseItemStatistics.ArmorPoint));
+		AtkText = FText::Format(NSLOCTEXT("ItemTooltip","AtkText","공격력 : {0}"),
+												 FText::AsNumber(HoveredItem->BaseItemStatistics.AttackPoint));
+		DefText = FText::Format(NSLOCTEXT("ItemTooltip","AtkText","방어력 : {0}"),
+												 FText::AsNumber(HoveredItem->BaseItemStatistics.ArmorPoint));
+		TooltipAtk->SetText(AtkText);
+		TooltipDef->SetText(DefText);
+		TooltipAtk->SetVisibility(ESlateVisibility::Visible);
+		TooltipDef->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EItemType::Clothes:
 		TooltipUsage->SetText(FText::FromString(TEXT("옷")));
-		TooltipAtk->SetText( FText::AsNumber(HoveredItem->BaseItemStatistics.AttackPoint));
-		TooltipDef->SetText( FText::AsNumber(HoveredItem->BaseItemStatistics.ArmorPoint));
+		AtkText = FText::Format(NSLOCTEXT("ItemTooltip","AtkText","공격력 : {0}"),
+												 FText::AsNumber(HoveredItem->BaseItemStatistics.AttackPoint));
+		DefText = FText::Format(NSLOCTEXT("ItemTooltip","AtkText","방어력 : {0}"),
+												 FText::AsNumber(HoveredItem->BaseItemStatistics.ArmorPoint));
+		TooltipAtk->SetText(AtkText);
+		TooltipDef->SetText(DefText);
+		TooltipAtk->SetVisibility(ESlateVisibility::Visible);
+		TooltipDef->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EItemType::Consume:
 		TooltipUsage->SetText(FText::FromString(TEXT("소비")));
@@ -58,12 +82,13 @@ void UItemTooltip::NativeConstruct()
 	const FText SellText = FText::Format(NSLOCTEXT("ItemTooltip","SellPrice","판매 가격 : {0}원"),
 											 FText::AsNumber(HoveredItem->BaseItemStatistics.SellValue));
 	TooltipSell->SetText(SellText);
-	
-	if (HoveredItem->BaseItemStatistics.AttackPoint == 0)
+
+	UE_LOG(LogTemp,Display,TEXT("%f"),HoveredItem->BaseItemStatistics.AttackPoint)
+	if ( FMath::IsNearlyZero(HoveredItem->BaseItemStatistics.AttackPoint))
 	{
 		TooltipAtk->SetVisibility(ESlateVisibility::Collapsed);
 	}
-	if (HoveredItem->BaseItemStatistics.ArmorPoint == 0)
+	if ( FMath::IsNearlyZero(HoveredItem->BaseItemStatistics.ArmorPoint))
 	{
 		TooltipDef->SetVisibility(ESlateVisibility::Collapsed);
 	}

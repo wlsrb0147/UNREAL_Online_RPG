@@ -74,7 +74,8 @@ public:
 	FORCEINLINE TArray<UItemBase*> GetInventory() const {return InventoryContents;}
 	FORCEINLINE int32 GetInventoryCapacity() const {return InventorySlotCapacity;}
 	FORCEINLINE void SetInventoryCapacity(const int32 Capacity) {InventorySlotCapacity = Capacity;}
-
+	void AddMoney(const uint64 AmountToAddMoney){CurrentMoney += AmountToAddMoney;}
+	uint64 GetMoney() const {return CurrentMoney;}
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -84,6 +85,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Inventory")
 	TArray<TObjectPtr<UItemBase>> InventoryContents;
+
+	UPROPERTY(VisibleAnywhere, Category = "Inventory")
+	uint64 CurrentMoney = 0;
 
 public:	
 	// Called every frame

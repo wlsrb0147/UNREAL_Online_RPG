@@ -170,6 +170,15 @@ FItemAddResultData UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 		return AddNonStackableItem(InputItem);
 	}
 
+	if (InputItem->BaseItemType == EItemType::Money)
+	{
+		AddMoney(InitialRequestedAddAmount);
+		OnInventoryUpdated.Broadcast();
+		
+		return FItemAddResultData::AddAll(InitialRequestedAddAmount,
+			FText::Format(FText::FromString("{0}원을 획득하였습니다"),InitialRequestedAddAmount));
+	}
+	
 	const int32 StackableAmountAdded = AddStackableItem(InputItem,InitialRequestedAddAmount);
 
 	if (StackableAmountAdded == InitialRequestedAddAmount)
