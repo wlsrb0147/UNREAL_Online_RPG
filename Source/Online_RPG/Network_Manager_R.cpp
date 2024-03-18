@@ -859,6 +859,17 @@ void UNetwork_Manager_R::Spawn_Init()
 		// 레벨 시퀀스 플레이어를 생성합니다.
 		Player_Sequence = ULevelSequencePlayer::CreateLevelSequencePlayer(World, Level_Sequence, MovieSceneSequencePlaybackSettings, SequenceActor);
 		//UE_LOG(LogTemp, Error, TEXT("Nope33"));
+		
+		AController* MyController = World->GetFirstPlayerController();
+		if(Cast<APlayerController>(MyController))
+		{
+			UE_LOG(LogTemp, Log, TEXT("Mouse 커서 없앴음 777"));
+			//Cast<APlayerController>(MyController)->bShowMouseCursor = false;
+
+			const FInputModeGameOnly InputMode;
+			Cast<APlayerController>(MyController)->SetInputMode(InputMode);
+			Cast<APlayerController>(MyController)->SetShowMouseCursor(false);
+		}
 	}
 	//UE_LOG(LogTemp, Error, TEXT("Nope44"));
 

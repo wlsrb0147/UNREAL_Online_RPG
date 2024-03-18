@@ -17,6 +17,8 @@ ALoginController::ALoginController()
 	//bReplicates = true;
 }
 
+
+
 void ALoginController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
