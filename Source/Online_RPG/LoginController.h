@@ -23,6 +23,9 @@ public:
 	
 	FString Login_ID;
 
+	UFUNCTION(BlueprintPure)
+	FString Get_Login_ID() { return Login_ID; }
+
 	UFUNCTION(NetMulticast, Reliable)
 	void SetLoginID(const FString& _Login_ID);
 	

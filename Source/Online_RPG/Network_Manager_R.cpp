@@ -38,7 +38,7 @@ UNetwork_Manager_R::UNetwork_Manager_R()
 	Level_Sequence = LoadObject<ULevelSequence>(nullptr, TEXT("/Game/MAIN/Sequence/SQ_GameStart.SQ_GameStart"));
 	if (Level_Sequence == nullptr)
 	{
-		//UE_LOG(LogTemp, Error, TEXT("Nope11"));
+		////UE_LOG(LogTemp, Error, TEXT("Nope11"));
 		// 에셋을 찾지 못한 경우 에러 처리
 		return;
 	}
@@ -61,7 +61,7 @@ ASound_Manager_R* UNetwork_Manager_R::Get_Sound_Instance()
 
 void UNetwork_Manager_R::LoadStartAsset()
 {
-// 	UE_LOG(LogTemp, Error, TEXT("LoadStartAsset"));
+// 	//UE_LOG(LogTemp, Error, TEXT("LoadStartAsset"));
 //     // 사운드 에셋 비동기 로드
 //     FPrimaryAssetId SoundAssetId("PostLoadAsset", TEXT("BP_PostLoadAsset"));
 //     //FPrimaryAssetId SoundAssetId("UPostLoadAsset", TEXT("Default__BP_PostLoadAsset_C"));
@@ -75,19 +75,19 @@ void UNetwork_Manager_R::LoadStartAsset()
 //     UAssetManager::Get().GetPrimaryAssetIdList("PostLoadAsset", OutAssets);
 // 	//UAssetManager* AssetManager = UAssetManager::GetIfValid();
 //     if (OutAssets.IsEmpty()) {
-//         UE_LOG(LogTemp, Warning, TEXT("OutAssets Empty"));
+//         //UE_LOG(LogTemp, Warning, TEXT("OutAssets Empty"));
 //     }
 //     TArray<FSoftObjectPath> AssetPaths;
 //     for (FPrimaryAssetId Id : OutAssets) {
-//         UE_LOG(LogTemp, Warning, TEXT("OutAssets 33333"));
+//         //UE_LOG(LogTemp, Warning, TEXT("OutAssets 33333"));
 //         FSoftObjectPath AssetPath = UAssetManager::Get().GetPrimaryAssetPath(Id);
 //         if (!AssetPath.IsValid())
 //         {
-//             UE_LOG(LogTemp, Error, TEXT("AssetPath is not valid."));
+//             //UE_LOG(LogTemp, Error, TEXT("AssetPath is not valid."));
 //         }
 //         else
 //         {
-//             UE_LOG(LogTemp, Error, TEXT("AssetPath is  valid. 777"));
+//             //UE_LOG(LogTemp, Error, TEXT("AssetPath is  valid. 777"));
 //         }
 //         AssetPaths.Add(AssetPath);
 //     }
@@ -97,7 +97,7 @@ void UNetwork_Manager_R::LoadStartAsset()
 // 	auto OnLoadComplete = [this, AssetPaths]()
 // 	{
 // 		//UPostLoadAsset* SoundAsset = Cast<UPostLoadAsset>(LoadedAsset);
-// 		UE_LOG(LogTemp, Warning, TEXT("UPostLoadAsset Load 성공"));
+// 		//UE_LOG(LogTemp, Warning, TEXT("UPostLoadAsset Load 성공"));
 //
 // 		for (const FSoftObjectPath& AssetPath : AssetPaths)
 // 		{
@@ -105,13 +105,13 @@ void UNetwork_Manager_R::LoadStartAsset()
 // 			UPostLoadAsset* LoadedAsset = Cast<UPostLoadAsset>(	UAssetManager::Get().GetPrimaryAssetObject(MyAssetId));
 // 			TSoftObjectPtr<UPostLoadAsset> SoftObjectPtr(AssetPath);
 // 			//UPostLoadAsset* LoadedAsset = SoftObjectPtr.Get();
-// 			UE_LOG(LogTemp, Warning, TEXT("Path 로 하나씩 다시 가져오기 %s"), *AssetPath.ToString());
+// 			//UE_LOG(LogTemp, Warning, TEXT("Path 로 하나씩 다시 가져오기 %s"), *AssetPath.ToString());
 // 			if(AssetPath.IsValid())
 // 			{
-// 				UE_LOG(LogTemp, Warning, TEXT("valid 긴해 "));
+// 				//UE_LOG(LogTemp, Warning, TEXT("valid 긴해 "));
 // 			}else
 // 			{
-// 				UE_LOG(LogTemp, Warning, TEXT("valid 아님"));
+// 				//UE_LOG(LogTemp, Warning, TEXT("valid 아님"));
 // 			}
 // 			// GetStreamableManager().LoadSynchronous()를 호출하여 UObject로 로드된 에셋을 가져옵니다.
 // 			//UObject* LoadedObject = UAssetManager::GetStreamableManager().LoadSynchronous(AssetPath, false);
@@ -125,11 +125,11 @@ void UNetwork_Manager_R::LoadStartAsset()
 // 			{
 // 				// 이제 로드된 에셋을 사용할 수 있습니다.
 // 				// 예를 들어, 사운드 재생, 메시 렌더링 등...
-// 				UE_LOG(LogTemp, Log, TEXT("Loaded Asset Name: %s"), *LoadedAsset->GetName());
+// 				//UE_LOG(LogTemp, Log, TEXT("Loaded Asset Name: %s"), *LoadedAsset->GetName());
 // 				// ...사용 코드...
 // 			}else
 // 			{
-// 				UE_LOG(LogTemp, Log, TEXT(" load 에셋 실패"));
+// 				//UE_LOG(LogTemp, Log, TEXT(" load 에셋 실패"));
 // 			
 // 			}
 // 		}
@@ -144,8 +144,8 @@ void UNetwork_Manager_R::LoadStartAsset()
 // Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadComplete));
 //Streamable.RequestAsyncLoad(SoundAssetId, FStreamableDelegate::CreateLambda(OnLoadComplete));
 	/*
-	UE_LOG(LogTemp, Error, TEXT("LoadStartAsset"));
 	//UE_LOG(LogTemp, Error, TEXT("LoadStartAsset"));
+	////UE_LOG(LogTemp, Error, TEXT("LoadStartAsset"));
     // 사운드 에셋 비동기 로드
     FPrimaryAssetId SoundAssetId("PostLoadAsset", TEXT("BP_PostLoadAsset"));
     //FPrimaryAssetId SoundAssetId("UPostLoadAsset", TEXT("Default__BP_PostLoadAsset_C"));
@@ -159,21 +159,21 @@ void UNetwork_Manager_R::LoadStartAsset()
 	UAssetManager& Manager = UAssetManager::Get();
 	Manager.GetPrimaryAssetIdList("PostLoadAsset", OutAssets);
 	if (OutAssets.IsEmpty()) {
-		UE_LOG(LogTemp, Warning, TEXT("OutAssets Empty"));
+		//UE_LOG(LogTemp, Warning, TEXT("OutAssets Empty"));
 	}
 	TArray<FSoftObjectPath> AssetPaths;
 	for (FPrimaryAssetId Id : OutAssets) {
     TArray<FSoftObjectPath> AssetPaths;
     for (FPrimaryAssetId Id : OutAssets) {
-        UE_LOG(LogTemp, Warning, TEXT("OutAssets 33333"));
+        //UE_LOG(LogTemp, Warning, TEXT("OutAssets 33333"));
         FSoftObjectPath AssetPath = UAssetManager::Get().GetPrimaryAssetPath(Id);
         if (!AssetPath.IsValid())
         {
-            UE_LOG(LogTemp, Error, TEXT("AssetPath is not valid."));
+            //UE_LOG(LogTemp, Error, TEXT("AssetPath is not valid."));
         }
         else
         {
-            UE_LOG(LogTemp, Error, TEXT("AssetPath is  valid. 777"));
+            //UE_LOG(LogTemp, Error, TEXT("AssetPath is  valid. 777"));
         }
         AssetPaths.Add(AssetPath);
     }
@@ -184,7 +184,7 @@ void UNetwork_Manager_R::LoadStartAsset()
 auto OnLoadComplete = [this, AssetPaths, &Streamable, &AssetManager]()
 {
     //UPostLoadAsset* SoundAsset = Cast<UPostLoadAsset>(LoadedAsset);
-    UE_LOG(LogTemp, Warning, TEXT("UPostLoadAsset Load 성공"));
+    //UE_LOG(LogTemp, Warning, TEXT("UPostLoadAsset Load 성공"));
 
 	for (const FSoftObjectPath& AssetPath : AssetPaths)
 	{
@@ -192,13 +192,13 @@ auto OnLoadComplete = [this, AssetPaths, &Streamable, &AssetManager]()
 		UPostLoadAsset* LoadedAsset = Cast<UPostLoadAsset>(	AssetManager->GetPrimaryAssetObject(MyAssetId));
 		TSoftObjectPtr<UPostLoadAsset> SoftObjectPtr(AssetPath);
 		//UPostLoadAsset* LoadedAsset = SoftObjectPtr.Get();
-		UE_LOG(LogTemp, Warning, TEXT("Path 로 하나씩 다시 가져오기 %s"), *AssetPath.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("Path 로 하나씩 다시 가져오기 %s"), *AssetPath.ToString());
 		if(AssetPath.IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("valid 긴해 "));
+			//UE_LOG(LogTemp, Warning, TEXT("valid 긴해 "));
 		}else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("valid 아님"));
+			//UE_LOG(LogTemp, Warning, TEXT("valid 아님"));
 		}
 		// GetStreamableManager().LoadSynchronous()를 호출하여 UObject로 로드된 에셋을 가져옵니다.
 		//UObject* LoadedObject = UAssetManager::GetStreamableManager().LoadSynchronous(AssetPath, false);
@@ -212,11 +212,11 @@ auto OnLoadComplete = [this, AssetPaths, &Streamable, &AssetManager]()
 		{
 			// 이제 로드된 에셋을 사용할 수 있습니다.
 			// 예를 들어, 사운드 재생, 메시 렌더링 등...
-			UE_LOG(LogTemp, Log, TEXT("Loaded Asset Name: %s"), *LoadedAsset->GetName());
+			//UE_LOG(LogTemp, Log, TEXT("Loaded Asset Name: %s"), *LoadedAsset->GetName());
 			// ...사용 코드...
 		}else
 		{
-			UE_LOG(LogTemp, Log, TEXT(" load 에셋 실패"));
+			//UE_LOG(LogTemp, Log, TEXT(" load 에셋 실패"));
 			
 		}
 	}
@@ -236,7 +236,7 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 	///////////////////////////////////////////////////////////////////////
 	///
 	
-	UAssetManager::Get().ReinitializeFromConfig();
+	//UAssetManager::Get().ReinitializeFromConfig();
 	FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
 	
 	// 비동기 로드 콜백
@@ -249,7 +249,7 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 	auto OnLoadComplete = [SoftObjectPtr]()
 	{
 		//UPostLoadAsset* SoundAsset = Cast<UPostLoadAsset>(LoadedAsset);
-		UE_LOG(LogTemp, Warning, TEXT("UPostLoadAsset Load 성공"));
+		//UE_LOG(LogTemp, Warning, TEXT("UPostLoadAsset Load 성공"));
 		
 		// 에셋 매니저를 사용하여 로드된 에셋을 가져옵니다.
 		UPostLoadAsset* LoadedAsset = SoftObjectPtr.Get();
@@ -258,13 +258,13 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 		if (LoadedAsset)
 		{
 			// 에셋이 성공적으로 로드되었습니다. 이제 여기서 로드된 에셋을 사용할 수 있습니다.
-			UE_LOG(LogTemp, Log, TEXT("Asset Loaded Successfully. %s"), *LoadedAsset->Shoot_Sound_queue->GetName() );
+			//UE_LOG(LogTemp, Log, TEXT("Asset Loaded Successfully. %s"), *LoadedAsset->Shoot_Sound_queue->GetName() );
 			// 이후 작업을 수행합니다. 예를 들어, 사운드 재생 등...
 			
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to load the asset."));
+			//UE_LOG(LogTemp, Error, TEXT("Failed to load the asset."));
 		}
 		
 		//UObject* LoadedAsset = Streamable.GetLoadedAsset(DirectAssetPath);
@@ -281,11 +281,11 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 	
 	if (!DirectAssetPath.IsValid())
 	{
-		UE_LOG(LogTemp, Error, TEXT("DirectAssetPath is not valid."));
+		//UE_LOG(LogTemp, Error, TEXT("DirectAssetPath is not valid."));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("DirectAssetPath valid."));
+		//UE_LOG(LogTemp, Error, TEXT("DirectAssetPath valid."));
 		//Streamable.RequestAsyncLoad(DirectAssetPath, FStreamableDelegate::CreateLambda(OnLoadComplete));
 		Streamable.RequestAsyncLoad(SoftObjectPtr.ToSoftObjectPath(), FStreamableDelegate::CreateLambda(OnLoadComplete));
 	}
@@ -308,7 +308,7 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 	//
 	// if(Assets.Num() > 0)
 	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("Asset Num > 0"));
+	// 	//UE_LOG(LogTemp, Warning, TEXT("Asset Num > 0"));
 	//
 	// 	int32 AccessIdx = 2;
 	// 	FSoftObjectPtr AssetPtr(__Manager.GetPrimaryAssetPath(Assets[AccessIdx ]));
@@ -323,11 +323,11 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 	//
 	// 	if(Item)
 	// 	{
-	// 		UE_LOG(LogTemp, Warning, TEXT("Asset loaded successfully!"));
+	// 		//UE_LOG(LogTemp, Warning, TEXT("Asset loaded successfully!"));
 	// 	}
-	// 	else UE_LOG(LogTemp, Warning, TEXT("Asset loaded fail..."));
+	// 	else //UE_LOG(LogTemp, Warning, TEXT("Asset loaded fail..."));
 	// }
-	// else UE_LOG(LogTemp, Warning, TEXT("Asset Num = 0"));
+	// else //UE_LOG(LogTemp, Warning, TEXT("Asset Num = 0"));
 	//
 	//
 
@@ -341,7 +341,7 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 	// FStreamableDelegate Callback;
 	// Callback.BindLambda([]() {
 	// 	// 에셋 로딩이 완료되면 실행될 코드 작성
-	// 	UE_LOG(LogTemp, Warning, TEXT("Asset loaded successfully!"));
+	// 	//UE_LOG(LogTemp, Warning, TEXT("Asset loaded successfully!"));
 	// });
 	//
 	// // 비동기적으로 에셋 로드
@@ -367,7 +367,7 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 			// JSON 응답을 배열로 파싱 시도합니다.
 			TSharedPtr<FJsonValue> JsonValue;
 			TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-			//UE_LOG(LogTemp, Error, TEXT("response...  %s"), *Response->GetContentAsString());
+			////UE_LOG(LogTemp, Error, TEXT("response...  %s"), *Response->GetContentAsString());
 			if (FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid() && JsonValue->Type == EJson::Array)
 			{
 				TArray<TSharedPtr<FJsonValue>> JsonArray = JsonValue->AsArray();
@@ -392,10 +392,10 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 								else
 								{
 									//이미 있는것이니 성공 띄우고 몇초 뒤에 로그인 시켜버리면됨
-									//UE_LOG(LogTemp, Error, TEXT("성공창 "));
+									////UE_LOG(LogTemp, Error, TEXT("성공창 "));
 									if (Current_Widget)
 									{
-										//UE_LOG(LogTemp, Error, TEXT("성공해서 위젯 없애버려볼까 "));
+										////UE_LOG(LogTemp, Error, TEXT("성공해서 위젯 없애버려볼까 "));
 										Current_Widget->RemoveFromParent();
 										if (Success_Widget)
 										{
@@ -405,13 +405,13 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 											// UUserWidget* TmpWidget = CreateWidget<UUserWidget>(this, Success_Widget, TEXT("SuccessWidget"));
 											// if(TmpWidget)
 											// TmpWidget->AddToViewport();
-											// UE_LOG(LogTemp, Log, TEXT("성공창 띠ㅡ웠음"));
+											// //UE_LOG(LogTemp, Log, TEXT("성공창 띠ㅡ웠음"));
 										}
 									}
 
 									// "name" 필드 값을 가져옵니다.
 									FString Name = DocumentObject->GetStringField(TEXT("name"));
-									UE_LOG(LogTemp, Log, TEXT("Document Name: %s"), *Name);
+									//UE_LOG(LogTemp, Log, TEXT("Document Name: %s"), *Name);
 
 									// "fields" 객체 내의 "ID"와 "PW" 필드 값을 가져옵니다.
 									TSharedPtr<FJsonObject> FieldsObject = DocumentObject->GetObjectField(TEXT("fields"));
@@ -419,7 +419,7 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 									{
 										FString ID = FieldsObject->GetObjectField(TEXT("ID"))->GetStringField(TEXT("stringValue"));
 										FString PW = FieldsObject->GetObjectField(TEXT("PW"))->GetStringField(TEXT("stringValue"));
-										UE_LOG(LogTemp, Log, TEXT("ID: %s, PW: %s"), *ID, *PW);
+										//UE_LOG(LogTemp, Log, TEXT("ID: %s, PW: %s"), *ID, *PW);
 									}
 								}
 
@@ -429,7 +429,7 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 						}
 						else
 						{
-							//UE_LOG(LogTemp, Error, TEXT("이럼 없는 거임"));
+							////UE_LOG(LogTemp, Error, TEXT("이럼 없는 거임"));
 						}
 
 					}
@@ -437,12 +437,12 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 			}
 			else
 			{
-				//UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON response."));
+				////UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON response."));
 			}
 			//TSharedPtr<FJsonObject> JsonObject;
 			//TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 
-			UE_LOG(LogTemp, Log, TEXT("HTTP Request was successful. Response: %s"), *Response->GetContentAsString());
+			//UE_LOG(LogTemp, Log, TEXT("HTTP Request was successful. Response: %s"), *Response->GetContentAsString());
 			// Parse the JSON response if needed
 			// ... rest of your code for JSON parsing
 			// Assuming the query results are in an array named "results"
@@ -452,17 +452,17 @@ void UNetwork_Manager_R::OnResponseReceived(FHttpRequestPtr Request, FHttpRespon
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("HTTP Request returned status code: %d"), Response->GetResponseCode());
+			//UE_LOG(LogTemp, Warning, TEXT("HTTP Request returned status code: %d"), Response->GetResponseCode());
 		}
 	}
 	else
 	{
-		//UE_LOG(LogTemp, Error, TEXT("HTTP Request was not successful."));
+		////UE_LOG(LogTemp, Error, TEXT("HTTP Request was not successful."));
 	}
 
 
 	//여기에 실패 띄우기
-	//UE_LOG(LogTemp, Error, TEXT("실패창 "));
+	////UE_LOG(LogTemp, Error, TEXT("실패창 "));
 	CreateWidget_OX(false);
 
 }
@@ -478,7 +478,7 @@ void UNetwork_Manager_R::OnResponseReceived_Join(FHttpRequestPtr Request, FHttpR
 			// JSON 응답을 배열로 파싱 시도합니다.
 			TSharedPtr<FJsonValue> JsonValue;
 			TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-			//UE_LOG(LogTemp, Error, TEXT("response...  %s"), *Response->GetContentAsString());
+			////UE_LOG(LogTemp, Error, TEXT("response...  %s"), *Response->GetContentAsString());
 			if (FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid() && JsonValue->Type == EJson::Array)
 			{
 				TArray<TSharedPtr<FJsonValue>> JsonArray = JsonValue->AsArray();
@@ -494,7 +494,7 @@ void UNetwork_Manager_R::OnResponseReceived_Join(FHttpRequestPtr Request, FHttpR
 							TSharedPtr<FJsonObject> DocumentObject = JsonObject->GetObjectField(TEXT("document"));
 							if (DocumentObject.IsValid())
 							{
-								//UE_LOG(LogTemp, Error, TEXT("이미 존재하는 아이디라 실패"));
+								////UE_LOG(LogTemp, Error, TEXT("이미 존재하는 아이디라 실패"));
 								CreateWidget_OX(false);
 
 								return;
@@ -512,12 +512,12 @@ void UNetwork_Manager_R::OnResponseReceived_Join(FHttpRequestPtr Request, FHttpR
 			}
 			else
 			{
-				//UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON response."));
+				////UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON response."));
 			}
 			//TSharedPtr<FJsonObject> JsonObject;
 			//TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 
-			UE_LOG(LogTemp, Log, TEXT("HTTP Request was successful. Response: %s"), *Response->GetContentAsString());
+			//UE_LOG(LogTemp, Log, TEXT("HTTP Request was successful. Response: %s"), *Response->GetContentAsString());
 			// Parse the JSON response if needed
 			// ... rest of your code for JSON parsing
 			// Assuming the query results are in an array named "results"
@@ -528,17 +528,17 @@ void UNetwork_Manager_R::OnResponseReceived_Join(FHttpRequestPtr Request, FHttpR
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("HTTP Request returned status code: %d"), Response->GetResponseCode());
+			//UE_LOG(LogTemp, Warning, TEXT("HTTP Request returned status code: %d"), Response->GetResponseCode());
 		}
 	}
 	else
 	{
-		//UE_LOG(LogTemp, Error, TEXT("HTTP Request was not successful."));
+		////UE_LOG(LogTemp, Error, TEXT("HTTP Request was not successful."));
 	}
 
 
 	//여기에 실패 띄우기
-	//UE_LOG(LogTemp, Error, TEXT("실패창 "));
+	////UE_LOG(LogTemp, Error, TEXT("실패창 "));
 }
 
 void UNetwork_Manager_R::SelectUser(const FString& Username, const FString& Password, UUserWidget* InputWidget)
@@ -570,12 +570,12 @@ void UNetwork_Manager_R::SelectUser(const FString& Username, const FString& Pass
 		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::OnResponseReceived);
 		if (!Request->ProcessRequest())
 		{
-			UE_LOG(LogTemp, Log, TEXT("Flag8"));
+			//UE_LOG(LogTemp, Log, TEXT("Flag8"));
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("Flag9"));
+		//UE_LOG(LogTemp, Log, TEXT("Flag9"));
 	}
 }
 
@@ -606,7 +606,7 @@ void UNetwork_Manager_R::InsertUser(const FString& Username, const FString& Pass
 	else
 	{
 		CreateWidget_OX(false);
-		//UE_LOG(LogTemp, Error, TEXT("Failed to get HTTP module!"));
+		////UE_LOG(LogTemp, Error, TEXT("Failed to get HTTP module!"));
 	}
 }
 
@@ -642,12 +642,12 @@ void UNetwork_Manager_R::ResistUser(const FString& Username, const FString& Pass
 		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::OnResponseReceived_Join);
 		if (!Request->ProcessRequest())
 		{
-			UE_LOG(LogTemp, Log, TEXT("Flag8"));
+			//UE_LOG(LogTemp, Log, TEXT("Flag8"));
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("Flag9"));
+		//UE_LOG(LogTemp, Log, TEXT("Flag9"));
 	}
 }
 
@@ -658,20 +658,20 @@ void UNetwork_Manager_R::OnInsertUserResponseReceived(FHttpRequestPtr Request, F
 	{
 		if (EHttpResponseCodes::IsOk(Response->GetResponseCode()))
 		{
-			UE_LOG(LogTemp, Log, TEXT("User inserted successfully!"));
+			//UE_LOG(LogTemp, Log, TEXT("User inserted successfully!"));
 			// Handle success
 			CreateWidget_OX(true);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("HTTP Request returned status code: %d"), Response->GetResponseCode());
+			//UE_LOG(LogTemp, Warning, TEXT("HTTP Request returned status code: %d"), Response->GetResponseCode());
 			CreateWidget_OX(false);
 			// Handle error
 		}
 	}
 	else
 	{
-		//UE_LOG(LogTemp, Error, TEXT("HTTP Request was not successful."));
+		////UE_LOG(LogTemp, Error, TEXT("HTTP Request was not successful."));
 		CreateWidget_OX(false);
 		// Handle error
 	}
@@ -721,19 +721,19 @@ void UNetwork_Manager_R::GetSpawnData()
 		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::GetSpawnData_CallBack);
 		if (!Request->ProcessRequest())
 		{
-			UE_LOG(LogTemp, Log, TEXT("Flag8"));
+			//UE_LOG(LogTemp, Log, TEXT("Flag8"));
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("Flag9"));
+		//UE_LOG(LogTemp, Log, TEXT("Flag9"));
 	}
 
 }
 
 void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	//UE_LOG(LogTemp, Error, TEXT("       spawn data Callback      "));
+	////UE_LOG(LogTemp, Error, TEXT("       spawn data Callback      "));
 	if (bWasSuccessful && Response.IsValid())
 	{
 		if (EHttpResponseCodes::IsOk(Response->GetResponseCode()))
@@ -743,7 +743,7 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 			// JSON 응답을 배열로 파싱 시도합니다.
 			TSharedPtr<FJsonValue> JsonValue;
 			TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-			//UE_LOG(LogTemp, Error, TEXT("response...  %s"), *Response->GetContentAsString());
+			////UE_LOG(LogTemp, Error, TEXT("response...  %s"), *Response->GetContentAsString());
 			if (FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid() && JsonValue->Type == EJson::Array)
 			{
 				TArray<TSharedPtr<FJsonValue>> JsonArray = JsonValue->AsArray();
@@ -763,7 +763,7 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 								TSharedPtr<FJsonObject> FieldsObject = DocumentObject->GetObjectField(TEXT("fields"));
 								if (FieldsObject.IsValid())
 								{
-									//UE_LOG(LogTemp, Error, TEXT("fields get!!!!!!!!!!!!"));
+									////UE_LOG(LogTemp, Error, TEXT("fields get!!!!!!!!!!!!"));
 									TSharedPtr<FJsonObject> SpawnLocation_X_Object = FieldsObject->GetObjectField(TEXT("SpawnLocation_X"));
 									TSharedPtr<FJsonObject> SpawnLocation_Y_Object = FieldsObject->GetObjectField(TEXT("SpawnLocation_Y"));
 									TSharedPtr<FJsonObject> SpawnLocation_Z_Object = FieldsObject->GetObjectField(TEXT("SpawnLocation_Z"));
@@ -803,7 +803,7 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 						}
 						else
 						{
-							//UE_LOG(LogTemp, Error, TEXT("이럼 없는 거임"));
+							////UE_LOG(LogTemp, Error, TEXT("이럼 없는 거임"));
 
 						}
 					}
@@ -813,12 +813,12 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 			}
 			else
 			{
-				//UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON response."));
+				////UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON response."));
 			}
 			//TSharedPtr<FJsonObject> JsonObject;
 			//TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 
-			UE_LOG(LogTemp, Log, TEXT("HTTP Request was successful. Response: %s"), *Response->GetContentAsString());
+			//UE_LOG(LogTemp, Log, TEXT("HTTP Request was successful. Response: %s"), *Response->GetContentAsString());
 			// Parse the JSON response if needed
 			// ... rest of your code for JSON parsing
 			// Assuming the query results are in an array named "results"
@@ -828,12 +828,12 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("HTTP Request returned status code: %d"), Response->GetResponseCode());
+			//UE_LOG(LogTemp, Warning, TEXT("HTTP Request returned status code: %d"), Response->GetResponseCode());
 		}
 	}
 	else
 	{
-		//UE_LOG(LogTemp, Error, TEXT("HTTP Request was not successful."));
+		////UE_LOG(LogTemp, Error, TEXT("HTTP Request was not successful."));
 	}
 
 
@@ -844,26 +844,26 @@ void UNetwork_Manager_R::Spawn_Init()
 	if (SpawnLocation.IsNearlyZero() && SpawnRotator.IsNearlyZero())
 	{
 		// 변수가 '초기화되지 않았다'고 가정하고 처리
-		//UE_LOG(LogTemp, Error, TEXT("ITS NEWB"));
+		////UE_LOG(LogTemp, Error, TEXT("ITS NEWB"));
 	}
 	else
 	{
-		//UE_LOG(LogTemp, Error, TEXT("ITS OLDB %s %s %s %s %s"), *SpawnLocation.ToCompactString(), *SpawnRotator.ToCompactString(), *GunName, *Login_ID, *SwordName);
+		////UE_LOG(LogTemp, Error, TEXT("ITS OLDB %s %s %s %s %s"), *SpawnLocation.ToCompactString(), *SpawnRotator.ToCompactString(), *GunName, *Login_ID, *SwordName);
 	}
 
 	// 현재 월드를 가져옵니다.
 	UWorld* World = GetWorld();
-	//UE_LOG(LogTemp, Error, TEXT("Nope22"));
+	////UE_LOG(LogTemp, Error, TEXT("Nope22"));
 	if (World != nullptr)
 	{
 		// 레벨 시퀀스 플레이어를 생성합니다.
 		Player_Sequence = ULevelSequencePlayer::CreateLevelSequencePlayer(World, Level_Sequence, MovieSceneSequencePlaybackSettings, SequenceActor);
-		//UE_LOG(LogTemp, Error, TEXT("Nope33"));
+		////UE_LOG(LogTemp, Error, TEXT("Nope33"));
 		
 		AController* MyController = World->GetFirstPlayerController();
 		if(Cast<APlayerController>(MyController))
 		{
-			UE_LOG(LogTemp, Log, TEXT("Mouse 커서 없앴음 777"));
+			//UE_LOG(LogTemp, Log, TEXT("Mouse 커서 없앴음 777"));
 			//Cast<APlayerController>(MyController)->bShowMouseCursor = false;
 
 			const FInputModeGameOnly InputMode;
@@ -871,7 +871,7 @@ void UNetwork_Manager_R::Spawn_Init()
 			Cast<APlayerController>(MyController)->SetShowMouseCursor(false);
 		}
 	}
-	//UE_LOG(LogTemp, Error, TEXT("Nope44"));
+	////UE_LOG(LogTemp, Error, TEXT("Nope44"));
 
 	// 시퀀스 플레이어가 성공적으로 생성되었는지 확인하고 재생합니다.
 	if (Player_Sequence != nullptr)
@@ -879,12 +879,12 @@ void UNetwork_Manager_R::Spawn_Init()
 		Player_Sequence->SetPlayRate(0.7f); // 재생 속도를 0.5로 설정
 		Player_Sequence->OnFinished.AddDynamic(this, &UNetwork_Manager_R::OnSequenceFinished);
 		Player_Sequence->Play();
-		//UE_LOG(LogTemp, Error, TEXT("Play!!!"));
+		////UE_LOG(LogTemp, Error, TEXT("Play!!!"));
 
 	}
 	else
 	{
-		//UE_LOG(LogTemp, Error, TEXT("Nope"));
+		////UE_LOG(LogTemp, Error, TEXT("Nope"));
 	}
 }
 
@@ -893,13 +893,13 @@ void UNetwork_Manager_R::SetSpawnData(FVector _Location, FRotator _Rotation, FSt
 	SpawnLocation = _Location;
 	SpawnRotator = _Rotation;
 	Login_ID = _Login_ID;
-	UE_LOG(LogTemp, Log, TEXT("Setspawndata init %s %s %s"), *_Location.ToCompactString(), *_Rotation.ToCompactString(), *_Login_ID);
+	//UE_LOG(LogTemp, Log, TEXT("Setspawndata init %s %s %s"), *_Location.ToCompactString(), *_Rotation.ToCompactString(), *_Login_ID);
 	//우선 이미 있는 데이터인지 확인하고 그 안에서 있으면 update, 없으면 insert
 	FHttpModule* Http = &FHttpModule::Get();
 	
 	if (Http)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Flag33"));
+		//UE_LOG(LogTemp, Log, TEXT("Flag33"));
 		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 		Request->SetVerb("POST");
 		Request->SetURL(TEXT("https://firestore.googleapis.com/v1/projects/unrealrpg-7a179/databases/(default)/documents:runQuery"));
@@ -912,25 +912,25 @@ void UNetwork_Manager_R::SetSpawnData(FVector _Location, FRotator _Rotation, FSt
 
 		Request->SetContentAsString(QueryJson);
 
-		UE_LOG(LogTemp, Log, TEXT("Flag44"));
+		//UE_LOG(LogTemp, Log, TEXT("Flag44"));
 		// Set any other necessary headers here, like Authorization if needed
 		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::SetSpawnData_Callback);
-		UE_LOG(LogTemp, Log, TEXT("Flag55"));
+		//UE_LOG(LogTemp, Log, TEXT("Flag55"));
 		if (!Request->ProcessRequest())
 		{
-			UE_LOG(LogTemp, Log, TEXT("Flag8"));
+			//UE_LOG(LogTemp, Log, TEXT("Flag8"));
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("Flag9"));
+		//UE_LOG(LogTemp, Log, TEXT("Flag9"));
 	}
 	
 }
 
 void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	UE_LOG(LogTemp, Log, TEXT("setspawn callback ..."));
+	//UE_LOG(LogTemp, Log, TEXT("setspawn callback ..."));
 	if (bWasSuccessful && Response.IsValid())
 	{
 		if (EHttpResponseCodes::IsOk(Response->GetResponseCode()))
@@ -940,7 +940,7 @@ void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpRes
 			// JSON 응답을 배열로 파싱 시도합니다.
 			TSharedPtr<FJsonValue> JsonValue;
 			TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-			UE_LOG(LogTemp, Error, TEXT("SetSpawnData_Callback response...  %s"), *Response->GetContentAsString());
+			//UE_LOG(LogTemp, Error, TEXT("SetSpawnData_Callback response...  %s"), *Response->GetContentAsString());
 			if (FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid() && JsonValue->Type == EJson::Array)
 			{
 				TArray<TSharedPtr<FJsonValue>> JsonArray = JsonValue->AsArray();
@@ -968,14 +968,14 @@ void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpRes
 								}
 								
 								//이미 있는것이니 UPDATE
-								UE_LOG(LogTemp, Log, TEXT("flag1 ..."));
+								//UE_LOG(LogTemp, Log, TEXT("flag1 ..."));
 								UpdateSpawnData();
 
 								return;
 							}
 						}else
 						{
-							UE_LOG(LogTemp, Error, TEXT("이럼 없는 거임"));
+							//UE_LOG(LogTemp, Error, TEXT("이럼 없는 거임"));
 							//없으니 INSERT
 							InsertSpawnData();
 						}
@@ -985,12 +985,12 @@ void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpRes
 			}
 			else
 			{
-				UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON response."));
+				//UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON response."));
 			}
 			//TSharedPtr<FJsonObject> JsonObject;
 			//TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 
-			UE_LOG(LogTemp, Log, TEXT("HTTP Request was successful. Response: %s"), *Response->GetContentAsString());
+			//UE_LOG(LogTemp, Log, TEXT("HTTP Request was successful. Response: %s"), *Response->GetContentAsString());
 			// Parse the JSON response if needed
 			// ... rest of your code for JSON parsing
 			// Assuming the query results are in an array named "results"
@@ -1000,12 +1000,12 @@ void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpRes
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("HTTP Request returned status code: %d"), Response->GetResponseCode());
+			//UE_LOG(LogTemp, Warning, TEXT("HTTP Request returned status code: %d"), Response->GetResponseCode());
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("HTTP Request was not successful."));
+		//UE_LOG(LogTemp, Error, TEXT("HTTP Request was not successful."));
 	}
 
 
@@ -1013,7 +1013,7 @@ void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpRes
 
 void UNetwork_Manager_R::UpdateSpawnData()
 {
-	UE_LOG(LogTemp, Log, TEXT("UpdateSpawnData ..."));
+	//UE_LOG(LogTemp, Log, TEXT("UpdateSpawnData ..."));
 	FHttpModule* Http = &FHttpModule::Get();
 	if (Http)
 	{
@@ -1044,18 +1044,18 @@ void UNetwork_Manager_R::UpdateSpawnData()
 		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::Callback_ForceExit);
 		if (!Request->ProcessRequest())
 		{
-			UE_LOG(LogTemp, Log, TEXT("Failed to process HTTP request for updating spawn data."));
+			//UE_LOG(LogTemp, Log, TEXT("Failed to process HTTP request for updating spawn data."));
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("HTTP Module not found for update."));
+		//UE_LOG(LogTemp, Log, TEXT("HTTP Module not found for update."));
 	}
 }
 
 void UNetwork_Manager_R::InsertSpawnData()
 {
-	UE_LOG(LogTemp, Log, TEXT("InsertSpawnData..."));
+	//UE_LOG(LogTemp, Log, TEXT("InsertSpawnData..."));
 	FHttpModule* Http = &FHttpModule::Get();
 	if (Http)
 	{
@@ -1087,19 +1087,19 @@ void UNetwork_Manager_R::InsertSpawnData()
 		if (!Request->ProcessRequest())
 		{
 			// 오류 처리
-			UE_LOG(LogTemp, Error, TEXT("flag1..."));
+			//UE_LOG(LogTemp, Error, TEXT("flag1..."));
 		}
 	}
 	else
 	{
-			UE_LOG(LogTemp, Error, TEXT("flag2..."));
+			//UE_LOG(LogTemp, Error, TEXT("flag2..."));
 		// Http 모듈 로드 실패 처리
 	}
 }
 
 void UNetwork_Manager_R::Callback_ForceExit(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	UE_LOG(LogTemp, Error, TEXT("Callback_ForceExit..."));
+	//UE_LOG(LogTemp, Error, TEXT("Callback_ForceExit..."));
 	// 플레이어 캐릭터(폰)의 참조를 얻습니다.
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if(PlayerController)
@@ -1116,14 +1116,14 @@ void UNetwork_Manager_R::Callback_ForceExit(FHttpRequestPtr Request, FHttpRespon
 
 void UNetwork_Manager_R::OnSequenceFinished()
 {
-	UE_LOG(LogTemp, Error, TEXT("시퀀스 콜백"));
+	//UE_LOG(LogTemp, Error, TEXT("시퀀스 콜백"));
 
 	//LoadStartAsset();
 
 	// if(GetWorld()->GetFirstPlayerController())
 	// {
 	//     ALoginController* MyController = Cast<ALoginController>(GetWorld()->GetFirstPlayerController());
-	//     UE_LOG(LogTemp, Error, TEXT("얘 컨트롤러꺼를 바꿔야되는게 맞아 : %s" ), GetWorld()->GetFirstPlayerController()->GetName());
+	//     //UE_LOG(LogTemp, Error, TEXT("얘 컨트롤러꺼를 바꿔야되는게 맞아 : %s" ), GetWorld()->GetFirstPlayerController()->GetName());
 	//     MyController->ChangePawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 	//     //CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 	// }
@@ -1131,8 +1131,8 @@ void UNetwork_Manager_R::OnSequenceFinished()
 	if (GetFirstLocalPlayerController())
 	{
 		ALoginController* MyController = Cast<ALoginController>(GetFirstLocalPlayerController());
-		UE_LOG(LogTemp, Error, TEXT("얘 컨트롤러꺼를 바꿔야되는게 맞아 : %s"), *GetFirstLocalPlayerController()->GetName());
-		UE_LOG(LogTemp, Error, TEXT("ITS OLDB %s %s %s %s %s"), *SpawnLocation.ToCompactString(), *SpawnRotator.ToCompactString(), *GunName, *Login_ID, *SwordName);
+		//UE_LOG(LogTemp, Error, TEXT("얘 컨트롤러꺼를 바꿔야되는게 맞아 : %s"), *GetFirstLocalPlayerController()->GetName());
+		//UE_LOG(LogTemp, Error, TEXT("ITS OLDB %s %s %s %s %s"), *SpawnLocation.ToCompactString(), *SpawnRotator.ToCompactString(), *GunName, *Login_ID, *SwordName);
 		MyController->ChangePawn(MyController->INDEX_OF_PLAYER_CONTROLLER, SpawnLocation, SpawnRotator);
 		//MyController->Login_ID = Login_ID;
 		MyController->SetLoginID(Login_ID);
@@ -1142,6 +1142,9 @@ void UNetwork_Manager_R::OnSequenceFinished()
 		//Ingame BGM ON
 		Sound_Play(SOUND_TYPE::BGM_Ingame, 1, FVector(0, 0, 0), FRotator(0, 0, 0));
 
+		//플레이어 위젯 생성
+		CreateWidget(this, Player_Widget)->AddToViewport();
+		
 		
 		////서버 전용 함수 기능
 		//if (MyController->GetPawn()->GetLocalRole() == ROLE_Authority)
@@ -1151,7 +1154,7 @@ void UNetwork_Manager_R::OnSequenceFinished()
 		////클라이언트 전용 함수 기능
 		//if (MyController->GetPawn()->IsLocallyControlled())
 		//{
-		//	UE_LOG(LogTemp, Display, TEXT("아직이야"));
+		//	//UE_LOG(LogTemp, Display, TEXT("아직이야"));
 		//}
 		
 
@@ -1192,12 +1195,12 @@ void UNetwork_Manager_R::OnCreateSessionComplete(FName SessionName, bool bWasSuc
 	if (bWasSuccessful)
 	{
 		// 세션 생성 성공 처리
-		UE_LOG(LogTemp, Log, TEXT("Create Success!!"));
+		//UE_LOG(LogTemp, Log, TEXT("Create Success!!"));
 	}
 	else
 	{
 		// 세션 생성 실패 처리
-		UE_LOG(LogTemp, Log, TEXT("Create Fail"));
+		//UE_LOG(LogTemp, Log, TEXT("Create Fail"));
 	}
 }
 
@@ -1256,7 +1259,7 @@ void UNetwork_Manager_R::OnCreateSessionComplete(FName SessionName, bool bWasSuc
 
 void UNetwork_Manager_R::CallSpawn_Implementation(int Player_Idx)
 {
-	//UE_LOG(LogTemp, Error, TEXT("콜 스폰 -->  %d 번 %d"), Player_Idx, UGameplayStatics::GetNumPlayerControllers(this));
+	////UE_LOG(LogTemp, Error, TEXT("콜 스폰 -->  %d 번 %d"), Player_Idx, UGameplayStatics::GetNumPlayerControllers(this));
 	AGameModeBase* MyModeBase = GetWorld()->GetAuthGameMode();
 
 	UWorld* World = GetWorld(); // 현재 GameInstance가 참조하는 월드를 얻습니다.
@@ -1264,11 +1267,11 @@ void UNetwork_Manager_R::CallSpawn_Implementation(int Player_Idx)
 
 	// 현재 실행 환경이 서버인지 클라이언트인지 확인
 	FString Role = World->GetNetMode() == NM_DedicatedServer || World->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
-	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *Role);
+	//UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *Role);
 
 	// 게임 내의 모든 플레이어 컨트롤러의 수를 로깅
 	int32 NumPlayerControllers = World->GetNumPlayerControllers();
-	UE_LOG(LogTemp, Log, TEXT("게임 내의 플레이어 컨트롤러 수: %d"), NumPlayerControllers);
+	//UE_LOG(LogTemp, Log, TEXT("게임 내의 플레이어 컨트롤러 수: %d"), NumPlayerControllers);
 
 	// 모든 플레이어 컨트롤러를 순회하며 로깅
 	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
@@ -1276,7 +1279,7 @@ void UNetwork_Manager_R::CallSpawn_Implementation(int Player_Idx)
 		APlayerController* PC = It->Get();
 		if (PC)
 		{
-			UE_LOG(LogTemp, Log, TEXT("플레이어 컨트롤러: %s"), *PC->GetName());
+			//UE_LOG(LogTemp, Log, TEXT("플레이어 컨트롤러: %s"), *PC->GetName());
 		}
 	}
 
@@ -1291,15 +1294,15 @@ void UNetwork_Manager_R::CallSpawn_Implementation(int Player_Idx)
 	if (NewPawn)
 	{
 		//APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
-		//UE_LOG(LogTemp, Error, TEXT("빙의도 진해됐긴했어 -->  %d 번"), Player_Idx);
+		////UE_LOG(LogTemp, Error, TEXT("빙의도 진해됐긴했어 -->  %d 번"), Player_Idx);
 		PC->Possess(NewPawn);
 	}
 
-	//UE_LOG(LogTemp, Error, TEXT("Call Spawn 서버에서 했겠지."));
+	////UE_LOG(LogTemp, Error, TEXT("Call Spawn 서버에서 했겠지."));
 
 	// if (PlayerController != nullptr)
 	// {
-	// 	UE_LOG(LogTemp, Error, TEXT("CallSpawn init"));
+	// 	//UE_LOG(LogTemp, Error, TEXT("CallSpawn init"));
 	// 	// 새 Pawn 클래스의 인스턴스를 생성합니다.
 	// 	APawn* NewPawn = GetWorld()->SpawnActor<APawn>(SpawnPawn, SpawnLocation, FQuat::Identity.Rotator());
  //        

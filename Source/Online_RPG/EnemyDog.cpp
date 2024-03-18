@@ -69,7 +69,7 @@ float AEnemyDog::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	}
 
 	Health -= ActualDamage;
-	UE_LOG(LogTemp, Display, TEXT("Actor took damage: %f Heath = %f"), ActualDamage, Health);
+	//UE_LOG(LogTemp, Display, TEXT("Actor took damage: %f Heath = %f"), ActualDamage, Health);
 	return ActualDamage;
 }
 
@@ -126,7 +126,7 @@ void AEnemyDog::Dead()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
+		//UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
 	}
 	
 	//SpawnSelf();
