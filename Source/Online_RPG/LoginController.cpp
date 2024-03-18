@@ -55,7 +55,7 @@ void ALoginController::OnPossess(APawn* InPawn)
 
 void ALoginController::ChangePawn_Implementation(int PlayerIdx)
 {
-	UE_LOG(LogTemp, Error, TEXT("콜 스폰 -->  %d 번 %d"), PlayerIdx, UGameplayStatics::GetNumPlayerControllers(this));
+	//UE_LOG(LogTemp, Error, TEXT("콜 스폰 -->  %d 번 %d"), PlayerIdx, UGameplayStatics::GetNumPlayerControllers(this));
 	AGameModeBase* MyModeBase = GetWorld()->GetAuthGameMode();
 
 	UWorld* World = GetWorld(); // 현재 GameInstance가 참조하는 월드를 얻습니다.
@@ -82,7 +82,7 @@ void ALoginController::ChangePawn_Implementation(int PlayerIdx)
 			
 			if (PlayerController != nullptr && PlayerController->INDEX_OF_PLAYER_CONTROLLER == PlayerIdx)
 			{
-				UE_LOG(LogTemp, Error, TEXT("CallSpawn init %s "),*PC->GetName());
+				//UE_LOG(LogTemp, Error, TEXT("CallSpawn init %s "),*PC->GetName());
 				// 새 Pawn 클래스의 인스턴스를 생성합니다.
 				SpawnLocation = FVector(-2712.000000,-1030.000000,1187.000000);
 				APawn* NewPawn = GetWorld()->SpawnActor<APawn>(SpawnPawn, SpawnLocation, FQuat::Identity.Rotator());
