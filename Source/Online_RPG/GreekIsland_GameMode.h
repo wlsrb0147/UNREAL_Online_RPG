@@ -18,5 +18,7 @@ public:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	int32 Unique_Player_Idx = 0;
+	virtual void Logout(AController* Exiting) override;
 	
+		
 };

@@ -21,14 +21,24 @@ public:
 	UPROPERTY(Replicated)
 	int32 INDEX_OF_PLAYER_CONTROLLER;
 	
+	FString Login_ID;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetLoginID(const FString& _Login_ID);
+	
 	virtual void PostNetInit() override;
 	virtual void OnPossess(APawn* InPawn) override;
+
+	FVector Current_Location = FVector(0,0,0);
+	FRotator Current_Rotatation = FRotator(0,0,0);
+	
+	
 
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(Server, Reliable)
-	void ChangePawn(int PlayerIdx);
+	void ChangePawn(int PlayerIdx, FVector _SpawnLocation, FRotator _SpawnRotation);
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<APawn> SpawnPawn;

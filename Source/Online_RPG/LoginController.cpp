@@ -25,6 +25,13 @@ void ALoginController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	
 }
 
+
+void ALoginController::SetLoginID_Implementation(const FString& _Login_ID)
+{
+	UE_LOG(LogTemp,Log, TEXT("login id rpc"));
+	Login_ID = _Login_ID;
+}
+
 void ALoginController::PostNetInit()
 {
 
@@ -53,8 +60,9 @@ void ALoginController::OnPossess(APawn* InPawn)
 	UE_LOG(LogTemp, Log, TEXT(" possess success  %s   in Controller <<<   "), *InPawn->GetActorNameOrLabel());
 }
 
-void ALoginController::ChangePawn_Implementation(int PlayerIdx)
+void ALoginController::ChangePawn_Implementation(int PlayerIdx, FVector _SpawnLocation, FRotator _SpawnRotation)
 {
+	UE_LOG(LogTemp, Error, TEXT("ITS OLDB %s %s "),*_SpawnLocation.ToCompactString(), *_SpawnRotation.ToCompactString());
 	UE_LOG(LogTemp, Error, TEXT("콜 스폰 -->  %d 번 %d"), PlayerIdx, UGameplayStatics::GetNumPlayerControllers(this));
 	AGameModeBase* MyModeBase = GetWorld()->GetAuthGameMode();
 
@@ -82,10 +90,11 @@ void ALoginController::ChangePawn_Implementation(int PlayerIdx)
 			
 			if (PlayerController != nullptr && PlayerController->INDEX_OF_PLAYER_CONTROLLER == PlayerIdx)
 			{
-				UE_LOG(LogTemp, Error, TEXT("CallSpawn init %s "),*PC->GetName());
+				//UE_LOG(LogTemp, Error, TEXT("CallSpawn init %s "),*PC->GetName());
 				// 새 Pawn 클래스의 인스턴스를 생성합니다.
-				SpawnLocation = FVector(-2712.000000,-1030.000000,1187.000000);
-				APawn* NewPawn = GetWorld()->SpawnActor<APawn>(SpawnPawn, SpawnLocation, FQuat::Identity.Rotator());
+				if(_SpawnLocation.IsNearlyZero()) _SpawnLocation = FVector(-2712.000000,-1030.000000,1187.000000);
+				//SpawnLocation = FVector(-2712.000000,-1030.000000,1187.000000);
+				APawn* NewPawn = GetWorld()->SpawnActor<APawn>(SpawnPawn, _SpawnLocation, _SpawnRotation);
 				
 				// 새로 생성된 Pawn을 PlayerController에 빙의시킵니다.
 				PlayerController->Possess(NewPawn);

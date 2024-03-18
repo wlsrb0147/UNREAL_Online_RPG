@@ -25,7 +25,7 @@ void ACMSpawnManager::DestroyActor(AActor* Actor)
 {
     if (!Actor)
     {
-        UE_LOG(LogTemp, Error, TEXT("Actor is null!"));
+        //UE_LOG(LogTemp, Error, TEXT("Actor is null!"));
         return;
     }
     // 엑터 소멸
