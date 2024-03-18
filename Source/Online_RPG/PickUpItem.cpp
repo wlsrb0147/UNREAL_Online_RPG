@@ -129,6 +129,12 @@ void APickUpItem::PickUpItem(const AItemC* Taker)
 
 void APickUpItem::InitializeDropItem(UItemBase* ItemToDrop, const int32 Quantity)
 {
+	InstanceItemData = ItemToDrop;
+	InstanceItemData->SetQuantity(Quantity);
+	InstanceItemData->OwningInventory = nullptr;
+	InstanceMesh->SetStaticMesh(ItemToDrop->BaseItemAssetData.Mesh);
+
+	UpdateItemInteractionData();
 }
 
 void APickUpItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

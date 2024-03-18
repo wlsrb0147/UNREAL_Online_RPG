@@ -16,7 +16,7 @@ UCLASS()
 class ONLINE_RPG_API UItemDragVisual : public UUserWidget
 {
 	GENERATED_BODY()
-
+public:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	UBorder* DragBorder;
 

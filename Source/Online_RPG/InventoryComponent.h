@@ -76,6 +76,7 @@ public:
 	FORCEINLINE void SetInventoryCapacity(const int32 Capacity) {InventorySlotCapacity = Capacity;}
 	void AddMoney(const uint64 AmountToAddMoney){CurrentMoney += AmountToAddMoney;}
 	uint64 GetMoney() const {return CurrentMoney;}
+	UItemBase* FindMatchingItem(UItemBase* ItemIn) const;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

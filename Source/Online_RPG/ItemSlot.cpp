@@ -6,6 +6,8 @@
 #include "InventoryComponent.h"
 #include "ItemBase.h"
 #include "ItemC.h"
+#include "ItemDragDrop.h"
+#include "ItemDragVisual.h"
 #include "ItemTooltip.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -64,7 +66,6 @@ FReply UItemSlot::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPoin
 	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
 		Item->Use(PlayerCharacter);
-		PlayerInventory->RemoveAmountOfItem(Item,1);
 		return Reply.Handled();
 	}
 
@@ -81,6 +82,22 @@ void UItemSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointer
 	UDragDropOperation*& OutOperation)
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+
+	const TObjectPtr<UItemDragVisual> DragVisual = CreateWidget<UItemDragVisual>(this,ItemDragVisualClass);
+	DragVisual->DragBorderImage->SetBrushFromTexture(Item->BaseItemAssetData.Icon);
+
+	Item->BaseItemNumericData.bIsStackable?
+		DragVisual->DragBorderQuantity->SetText(FText::AsNumber(Item->BaseItemQuantity)) :
+		DragVisual->DragBorderQuantity->SetVisibility(ESlateVisibility::Collapsed);
+
+	UItemDragDrop* DragDrop = NewObject<UItemDragDrop>();
+	DragDrop->SourceItem = Item;
+	DragDrop->SourceInventory = Item->OwningInventory;
+
+	DragDrop->DefaultDragVisual = DragVisual;
+	DragDrop->Pivot = EDragPivot::BottomCenter;
+
+	OutOperation = DragDrop;
 }
 
 bool UItemSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,

@@ -16,6 +16,18 @@ UInventoryComponent::UInventoryComponent(): InventorySlotCapacity(0)
 }
 
 
+UItemBase* UInventoryComponent::FindMatchingItem(UItemBase* ItemIn) const
+{
+	if (!ItemIn) return nullptr;
+
+	if (InventoryContents.Contains(ItemIn))
+	{
+		return ItemIn;
+	}
+
+	return nullptr;
+}
+
 // Called when the game starts
 void UInventoryComponent::BeginPlay()
 {

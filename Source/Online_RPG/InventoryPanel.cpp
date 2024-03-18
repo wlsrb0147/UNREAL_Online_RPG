@@ -5,6 +5,7 @@
 #include "ItemSlot.h"
 #include "InventoryComponent.h"
 #include "ItemC.h"
+#include "ItemDragDrop.h"
 #include "Components/TextBlock.h"
 #include "Components/WrapBox.h"
 
@@ -47,5 +48,15 @@ void UInventoryPanel::WriteInfoText() const
 bool UInventoryPanel::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
-	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+//	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+
+	const UItemDragDrop* ItemDragDrop = Cast<UItemDragDrop>(InOperation);
+
+	if (ItemDragDrop->SourceItem && Inventory)
+	{
+		return  true;
+	}
+
+	return false;
+	
 }

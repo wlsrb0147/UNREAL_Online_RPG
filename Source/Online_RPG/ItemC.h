@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "ItemC.generated.h"
 
+class UItemBase;
 class UInventoryComponent;
 class IItemInteractionInterface;
 class AInventoryHUD;
@@ -50,6 +51,7 @@ public:
 	void EndInteract();
 	void OpenInventory();
 	void UpdateInteractionWidget() const;
+	void DropItem(UItemBase* ItemToDrop,const int32 QuantityToDrop);
 	
 protected:
 	// Called when the game starts or when spawned
