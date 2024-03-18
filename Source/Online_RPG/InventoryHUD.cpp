@@ -65,6 +65,7 @@ void AInventoryHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
 	if (ItemInteractionWidgetClass)
 	{
 		ItemInteractionWidget = CreateWidget<UItemInteractWidget>(GetWorld(),ItemInteractionWidgetClass);
@@ -77,6 +78,7 @@ void AInventoryHUD::BeginPlay()
 		InventoryMainMenuWidget = CreateWidget<UInventoryMainMenu>(GetWorld(),InventoryMainMenuClass);
 		InventoryMainMenuWidget->AddToViewport(5);
 		InventoryMainMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
+		InventoryPanel = InventoryMainMenuWidget->GetInventoryPanel();
 	}
 
 }

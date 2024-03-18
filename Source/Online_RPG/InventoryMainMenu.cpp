@@ -15,17 +15,23 @@ void UInventoryMainMenu::NativeOnInitialized()
 void UInventoryMainMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	PlayerCharacter = Cast<AItemC>(GetOwningPlayerPawn());
 }
+
+
 
 bool UInventoryMainMenu::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
+	if (!PlayerCharacter)
+	{
+		PlayerCharacter = Cast<APlayerCharacter>(GetOwningPlayerPawn());
+	}
 	const UItemDragDrop* ItemDragDrop = Cast<UItemDragDrop>(InOperation);
 
+	UE_LOG(LogTemp,Warning,TEXT("네이티브 온 드롭 시작"))
 	if (PlayerCharacter && ItemDragDrop->SourceItem)
 	{
+		UE_LOG(LogTemp,Warning,TEXT("네이티브 온 드롭 성립"))
 		PlayerCharacter->DropItem(ItemDragDrop->SourceItem,ItemDragDrop->SourceItem->BaseItemQuantity);
 		return true;
 	}

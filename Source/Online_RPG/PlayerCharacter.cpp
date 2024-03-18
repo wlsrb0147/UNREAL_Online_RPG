@@ -17,13 +17,165 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "CollisionShape.h"
+#include "InventoryComponent.h"
+#include "InventoryHUD.h"
+#include "InventoryPanel.h"
+#include "ItemInteractionInterface.h"
 #include "LoginController.h"
+#include "PickUpItem.h"
 #include "Particles/ParticleSystemComponent.h"
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void APlayerCharacter::CheckInteraction()
+{
+	FVector TraceStart{GetPawnViewLocation()};
+	FVector TraceEnd{TraceStart + GetViewRotation().Vector() * InteractionDistance};
+	
+	DrawDebugLine(GetWorld(),TraceStart,TraceEnd,FColor::Red,false,-1,0,2);
+
+	//FCollisionQueryParams
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	
+	if (!GetWorld()->LineTraceSingleByChannel(HitResult,TraceStart,TraceEnd,
+		ECC_Visibility,
+		QueryParams)
+		)
+	{
+		FoundNoInteract();
+		return;
+	}
+
+	if (!HitResult.GetActor()->GetClass()->ImplementsInterface(UItemInteractionInterface::StaticClass())) return;
+
+	if (HitResult.GetActor() != InteractionData.CurrentInteracting)
+	{
+		FoundInteract(HitResult.GetActor());
+		return;
+	}
+
+	if (HitResult.GetActor() == InteractionData.CurrentInteracting)
+	{
+		return;
+	}
+}
+
+void APlayerCharacter::FoundNoInteract()
+{
+	if (InteractionData.CurrentInteracting)
+	{
+		if (IsValid(InteractionTarget.GetObject()))
+		{
+			InteractionTarget->EndFocus();
+		}
+
+		HUD->CloseInteractionWidget();
+
+		InteractionData.CurrentInteracting = nullptr;
+		InteractionTarget = nullptr;
+	}
+}
+
+void APlayerCharacter::FoundInteract(AActor* NewInteract)
+{
+	
+	if (InteractionData.CurrentInteracting)
+	{
+		InteractionTarget = InteractionData.CurrentInteracting;
+		InteractionTarget->EndFocus();
+	}
+	
+	InteractionData.CurrentInteracting = NewInteract;
+	InteractionTarget = NewInteract;
+	
+	HUD->UpdateInteractionWidget(&InteractionTarget->InteractionData);
+	InteractionTarget->BeginFocus();
+}
+
+void APlayerCharacter::BeginInteract()
+{
+	UE_LOG(LogTemp,Display,TEXT("%d"),PlayerInventory->GetInventoryCapacity())
+	CheckInteraction();
+
+	if (!InteractionData.CurrentInteracting) return;
+
+	if (!IsValid(InteractionTarget.GetObject())) return;
+
+	InteractionTarget->BeginInteract();
+	Interact();
+}
+
+void APlayerCharacter::Interact()
+{
+	if (!IsValid(InteractionTarget.GetObject())) return;
+
+	InteractionTarget->Interact(this);
+	FoundNoInteract();
+}
+
+void APlayerCharacter::EndInteract()
+{
+	if (!IsValid(InteractionTarget.GetObject())) return;
+
+	InteractionTarget->EndInteract();
+}
+
+void APlayerCharacter::OpenInventory()
+{
+	HUD->ToggleInventoryWidget();
+}
+
+void APlayerCharacter::UpdateInteractionWidget() const
+{
+	if (IsValid(InteractionTarget.GetObject()))
+	{
+		HUD->UpdateInteractionWidget(&InteractionTarget->InteractionData);
+	}
+}
+
+void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop)
+{
+	UE_LOG(LogTemp,Warning,TEXT("드롭1"))
+	if (!PlayerInventory->FindMatchingItem(ItemToDrop))
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp,Warning,TEXT("아이템 찾음"))
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Owner = this;
+	SpawnParameters.bNoFail = true;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	const FVector SpawnLocation{GetActorLocation() + GetActorForwardVector()*50.0f};
+	const FTransform SpawnTransform(GetActorRotation(),SpawnLocation);
+	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop,QuantityToDrop);
+
+	APickUpItem* Item = GetWorld()->SpawnActor<APickUpItem>(APickUpItem::StaticClass(),SpawnTransform,SpawnParameters);
+
+	Item->InitializeDropItem(ItemToDrop,RemovedQuantity);
+
+	UE_LOG(LogTemp,Warning,TEXT("끝"))
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 // Sets default values
-APlayerCharacter::APlayerCharacter()
+APlayerCharacter::APlayerCharacter(): HUD(nullptr)
 {
+	
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -54,21 +206,32 @@ APlayerCharacter::APlayerCharacter()
 	bIsUpperSlash = false;
 
 	//bReplicates = true;
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	PlayerInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("인벤토리"));
+	PlayerInventory->SetInventoryCapacity(24);
+
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 void APlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
-	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
-	UE_LOG(LogTemp, Log, TEXT("========================="));
+	//UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	//UE_LOG(LogTemp, Log, TEXT("========================="));
 
-	UE_LOG(LogTemp, Log, TEXT("Controller is POSSESSED!!!!!!!!!!!!!!!!: %s "), *NewController->GetName());
-	UE_LOG(LogTemp, Log, TEXT("========================="));
+	//UE_LOG(LogTemp, Log, TEXT("Controller is POSSESSED!!!!!!!!!!!!!!!!: %s "), *NewController->GetName());
+	//UE_LOG(LogTemp, Log, TEXT("========================="));
 
 	// if(Cast<APlayerController>(NewController))
 	// {
-	// 	UE_LOG(LogTemp, Log, TEXT("Mouse 커서 없앴음 777"));
+	// 	//UE_LOG(LogTemp, Log, TEXT("Mouse 커서 없앴음 777"));
 	// 	Cast<APlayerController>(NewController)->bShowMouseCursor = false;
 	// 	
 	// }
@@ -80,16 +243,16 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 void APlayerCharacter::OnRep_Owner()
 {
 	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
-	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
-	UE_LOG(LogTemp, Log, TEXT("========================="));
+	//UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	//UE_LOG(LogTemp, Log, TEXT("========================="));
 	AActor* OwnerActor = GetOwner();
 	if (OwnerActor)
 	{
-		UE_LOG(LogTemp, Log, TEXT("OnRep_Owner!!!!!!!!!!!!!!!!:  %s"), *GetOwner()->GetActorNameOrLabel());
+		//UE_LOG(LogTemp, Log, TEXT("OnRep_Owner!!!!!!!!!!!!!!!!:  %s"), *GetOwner()->GetActorNameOrLabel());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("No Owner "));
+		//UE_LOG(LogTemp, Log, TEXT("No Owner "));
 	}
 	Super::OnRep_Owner();
 
@@ -100,13 +263,13 @@ void APlayerCharacter::OnRep_Owner()
 	OwnerActor = GetOwner();
 	if (OwnerActor)
 	{
-		UE_LOG(LogTemp, Log, TEXT("OnRep_Owner!!!!!!!!!!!!!!!!:  %s"), *GetOwner()->GetActorNameOrLabel());
+		//UE_LOG(LogTemp, Log, TEXT("OnRep_Owner!!!!!!!!!!!!!!!!:  %s"), *GetOwner()->GetActorNameOrLabel());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("No Owner "));
+		//UE_LOG(LogTemp, Log, TEXT("No Owner "));
 	}
-	UE_LOG(LogTemp, Log, TEXT("========================="));
+	//UE_LOG(LogTemp, Log, TEXT("========================="));
 }
 
 
@@ -115,42 +278,45 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	HUD = Cast<AInventoryHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	HUD->InventoryPanel->InitializePanel(this);
+	
 	// 현재 실행 환경이 서버인지 클라이언트인지 확인
 	// FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
-	// UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	// //UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
 	if (IsLocallyControlled())
 	{
-		UE_LOG(LogTemp, Display, TEXT("Locally controlled: %s"), *GetActorNameOrLabel());
+		//UE_LOG(LogTemp, Display, TEXT("Locally controlled: %s"), *GetActorNameOrLabel());
 	}
 	else if (GetLocalRole() == ROLE_Authority)
 	{
-		UE_LOG(LogTemp, Display, TEXT("Server controlled: %s"), *GetActorNameOrLabel());
+		//UE_LOG(LogTemp, Display, TEXT("Server controlled: %s"), *GetActorNameOrLabel());
 	}
 	else if (GetLocalRole() == ROLE_SimulatedProxy)
 	{
-		UE_LOG(LogTemp, Display, TEXT("Simulated proxy: %s"), *GetActorNameOrLabel());
+		//UE_LOG(LogTemp, Display, TEXT("Simulated proxy: %s"), *GetActorNameOrLabel());
 	}
 	else if (GetLocalRole() == ROLE_None)
 	{
-		UE_LOG(LogTemp, Display, TEXT("No network role: %s"), *GetActorNameOrLabel());
+		//UE_LOG(LogTemp, Display, TEXT("No network role: %s"), *GetActorNameOrLabel());
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("========================= %s %s"), *GetName(), *GetActorNameOrLabel());
+	//UE_LOG(LogTemp, Log, TEXT("========================= %s %s"), *GetName(), *GetActorNameOrLabel());
 
 	if (GetController() != nullptr)
 	{
 		EnableInput(Cast<ALoginController>(GetController()));
-		UE_LOG(LogTemp, Log, TEXT("Controller is assigned: %s %s"), *GetController()->GetName(), *GetName());
+		//UE_LOG(LogTemp, Log, TEXT("Controller is assigned: %s %s"), *GetController()->GetName(), *GetName());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Controller is not assigned."));
+		//UE_LOG(LogTemp, Warning, TEXT("Controller is not assigned."));
 	}
 
 
 
 
-	UE_LOG(LogTemp, Log, TEXT("========================="));
+	//UE_LOG(LogTemp, Log, TEXT("========================="));
 
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController != nullptr)
@@ -164,7 +330,7 @@ void APlayerCharacter::BeginPlay()
 
 	if (SwordClass)
 	{
-		UE_LOG(LogTemp, Log, TEXT("칼 생성 했자나"));
+		//UE_LOG(LogTemp, Log, TEXT("칼 생성 했자나"));
 		MySword = GetWorld()->SpawnActor<ASword>(SwordClass);
 		MySword->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket_r"));
 		MySword->SetOwner(this);
@@ -172,7 +338,7 @@ void APlayerCharacter::BeginPlay()
 
 	if (GunClass)
 	{
-		UE_LOG(LogTemp, Log, TEXT("총 생성 했자나"));
+		//UE_LOG(LogTemp, Log, TEXT("총 생성 했자나"));
 		MyGun = GetWorld()->SpawnActor<AGun>(GunClass);
 		MyGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket_l"));
 		MyGun->SetOwner(this);
@@ -192,13 +358,29 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+	CheckInteraction();
 	
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 	
 	/*if (GetMovementComponent()->IsFalling()) {
-		UE_LOG(LogTemp, Warning, TEXT("IsFalling : True"));
+		//UE_LOG(LogTemp, Warning, TEXT("IsFalling : True"));
 	}
 	else {
-		UE_LOG(LogTemp, Warning, TEXT("IsFalling : False"));
+		//UE_LOG(LogTemp, Warning, TEXT("IsFalling : False"));
 	}*/
 
 
@@ -217,10 +399,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 	DrawDebugBox(GetWorld(), Location, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Cyan, false);
 
 	/*if (bIsAttacking) {
-		UE_LOG(LogTemp, Display, TEXT("bIsAttacking TRUE"));
+		//UE_LOG(LogTemp, Display, TEXT("bIsAttacking TRUE"));
 	}
 	else {
-		UE_LOG(LogTemp, Display, TEXT("bIsAttacking FALSE"));
+		//UE_LOG(LogTemp, Display, TEXT("bIsAttacking FALSE"));
 	}*/
 
 	//SpawnDebugCapsule(Location, FVector(UpperSlashAttackRadius, UpperSlashAttackRadius, UpperSlashAttackHeight));
@@ -229,16 +411,16 @@ void APlayerCharacter::Tick(float DeltaTime)
 // Called to bind functionality to input
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent ..."));
+	//UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent ..."));
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent22 ..."));
+	//UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent22 ..."));
 
 	//뉴인풋
 	//UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
 	//if (Input != nullptr)
 	//{
-	//	UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent33 ..."));
+	//	//UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent33 ..."));
 	//	Input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 	//	Input->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
@@ -254,7 +436,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	//	//공격
 	//	//Input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFire);
 	//	PlayerInputComponent->BindAction(TEXT("Fire1"), IE_Pressed, this, &APlayerCharacter::StartFire);
-	//	UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent44 ..."));
+	//	//UE_LOG(LogTemp, Log, TEXT("SetupPlayerInputComponent44 ..."));
 	//}
 
 	//구 인풋
@@ -272,11 +454,24 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	//Input->BindAction(FireUpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StopFire);
 
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	PlayerInputComponent->BindAction("Interact",IE_Pressed,this,&APlayerCharacter::BeginInteract);
+	PlayerInputComponent->BindAction("Interact",IE_Released,this,&APlayerCharacter::EndInteract);
+
+	PlayerInputComponent->BindAction("OpenInventory",IE_Pressed,this,&APlayerCharacter::OpenInventory);
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 void APlayerCharacter::Move(const FInputActionInstance& Instance)
 {
-	//UE_LOG(LogTemp,Log,TEXT("Move ..."));
+	////UE_LOG(LogTemp,Log,TEXT("Move ..."));
 	//공격중에는 움직임 X
 	if (bIsAttacking) return;
 
@@ -293,7 +488,7 @@ void APlayerCharacter::Move(const FInputActionInstance& Instance)
 		AddMovementInput(FowardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 
-		//UE_LOG(LogTemp, Warning, TEXT("XXXXX : %f, YYYYY : %f"), MovementVector.X, MovementVector.Y);
+		////UE_LOG(LogTemp, Warning, TEXT("XXXXX : %f, YYYYY : %f"), MovementVector.X, MovementVector.Y);
 	}
 }
 
@@ -343,14 +538,14 @@ void APlayerCharacter::Look(const FInputActionInstance& Instance)
 		AddControllerYawInput(-LookVector.X);
 		AddControllerPitchInput(LookVector.Y);
 
-		//UE_LOG(LogTemp, Warning, TEXT("XXXXX : %f, YYYYY : %f"), LookVector.X, LookVector.Y);
+		////UE_LOG(LogTemp, Warning, TEXT("XXXXX : %f, YYYYY : %f"), LookVector.X, LookVector.Y);
 	}
 }
 
 void APlayerCharacter::UpperSlash_Implementation()
 {
 	if (bIsAttacking) return;
-	UE_LOG(LogTemp, Log, TEXT("Upper Slash init"));
+	//UE_LOG(LogTemp, Log, TEXT("Upper Slash init"));
 	//FTimerHandle Handle;
 	//GetWorldTimerManager().SetTimer(Handle, this, &APlayerCharacter::StopUpperSlash, UpperSlash_Rate, false);
 	bIsUpperSlash = true;
@@ -374,7 +569,7 @@ void APlayerCharacter::HandleUpperSlash()
 {
 	//서버 전용 함수 기능
 	if (GetLocalRole() == ROLE_Authority) {
-		UE_LOG(LogTemp, Display, TEXT("UpperSlashAttack!!!!!!!!!"));
+		//UE_LOG(LogTemp, Display, TEXT("UpperSlashAttack!!!!!!!!!"));
 		UpperSlashAttack();
 	}
 }
@@ -385,7 +580,7 @@ void APlayerCharacter::HandleUpperSlash()
 // 	AController* MyController = GetController();
 // 	if(Cast<APlayerController>(MyController))
 // 	{
-// 		UE_LOG(LogTemp, Log, TEXT("Mouse 커서 없앴음 777"));
+// 		//UE_LOG(LogTemp, Log, TEXT("Mouse 커서 없앴음 777"));
 // 		Cast<APlayerController>(MyController)->bShowMouseCursor = false;
 // 		
 // 	}
@@ -472,11 +667,11 @@ void APlayerCharacter::StartFire_Implementation()
 {
 
 	if (bIsAttacking) return;
-	UE_LOG(LogTemp, Log, TEXT("START RFIRE"));
+	//UE_LOG(LogTemp, Log, TEXT("START RFIRE"));
 
 	UseControllerRotationYaw_Toggle_Multi(true);
 
-	//UE_LOG(LogTemp, Display, TEXT("??????????????"));
+	////UE_LOG(LogTemp, Display, TEXT("??????????????"));
 	bIsShoot = true;
 	bIsAttacking = true;
 	//bIsShootAnim = true;
@@ -493,7 +688,7 @@ void APlayerCharacter::StopFire_Implementation()
 	if (!bIsShoot) return;
 
 	UseControllerRotationYaw_Toggle_Multi(false);
-	UE_LOG(LogTemp, Display, TEXT("FALSE"));
+	//UE_LOG(LogTemp, Display, TEXT("FALSE"));
 
 	bIsShoot = false;
 	//UWorld* World = GetWorld();
@@ -531,7 +726,7 @@ void APlayerCharacter::HandleFire()
 	//CMAttack();
 	//서버 전용 함수 기능
 	if (GetLocalRole() == ROLE_Authority) {
-		UE_LOG(LogTemp, Display, TEXT("Attack!!!!!!!!!"));
+		//UE_LOG(LogTemp, Display, TEXT("Attack!!!!!!!!!"));
 		ShootAttack();
 	}
 
@@ -621,7 +816,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 		if (bIsDead)
 		{
 			//...
-			UE_LOG(LogTemp, Display, TEXT("7777"));
+			//UE_LOG(LogTemp, Display, TEXT("7777"));
 		}
 	}
 
@@ -631,7 +826,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 		if (bIsDead)
 		{
 			//...
-			UE_LOG(LogTemp, Display, TEXT("8888"));
+			//UE_LOG(LogTemp, Display, TEXT("8888"));
 		}
 	}
 
@@ -698,7 +893,7 @@ float APlayerCharacter::TakeDamage(float DamageTaken, FDamageEvent const& Damage
 	//화면 출력
 	FString TakeDamageMessage = FString::Printf(TEXT("TakeDamage Damage : %f"), DamageTaken);
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TakeDamageMessage);
-	UE_LOG(LogTemp, Warning, TEXT("TakeDamage Damage : %f"), DamageTaken);
+	//UE_LOG(LogTemp, Warning, TEXT("TakeDamage Damage : %f"), DamageTaken);
 
 	return damageApplied;
 }
@@ -743,11 +938,11 @@ void APlayerCharacter::CMAttack()
 			//화면 출력
 			FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), ShootAttackDamage);
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
-			UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
+			//UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
 
 			FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
-			UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+			//UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
 		}
 
 	}
@@ -761,16 +956,16 @@ void APlayerCharacter::ShootAttack()
 	//if(!HasLocalNetOwner()) return;
 	/*
 	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
-	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	//UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
 
 	if(GetOwner())
 	{
-		UE_LOG(LogTemp,Log, TEXT(" Shoot 의 오우너 :  %s "), *GetOwner()->GetName())	;
+		//UE_LOG(LogTemp,Log, TEXT(" Shoot 의 오우너 :  %s "), *GetOwner()->GetName())	;
 	}
 
 	if(GetNetOwner()){
 
-		UE_LOG(LogTemp,Log, TEXT(" Shoot 의 넷 오우너 :  %s "), *GetNetOwner()->GetName())	;
+		//UE_LOG(LogTemp,Log, TEXT(" Shoot 의 넷 오우너 :  %s "), *GetNetOwner()->GetName())	;
 
 	}*/
 	FVector Location = GetActorLocation();
@@ -820,11 +1015,11 @@ void APlayerCharacter::ShootAttack()
 			//화면 출력
 			FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), ShootAttackDamage);
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
-			UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
+			//UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
 
 			FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
-			UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+			//UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
 		}
 
 		DrawDebugLine(GetWorld(), Location, End, FColor::Red, false, 3, 0, 5);
@@ -842,7 +1037,7 @@ void APlayerCharacter::UpperSlashAttack()
 
 	//콜리전 크기
 	FVector CollisionExtent = GetSimpleCollisionCylinderExtent();
-	//UE_LOG(LogTemp, Warning, TEXT("CollisionExtent : %f, %f, %f"), CollisionExtent.X, CollisionExtent.Y, CollisionExtent.Z);
+	////UE_LOG(LogTemp, Warning, TEXT("CollisionExtent : %f, %f, %f"), CollisionExtent.X, CollisionExtent.Y, CollisionExtent.Z);
 
 	FVector CapsuleSize = FVector(UpperSlashAttackRadius, UpperSlashAttackRadius, UpperSlashAttackHeight);
 
@@ -893,11 +1088,11 @@ void APlayerCharacter::UpperSlashAttack()
 				//화면 출력
 				FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), ShootAttackDamage);
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
-				UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
+				//UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
 
 				FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
-				UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+				//UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
 			}
 		}
 
@@ -912,7 +1107,7 @@ void APlayerCharacter::UpperSlashAttack()
 
 void APlayerCharacter::SpawnEmitterAtLocation_Multi_Implementation(const UObject* WorldContextObject, UParticleSystem* Particle, FVector Location, FRotator Rotation, FVector Scale, float DurationSec)
 {
-	UE_LOG(LogTemp, Warning, TEXT("SpawnEmitterAtLocation"));
+	//UE_LOG(LogTemp, Warning, TEXT("SpawnEmitterAtLocation"));
 	//피격 이펙트 생성
 	UParticleSystemComponent* ParticleSystemComponent;
 	ParticleSystemComponent = UGameplayStatics::SpawnEmitterAtLocation(WorldContextObject, Particle, Location, Rotation, Scale);
@@ -959,7 +1154,7 @@ void APlayerCharacter::UseControllerRotationYaw_Toggle_Multi_Implementation(bool
 }
 
 void APlayerCharacter::SpawnDebugCapsule(FVector Location, FVector CapsuleSize, FColor Color) {
-	UE_LOG(LogTemp, Warning, TEXT("DrawDebugCapsule"));
+	//UE_LOG(LogTemp, Warning, TEXT("DrawDebugCapsule"));
 	DrawDebugCapsule(
 		GetWorld(),
 		Location,

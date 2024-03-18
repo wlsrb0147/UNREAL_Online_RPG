@@ -9,12 +9,26 @@
 
 void UWIdget_Login::JoinClick()
 {
-	UE_LOG(LogTemp, Log, TEXT("Join CLick!!!!"));
+	//UE_LOG(LogTemp, Log, TEXT("Join CLick!!!!"));
+}
+
+bool UWIdget_Login::NeedSetButtonCool()
+{
+	if(bIsButtonCool) return false;
+	bIsButtonCool = true;
+	GetWorld()->GetTimerManager().SetTimer(ButtonCoolTimer, this, &UWIdget_Login::StopButtonCool, 0.3f, false );
+	return true;
+}
+
+void UWIdget_Login::StopButtonCool()
+{
+	bIsButtonCool = false;
 }
 
 void UWIdget_Login::LoginClick(FString _id, FString _pw)
 {
-	UE_LOG(LogTemp, Log, TEXT("Login CLick!!!! %s %s"), *_id, *_pw);
+	if(!NeedSetButtonCool()) return;
+	//UE_LOG(LogTemp, Log, TEXT("Login CLick!!!! %s %s"), *_id, *_pw);
 	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
 
 	Instance->SelectUser(_id,_pw, this);
@@ -22,7 +36,8 @@ void UWIdget_Login::LoginClick(FString _id, FString _pw)
 
 void UWIdget_Login::ResistClick(FString _id, FString _pw, FString nickname)
 {
-	UE_LOG(LogTemp, Log, TEXT("Resist CLick!!!! %s %s %s"), *_id, *_pw, *nickname);
+	if(!NeedSetButtonCool()) return;
+	//UE_LOG(LogTemp, Log, TEXT("Resist CLick!!!! %s %s %s"), *_id, *_pw, *nickname);
 	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
 
 	Instance->ResistUser(_id,_pw, nickname, this);
@@ -30,12 +45,12 @@ void UWIdget_Login::ResistClick(FString _id, FString _pw, FString nickname)
 
 void UWIdget_Login::LoginSuccess()
 {
-	UE_LOG(LogTemp, Log, TEXT("Login Success"));
+	//UE_LOG(LogTemp, Log, TEXT("Login Success"));
 }
 
 void UWIdget_Login::LoginFail()
 {
-	UE_LOG(LogTemp, Log, TEXT("Login Fail"));
+	//UE_LOG(LogTemp, Log, TEXT("Login Fail"));
 }
 
 void UWIdget_Login::SetCurrentWidget(AActor* Widget)
@@ -58,7 +73,7 @@ void UWIdget_Login::SetDestroy()
 
 void UWIdget_Login::DoLogout()
 {
-	UE_LOG(LogTemp, Log, TEXT("DoLogout init "));
+	//UE_LOG(LogTemp, Log, TEXT("DoLogout init "));
 	
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	ALoginController* Controller =  Cast<ALoginController>(PlayerController);
@@ -90,7 +105,7 @@ void UWIdget_Login::DoLogout()
 
 // void UWIdget_Login::LoginClick()
 // {
-// 	UE_LOG(LogTemp, Log, TEXT("Login CLick!!!!"));
+// 	//UE_LOG(LogTemp, Log, TEXT("Login CLick!!!!"));
 // 	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
 // 	
 // 	

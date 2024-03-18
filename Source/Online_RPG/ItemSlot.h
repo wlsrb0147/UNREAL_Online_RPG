@@ -7,7 +7,7 @@
 #include "ItemSlot.generated.h"
 
 class UInventoryComponent;
-class AItemC;
+class APlayerCharacter;
 class UItemTooltip;
 class UItemDragVisual;
 class UItemBase;
@@ -25,7 +25,7 @@ class ONLINE_RPG_API UItemSlot : public UUserWidget
 public:
 	UItemBase* GetItem() const{ return Item; }
 	void SetItem(UItemBase* ItemRef){Item = ItemRef;}
-	void SetPlayer(AItemC* CharacterRef){PlayerCharacter = CharacterRef;}
+	void SetPlayer(APlayerCharacter* CharacterRef){PlayerCharacter = CharacterRef;}
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -39,7 +39,7 @@ protected:
 		UDragDropOperation* InOperation) override;
 
 	UPROPERTY(VisibleAnywhere)
-	AItemC* PlayerCharacter;
+	APlayerCharacter* PlayerCharacter;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UItemDragVisual> ItemDragVisualClass;

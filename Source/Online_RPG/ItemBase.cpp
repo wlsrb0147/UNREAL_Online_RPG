@@ -4,6 +4,7 @@
 #include "ItemBase.h"
 
 #include "InventoryComponent.h"
+#include "PlayerCharacter.h"
 
 UItemBase::UItemBase(): BaseItemQuantity(0), BaseItemType(), BaseItemAssetData(), OwningInventory(nullptr)
 {
@@ -47,8 +48,8 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 	
 }
 
-void UItemBase::Use(AItemC* UsingCharacter)
+void UItemBase::Use(APlayerCharacter* UsingCharacter)
 {
 	OwningInventory->RemoveAmountOfItem(this,1);
-	UE_LOG(LogTemp,Display,TEXT("Use 실행"))
+	//UE_LOG(LogTemp,Display,TEXT("Use 실행"))
 }
