@@ -12,8 +12,22 @@ void UWIdget_Login::JoinClick()
 	UE_LOG(LogTemp, Log, TEXT("Join CLick!!!!"));
 }
 
+bool UWIdget_Login::NeedSetButtonCool()
+{
+	if(bIsButtonCool) return false;
+	bIsButtonCool = true;
+	GetWorld()->GetTimerManager().SetTimer(ButtonCoolTimer, this, &UWIdget_Login::StopButtonCool, 0.3f, false );
+	return true;
+}
+
+void UWIdget_Login::StopButtonCool()
+{
+	bIsButtonCool = false;
+}
+
 void UWIdget_Login::LoginClick(FString _id, FString _pw)
 {
+	if(!NeedSetButtonCool()) return;
 	UE_LOG(LogTemp, Log, TEXT("Login CLick!!!! %s %s"), *_id, *_pw);
 	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
 
@@ -22,6 +36,7 @@ void UWIdget_Login::LoginClick(FString _id, FString _pw)
 
 void UWIdget_Login::ResistClick(FString _id, FString _pw, FString nickname)
 {
+	if(!NeedSetButtonCool()) return;
 	UE_LOG(LogTemp, Log, TEXT("Resist CLick!!!! %s %s %s"), *_id, *_pw, *nickname);
 	UNetwork_Manager_R* Instance = Cast<UNetwork_Manager_R>(GetGameInstance());
 

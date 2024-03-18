@@ -92,6 +92,10 @@ public:
 	
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_Owner() override;
+	// UPROPERTY(ReplicatedUsing=OnRep_Possessed)
+	// bool bIsPossessed = false;
+	// UFUNCTION()
+	// void OnRep_Possessed();
 
 	/** ??????? ???©ª?????? */
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

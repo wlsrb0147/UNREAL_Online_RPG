@@ -228,6 +228,16 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 
 	UE_LOG(LogTemp, Log, TEXT("Controller is POSSESSED!!!!!!!!!!!!!!!!: %s "), *NewController->GetName());
 	UE_LOG(LogTemp, Log, TEXT("========================="));
+
+	// if(Cast<APlayerController>(NewController))
+	// {
+	// 	UE_LOG(LogTemp, Log, TEXT("Mouse 커서 없앴음 777"));
+	// 	Cast<APlayerController>(NewController)->bShowMouseCursor = false;
+	// 	
+	// }
+
+	//bIsPossessed = true;
+	//NewController->bShowMouseCursor = false;
 }
 
 void APlayerCharacter::OnRep_Owner()
@@ -557,6 +567,7 @@ bool APlayerCharacter::GetIsUpperSlash() const
 
 void APlayerCharacter::OnRep_IsUpperSlash()
 {
+	
 }
 
 void APlayerCharacter::HandleUpperSlash()
@@ -568,6 +579,17 @@ void APlayerCharacter::HandleUpperSlash()
 	}
 }
 
+
+// void APlayerCharacter::OnRep_Possessed()
+// {
+// 	AController* MyController = GetController();
+// 	if(Cast<APlayerController>(MyController))
+// 	{
+// 		UE_LOG(LogTemp, Log, TEXT("Mouse 커서 없앴음 777"));
+// 		Cast<APlayerController>(MyController)->bShowMouseCursor = false;
+// 		
+// 	}
+// }
 
 // 리플리케이트된 프로퍼티
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifetimeProps) const
@@ -583,6 +605,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Ou
 	DOREPLIFETIME(APlayerCharacter, bIsShoot);
 	DOREPLIFETIME(APlayerCharacter, bIsShootAnim);
 	DOREPLIFETIME(APlayerCharacter, bIsAttacking);
+	//DOREPLIFETIME(APlayerCharacter, bIsPossessed);
 
 }
 
