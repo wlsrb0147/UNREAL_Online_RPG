@@ -22,6 +22,7 @@
 #include "InventoryPanel.h"
 #include "ItemInteractionInterface.h"
 #include "LoginController.h"
+#include "Network_Manager_R.h"
 #include "PickUpItem.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -280,6 +281,20 @@ void APlayerCharacter::BeginPlay()
 
 	HUD = Cast<AInventoryHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	HUD->InventoryPanel->InitializePanel(this);
+
+	/*TArray<TSharedPtr<FJsonValue>> ValuesArray = Cast<UNetwork_Manager_R>(GetGameInstance())->ValuesArray;
+	for (const TSharedPtr<FJsonValue>& Value : ValuesArray)
+	{
+		// 각 항목을 mapValue 객체로 추출합니다.
+		const TSharedPtr<FJsonObject> MapValueObject = Value->AsObject()->GetObjectField(TEXT("mapValue"));
+		const TSharedPtr<FJsonObject> TheObject = MapValueObject->GetObjectField(TEXT("fields"));
+    
+		// 이제 key와 quantity를 fields 객체에서 추출할 수 있습니다.
+		FString ItemKey = TheObject->GetObjectField(TEXT("key"))->GetStringField(TEXT("stringValue"));
+		FString ItemQuantity = TheObject->GetObjectField(TEXT("quantity"))->GetStringField(TEXT("stringValue"));
+
+		
+	}*/
 	
 	// 현재 실행 환경이 서버인지 클라이언트인지 확인
 	// FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
