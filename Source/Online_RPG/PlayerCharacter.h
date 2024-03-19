@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameDelegates.h"
+#include "ItemStruct.h"
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
 
+struct FItemData;
 class UItemBase;
 class IItemInteractionInterface;
 class AInventoryHUD;
@@ -65,6 +67,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "Character | Inventory")
 	UInventoryComponent* PlayerInventory;
+
+	UPROPERTY(EditAnywhere, Category ="Character | Database")
+	UDataTable* ItemDataTable;
+	
 	
 	FInteractingData InteractionData;
 	void FoundNoInteract();
@@ -76,6 +82,7 @@ public:
 	void UpdateInteractionWidget() const;
 	void DropItem(UItemBase* ItemToDrop,const int32 QuantityToDrop);
 	void CheckInteraction();
+	UItemBase* MakeItemBase(const FItemData* ItemData,int32 Quantity);
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
