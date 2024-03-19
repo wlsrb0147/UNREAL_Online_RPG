@@ -2,6 +2,7 @@
 
 #include "Network_Manager_R.h"
 
+#include "InventoryComponent.h"
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
@@ -20,6 +21,7 @@
 #include "OnlineSubsystem.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSessionSettings.h"
+#include "PlayerCharacter.h"
 
 
 const char* host = "localhost";
@@ -61,87 +63,131 @@ ASound_Manager_R* UNetwork_Manager_R::Get_Sound_Instance()
 
 void UNetwork_Manager_R::LoadStartAsset()
 {
-// 	//UE_LOG(LogTemp, Error, TEXT("LoadStartAsset"));
-//     // 사운드 에셋 비동기 로드
-//     FPrimaryAssetId SoundAssetId("PostLoadAsset", TEXT("BP_PostLoadAsset"));
-//     //FPrimaryAssetId SoundAssetId("UPostLoadAsset", TEXT("Default__BP_PostLoadAsset_C"));
-//     FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
+	UE_LOG(LogTemp, Error, TEXT("LoadStartAsset"));
+    // 사운드 에셋 비동기 로드
+    //FPrimaryAssetId SoundAssetId("PostLoadAsset", TEXT("BP_PostLoadAsset"));
+    //FPrimaryAssetId SoundAssetId("UPostLoadAsset", TEXT("Default__BP_PostLoadAsset_C"));
+    FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
+
+    // FPrimaryAssetId에서 FSoftObjectPath 배열을 얻어내는 과정
+    //TArray<FSoftObjectPath> AssetPaths;
+    //FSoftObjectPath AssetPath = UAssetManager::Get().GetPrimaryAssetPath(SoundAssetId);
+
+    TArray<FPrimaryAssetId> OutAssets;
+    UAssetManager::Get().GetPrimaryAssetIdList("PostLoadAsset", OutAssets);
+	//UAssetManager* AssetManager = UAssetManager::GetIfValid();
+    if (OutAssets.IsEmpty()) {
+        UE_LOG(LogTemp, Warning, TEXT("OutAssets Empty"));
+    }
+    TArray<FSoftObjectPath> AssetPaths;
+    for (FPrimaryAssetId Id : OutAssets) {
+        //UE_LOG(LogTemp, Warning, TEXT("OutAssets 33333"));
+        FSoftObjectPath AssetPath = UAssetManager::Get().GetPrimaryAssetPath(Id);
+        if (!AssetPath.IsValid())
+        {
+            UE_LOG(LogTemp, Error, TEXT("AssetPath is not valid."));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("AssetPath is  valid. 777 %s"), *AssetPath.ToString());
+        }
+        AssetPaths.Add(AssetPath);
+    }
+//AssetPaths.Add(AssetPath);
 //
-//     // FPrimaryAssetId에서 FSoftObjectPath 배열을 얻어내는 과정
-//     //TArray<FSoftObjectPath> AssetPaths;
-//     //FSoftObjectPath AssetPath = UAssetManager::Get().GetPrimaryAssetPath(SoundAssetId);
-//
-//     TArray<FPrimaryAssetId> OutAssets;
-//     UAssetManager::Get().GetPrimaryAssetIdList("PostLoadAsset", OutAssets);
-// 	//UAssetManager* AssetManager = UAssetManager::GetIfValid();
-//     if (OutAssets.IsEmpty()) {
-//         //UE_LOG(LogTemp, Warning, TEXT("OutAssets Empty"));
-//     }
-//     TArray<FSoftObjectPath> AssetPaths;
-//     for (FPrimaryAssetId Id : OutAssets) {
-//         //UE_LOG(LogTemp, Warning, TEXT("OutAssets 33333"));
-//         FSoftObjectPath AssetPath = UAssetManager::Get().GetPrimaryAssetPath(Id);
-//         if (!AssetPath.IsValid())
-//         {
-//             //UE_LOG(LogTemp, Error, TEXT("AssetPath is not valid."));
-//         }
-//         else
-//         {
-//             //UE_LOG(LogTemp, Error, TEXT("AssetPath is  valid. 777"));
-//         }
-//         AssetPaths.Add(AssetPath);
-//     }
-// //AssetPaths.Add(AssetPath);
-//
-// 	// 비동기 로드 콜백
-// 	auto OnLoadComplete = [this, AssetPaths]()
-// 	{
-// 		//UPostLoadAsset* SoundAsset = Cast<UPostLoadAsset>(LoadedAsset);
-// 		//UE_LOG(LogTemp, Warning, TEXT("UPostLoadAsset Load 성공"));
-//
-// 		for (const FSoftObjectPath& AssetPath : AssetPaths)
-// 		{
-// 			FPrimaryAssetId MyAssetId = UAssetManager::Get().GetPrimaryAssetIdForPath(AssetPath);
-// 			UPostLoadAsset* LoadedAsset = Cast<UPostLoadAsset>(	UAssetManager::Get().GetPrimaryAssetObject(MyAssetId));
-// 			TSoftObjectPtr<UPostLoadAsset> SoftObjectPtr(AssetPath);
-// 			//UPostLoadAsset* LoadedAsset = SoftObjectPtr.Get();
-// 			//UE_LOG(LogTemp, Warning, TEXT("Path 로 하나씩 다시 가져오기 %s"), *AssetPath.ToString());
-// 			if(AssetPath.IsValid())
-// 			{
-// 				//UE_LOG(LogTemp, Warning, TEXT("valid 긴해 "));
-// 			}else
-// 			{
-// 				//UE_LOG(LogTemp, Warning, TEXT("valid 아님"));
-// 			}
-// 			// GetStreamableManager().LoadSynchronous()를 호출하여 UObject로 로드된 에셋을 가져옵니다.
-// 			//UObject* LoadedObject = UAssetManager::GetStreamableManager().LoadSynchronous(AssetPath, false);
-//
-// 			// 로드된 UObject를 UPostLoadAsset 타입으로 캐스트합니다.
-// 			//UObject* LoadedAsset = Cast<UObject>(Streamable.GetLoadedAsset(AssetPath));
-//         
-// 			//UPostLoadAsset* LoadedAsset = Cast<UPostLoadAsset>(LoadedObject);
-//
-// 			if (LoadedAsset)
-// 			{
-// 				// 이제 로드된 에셋을 사용할 수 있습니다.
-// 				// 예를 들어, 사운드 재생, 메시 렌더링 등...
-// 				//UE_LOG(LogTemp, Log, TEXT("Loaded Asset Name: %s"), *LoadedAsset->GetName());
-// 				// ...사용 코드...
-// 			}else
-// 			{
-// 				//UE_LOG(LogTemp, Log, TEXT(" load 에셋 실패"));
-// 			
-// 			}
-// 		}
-// 		// if (SoundAsset && SoundAsset->Sound1) // Sound1을 예로 듭니다. 필요에 따라 Sound2 등 다른 사운드 참조 가능
-// 		// {
-// 		//     UGameplayStatics::PlaySoundAtLocation(this, SoundAsset->Sound1, GetActorLocation());
-// 		// }
-// 	};
+	// 비동기 로드 콜백
+	auto OnLoadComplete = [this, AssetPaths]()
+	{
+		//UPostLoadAsset* SoundAsset = Cast<UPostLoadAsset>(LoadedAsset);
+		UE_LOG(LogTemp, Warning, TEXT("UPostLoadAsset Load 성공"));
+	
+		for (const FSoftObjectPath& AssetPath : AssetPaths)
+		{
+			FPrimaryAssetId MyAssetId = UAssetManager::Get().GetPrimaryAssetIdForPath(AssetPath);
+			if(UAssetManager::Get().GetPrimaryAssetObject(MyAssetId))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("nullptr 아님 "));
+			}else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("nullptr 임 "));
+			}
+			
+			//UAssetManager::Get().GetPrimaryAssetObject(MyAssetId)-
+			UE_LOG(LogTemp, Warning, TEXT("Loaded object type: %s"), *UAssetManager::Get().GetPrimaryAssetObject(MyAssetId)->GetClass()->GetName());
+			UPostLoadAsset* LoadedAsset = Cast<UPostLoadAsset>(	UAssetManager::Get().GetPrimaryAssetObject(MyAssetId));
+			UObject* LoadedObject = UAssetManager::Get().GetPrimaryAssetObject(MyAssetId);
+			UBlueprintGeneratedClass* BPClass = Cast<UBlueprintGeneratedClass>(LoadedObject);
+
+			if (BPClass)
+			{
+				UObject* BPObject = BPClass->GetDefaultObject(); // 기본 객체를 가져옵니다.
+				UPostLoadAsset* PostLoadAsset = Cast<UPostLoadAsset>(BPObject); // 이제 원하는 타입으로 캐스팅을 시도합니다.
+
+				if (PostLoadAsset)
+				{
+					// 성공적으로 캐스팅되었습니다. 이제 PostLoadAsset을 사용할 수 있습니다.
+					UE_LOG(LogTemp, Warning, TEXT("Casting to UPostLoadAsset successful. %s"), *PostLoadAsset->Ingame_Sound_queue->GetName());
+					Get_Sound_Instance();
+					
+					Sound_Instance->Ingame_Sound_queue = PostLoadAsset->Ingame_Sound_queue;
+					Sound_Instance->Walk_Sound_queue = PostLoadAsset->Walk_Sound_queue;
+					Sound_Instance->Walk_Sound_Grass_queue = PostLoadAsset->Walk_Sound_Grass_queue;
+					Sound_Instance->Walk_Sound_Water_queue = PostLoadAsset->Walk_Sound_Water_queue;
+					Sound_Instance->Boss_BGM = PostLoadAsset->Boss_BGM;
+					Sound_Instance->Shoot_Sound_queue = PostLoadAsset->Shoot_Sound_queue;
+					Sound_Instance->Fire_Sound = PostLoadAsset->Fire_Sound;
+					Sound_Instance->Explosion_Sound = PostLoadAsset->Explosion_Sound;
+					Sound_Instance->Manager_Init();
+
+					//TODO : 색깔이 번쩍번쩍 하게 변합니다. 찾아보면 알림도 있음
+					//Ingame BGM ON
+					Sound_Play(SOUND_TYPE::BGM_Ingame, 1, FVector(0, 0, 0), FRotator(0, 0, 0));
+
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Casting to UPostLoadAsset failed."));
+				}
+			}
+			TSoftObjectPtr<UPostLoadAsset> SoftObjectPtr(AssetPath);
+			//UPostLoadAsset* LoadedAsset = SoftObjectPtr.Get();
+			//UE_LOG(LogTemp, Warning, TEXT("Path 로 하나씩 다시 가져오기 %s"), *AssetPath.ToString());
+			if(AssetPath.IsValid())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("valid 긴해 "));
+			}else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("valid 아님"));
+			}
+			// GetStreamableManager().LoadSynchronous()를 호출하여 UObject로 로드된 에셋을 가져옵니다.
+			//UObject* LoadedObject = UAssetManager::GetStreamableManager().LoadSynchronous(AssetPath, false);
+	
+			// 로드된 UObject를 UPostLoadAsset 타입으로 캐스트합니다.
+			//UObject* LoadedAsset = Cast<UObject>(Streamable.GetLoadedAsset(AssetPath));
+        
+			//UPostLoadAsset* LoadedAsset = Cast<UPostLoadAsset>(LoadedObject);
+	
+			if (LoadedAsset)
+			{
+				// 이제 로드된 에셋을 사용할 수 있습니다.
+				// 예를 들어, 사운드 재생, 메시 렌더링 등...
+				UE_LOG(LogTemp, Log, TEXT("Loaded Asset Name: %s"), *LoadedAsset->GetName());
+				// ...사용 코드...
+			}else
+			{
+				UE_LOG(LogTemp, Log, TEXT(" load 에셋 실패"));
+			
+			}
+		}
+		// if (SoundAsset && SoundAsset->Sound1) // Sound1을 예로 듭니다. 필요에 따라 Sound2 등 다른 사운드 참조 가능
+		// {
+		//     UGameplayStatics::PlaySoundAtLocation(this, SoundAsset->Sound1, GetActorLocation());
+		// }
+	};
 //
 // // 비동기적으로 사운드 에셋 로드 요청
 // //Streamable.RequestAsyncLoad(AssetPath, FStreamableDelegate::CreateLambda(OnLoadComplete));
-// Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadComplete));
+ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadComplete));
 //Streamable.RequestAsyncLoad(SoundAssetId, FStreamableDelegate::CreateLambda(OnLoadComplete));
 	/*
 	//UE_LOG(LogTemp, Error, TEXT("LoadStartAsset"));
@@ -236,66 +282,66 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 	///////////////////////////////////////////////////////////////////////
 	///
 	
-	UAssetManager::Get().ReinitializeFromConfig();
-	FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
-	
-	// 비동기 로드 콜백
-	// TSoftObjectPtr는 특정 에셋에 대한 소프트 참조입니다.
-	FSoftObjectPath DirectAssetPath(TEXT("/Game/MAIN/BP_PostLoadAsset.BP_PostLoadAsset_C"));
-	TSoftObjectPtr<UPostLoadAsset> SoftObjectPtr(DirectAssetPath);
-	//LoadAssetPointer = TSoftObjectPtr<UPostLoadAsset>(DirectAssetPath);
-	
-	
-	auto OnLoadComplete = [SoftObjectPtr]()
-	{
-		//UPostLoadAsset* SoundAsset = Cast<UPostLoadAsset>(LoadedAsset);
-		//UE_LOG(LogTemp, Warning, TEXT("UPostLoadAsset Load 성공"));
-		
-		// 에셋 매니저를 사용하여 로드된 에셋을 가져옵니다.
-		UPostLoadAsset* LoadedAsset = SoftObjectPtr.Get();
-		//UPostLoadAsset* LoadedAsset = Cast<UPostLoadAsset>(StaticLoadObject(UPostLoadAsset::StaticClass(), nullptr, *DirectAssetPath.ToString()));
-
-		if (LoadedAsset)
-		{
-			// 에셋이 성공적으로 로드되었습니다. 이제 여기서 로드된 에셋을 사용할 수 있습니다.
-			//UE_LOG(LogTemp, Log, TEXT("Asset Loaded Successfully. %s"), *LoadedAsset->Shoot_Sound_queue->GetName() );
-			// 이후 작업을 수행합니다. 예를 들어, 사운드 재생 등...
-			
-		}
-		else
-		{
-			//UE_LOG(LogTemp, Error, TEXT("Failed to load the asset."));
-		}
-		
-		//UObject* LoadedAsset = Streamable.GetLoadedAsset(DirectAssetPath);
-    
-		// 로드된 에셋이 UPostLoadAsset 타입인지 확인하고 캐스트합니다.
-		//UPostLoadAsset* SoundAsset = Cast<UPostLoadAsset>(LoadedAsset);
-		
-		// if (SoundAsset && SoundAsset->Sound1) // Sound1을 예로 듭니다. 필요에 따라 Sound2 등 다른 사운드 참조 가능
-		// {
-		// 	UGameplayStatics::PlaySoundAtLocation(this, SoundAsset->Sound1, GetActorLocation());
-		// }
-	};
-
-	
-	if (!DirectAssetPath.IsValid())
-	{
-		//UE_LOG(LogTemp, Error, TEXT("DirectAssetPath is not valid."));
-	}
-	else
-	{
-		//UE_LOG(LogTemp, Error, TEXT("DirectAssetPath valid."));
-		//Streamable.RequestAsyncLoad(DirectAssetPath, FStreamableDelegate::CreateLambda(OnLoadComplete));
-		Streamable.RequestAsyncLoad(SoftObjectPtr.ToSoftObjectPath(), FStreamableDelegate::CreateLambda(OnLoadComplete));
-	}
-
-	// 비동기적으로 사운드 에셋 로드 요청
-	//Streamable.RequestAsyncLoad(AssetPath, FStreamableDelegate::CreateLambda(OnLoadComplete));
-	//Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadComplete));
-	TArray<FName> LoadBundles;
-	//Manager.LoadPrimaryAssets(OutAssets, LoadBundles, FStreamableDelegate::CreateLambda(OnLoadComplete));
-	//Streamable.RequestAsyncLoad(SoundAssetId, FStreamableDelegate::CreateLambda(OnLoadComplete));
+	// UAssetManager::Get().ReinitializeFromConfig();
+	// FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
+	//
+	// // 비동기 로드 콜백
+	// // TSoftObjectPtr는 특정 에셋에 대한 소프트 참조입니다.
+	// FSoftObjectPath DirectAssetPath(TEXT("/Game/MAIN/BP_PostLoadAsset.BP_PostLoadAsset_C"));
+	// TSoftObjectPtr<UPostLoadAsset> SoftObjectPtr(DirectAssetPath);
+	// //LoadAssetPointer = TSoftObjectPtr<UPostLoadAsset>(DirectAssetPath);
+	//
+	//
+	// auto OnLoadComplete = [SoftObjectPtr]()
+	// {
+	// 	//UPostLoadAsset* SoundAsset = Cast<UPostLoadAsset>(LoadedAsset);
+	// 	//UE_LOG(LogTemp, Warning, TEXT("UPostLoadAsset Load 성공"));
+	// 	
+	// 	// 에셋 매니저를 사용하여 로드된 에셋을 가져옵니다.
+	// 	UPostLoadAsset* LoadedAsset = SoftObjectPtr.Get();
+	// 	//UPostLoadAsset* LoadedAsset = Cast<UPostLoadAsset>(StaticLoadObject(UPostLoadAsset::StaticClass(), nullptr, *DirectAssetPath.ToString()));
+	//
+	// 	if (LoadedAsset)
+	// 	{
+	// 		// 에셋이 성공적으로 로드되었습니다. 이제 여기서 로드된 에셋을 사용할 수 있습니다.
+	// 		//UE_LOG(LogTemp, Log, TEXT("Asset Loaded Successfully. %s"), *LoadedAsset->Shoot_Sound_queue->GetName() );
+	// 		// 이후 작업을 수행합니다. 예를 들어, 사운드 재생 등...
+	// 		
+	// 	}
+	// 	else
+	// 	{
+	// 		//UE_LOG(LogTemp, Error, TEXT("Failed to load the asset."));
+	// 	}
+	// 	
+	// 	//UObject* LoadedAsset = Streamable.GetLoadedAsset(DirectAssetPath);
+ //    
+	// 	// 로드된 에셋이 UPostLoadAsset 타입인지 확인하고 캐스트합니다.
+	// 	//UPostLoadAsset* SoundAsset = Cast<UPostLoadAsset>(LoadedAsset);
+	// 	
+	// 	// if (SoundAsset && SoundAsset->Sound1) // Sound1을 예로 듭니다. 필요에 따라 Sound2 등 다른 사운드 참조 가능
+	// 	// {
+	// 	// 	UGameplayStatics::PlaySoundAtLocation(this, SoundAsset->Sound1, GetActorLocation());
+	// 	// }
+	// };
+	//
+	//
+	// if (!DirectAssetPath.IsValid())
+	// {
+	// 	//UE_LOG(LogTemp, Error, TEXT("DirectAssetPath is not valid."));
+	// }
+	// else
+	// {
+	// 	//UE_LOG(LogTemp, Error, TEXT("DirectAssetPath valid."));
+	// 	//Streamable.RequestAsyncLoad(DirectAssetPath, FStreamableDelegate::CreateLambda(OnLoadComplete));
+	// 	Streamable.RequestAsyncLoad(SoftObjectPtr.ToSoftObjectPath(), FStreamableDelegate::CreateLambda(OnLoadComplete));
+	// }
+	//
+	// // 비동기적으로 사운드 에셋 로드 요청
+	// //Streamable.RequestAsyncLoad(AssetPath, FStreamableDelegate::CreateLambda(OnLoadComplete));
+	// //Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadComplete));
+	// TArray<FName> LoadBundles;
+	// //Manager.LoadPrimaryAssets(OutAssets, LoadBundles, FStreamableDelegate::CreateLambda(OnLoadComplete));
+	// //Streamable.RequestAsyncLoad(SoundAssetId, FStreamableDelegate::CreateLambda(OnLoadComplete));
 
 
 	/////////////////
@@ -797,6 +843,11 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 									// ID 값을 FString으로 가져옵니다.
 									FString ID = IDObject->GetStringField(TEXT("stringValue"));
 
+									TSharedPtr<FJsonObject> ItemsObject = FieldsObject->GetObjectField(TEXT("Items"));
+									TSharedPtr<FJsonObject> ArrayValueObject = ItemsObject->GetObjectField(TEXT("arrayValue"));
+									ValuesArray = ArrayValueObject->GetArrayField(TEXT("values"));
+
+									
 
 								}
 							}
@@ -1013,10 +1064,47 @@ void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpRes
 
 void UNetwork_Manager_R::UpdateSpawnData()
 {
-	//UE_LOG(LogTemp, Log, TEXT("UpdateSpawnData ..."));
+	UE_LOG(LogTemp, Log, TEXT("UpdateSpawnData ..."));
 	FHttpModule* Http = &FHttpModule::Get();
 	if (Http)
 	{
+		// Item 가진 스크립트
+
+		
+		const APlayerCharacter* CurrentCharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+		const UInventoryComponent* PlayerInventory = CurrentCharacter->GetInventory();
+
+		FString ItemJson = TEXT("[");
+		
+
+		const TArray<UItemBase*>& InventoryItems = PlayerInventory->GetInventory();
+		
+		for (int32 i = 0; i < InventoryItems.Num(); ++i)
+		{
+			UItemBase* const& InventoryItem = InventoryItems[i];
+			ItemJson += FString::Printf(TEXT(
+				"{"
+				"\"mapValue\": {"
+				"\"fields\": {"
+				"\"key\": {\"stringValue\": \"%s\"},"
+				"\"quantity\": {\"integerValue\": %d}"
+				"}"
+				"}"
+				"}"), 
+				*InventoryItem->BaseItemID.ToString(), InventoryItem->BaseItemQuantity
+			);
+    
+			if (i < InventoryItems.Num() - 1)
+			{
+				ItemJson += TEXT(",");
+			}
+		}
+
+		
+		ItemJson += TEXT("]");
+
+		UE_LOG(LogTemp,Log,TEXT(" ITEMJSON : %s "),*ItemJson);
+		
 		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 		Request->SetVerb("PATCH");
 		Request->SetURL(FString::Printf(TEXT("https://firestore.googleapis.com/v1/projects/unrealrpg-7a179/databases/(default)/documents/Spawn/%s"), *DocumentId));
@@ -1034,12 +1122,36 @@ void UNetwork_Manager_R::UpdateSpawnData()
 		"\"SpawnRotator_Pitch\": {\"doubleValue\": %f},"
 		"\"SpawnRotator_Roll\": {\"doubleValue\": %f},"
 		"\"SpawnRotator_Yaw\": {\"doubleValue\": %f},"
-		"\"SwordName\": {\"stringValue\": \"blue\"}"
+		"\"SwordName\": {\"stringValue\": \"blue\"},"
+		"\"Items\": {\"arrayValue\": {\"values\": [%s]}}"
+		//"\"Items\": {\"arrayValue\": {\"values\": [%s]}}"
+		
+		//"\"Items\": {\"arrayValue\": {\"values\": [{\"key\": \"red\", \"quantity\": 4}]}}"
+		// "\"Items\": {\"arrayValue\": {\"values\": ["
+  //  "{"
+  //  "\"mapValue\": {"
+  //  "\"fields\": {"
+  //  "\"key\": {\"stringValue\": \"itemKey1\"},"
+  //  "\"quantity\": {\"integerValue\": 1}"
+  //  "}"
+  //  "}"
+  //  "},"
+  //  "{"
+  //  "\"mapValue\": {"
+  //  "\"fields\": {"
+  //  "\"key\": {\"stringValue\": \"itemKey2\"},"
+  //  "\"quantity\": {\"integerValue\": 2}"
+  //  "}"
+  //  "}"
+  //  "}"
+  // "]}}"
 		"}"
 		"}"), *Login_ID,
 		SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z,
-		SpawnRotator.Pitch, SpawnRotator.Roll, SpawnRotator.Yaw);
-
+		SpawnRotator.Pitch, SpawnRotator.Roll, SpawnRotator.Yaw
+		,*ItemJson
+		);
+//
 		Request->SetContentAsString(FieldsJson);
 		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::Callback_ForceExit);
 		if (!Request->ProcessRequest())
@@ -1059,6 +1171,40 @@ void UNetwork_Manager_R::InsertSpawnData()
 	FHttpModule* Http = &FHttpModule::Get();
 	if (Http)
 	{
+		const APlayerCharacter* CurrentCharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+		const UInventoryComponent* PlayerInventory = CurrentCharacter->GetInventory();
+
+		FString ItemJson = TEXT("[");
+		
+
+		const TArray<UItemBase*>& InventoryItems = PlayerInventory->GetInventory();
+		
+		for (int32 i = 0; i < InventoryItems.Num(); ++i)
+		{
+			UItemBase* const& InventoryItem = InventoryItems[i];
+			ItemJson += FString::Printf(TEXT(
+				"{"
+				"\"mapValue\": {"
+				"\"fields\": {"
+				"\"key\": {\"stringValue\": \"%s\"},"
+				"\"quantity\": {\"integerValue\": %d}"
+				"}"
+				"}"
+				"}"), 
+				*InventoryItem->BaseItemID.ToString(), InventoryItem->BaseItemQuantity
+			);
+    
+			if (i < InventoryItems.Num() - 1)
+			{
+				ItemJson += TEXT(",");
+			}
+		}
+
+		
+		ItemJson += TEXT("]");
+
+		UE_LOG(LogTemp,Log,TEXT(" ITEMJSON : %s "),*ItemJson);
+		
 		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 		Request->SetVerb("POST");
 		Request->SetURL(TEXT("https://firestore.googleapis.com/v1/projects/unrealrpg-7a179/databases/(default)/documents/Spawn"));
@@ -1076,11 +1222,14 @@ void UNetwork_Manager_R::InsertSpawnData()
 			"\"SpawnRotator_Pitch\": {\"doubleValue\": %f},"
 			"\"SpawnRotator_Roll\": {\"doubleValue\": %f},"
 			"\"SpawnRotator_Yaw\": {\"doubleValue\": %f},"
-			"\"SwordName\": {\"stringValue\": \"blue\"}"
+			"\"SwordName\": {\"stringValue\": \"blue\"},"
+			"\"Items\": {\"arrayValue\": {\"values\": [%s]}}"
 			"}"
 			"}"), *Login_ID,
 			SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z,
-			SpawnRotator.Pitch, SpawnRotator.Roll, SpawnRotator.Yaw);
+			SpawnRotator.Pitch, SpawnRotator.Roll, SpawnRotator.Yaw
+			,*ItemJson
+			);
 
 		Request->SetContentAsString(InsertJson);
 		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::Callback_ForceExit);
@@ -1116,9 +1265,9 @@ void UNetwork_Manager_R::Callback_ForceExit(FHttpRequestPtr Request, FHttpRespon
 
 void UNetwork_Manager_R::OnSequenceFinished()
 {
-	//UE_LOG(LogTemp, Error, TEXT("시퀀스 콜백"));
+	UE_LOG(LogTemp, Error, TEXT("시퀀스 콜백"));
 
-	//LoadStartAsset();
+	LoadStartAsset();
 
 	// if(GetWorld()->GetFirstPlayerController())
 	// {
@@ -1138,10 +1287,7 @@ void UNetwork_Manager_R::OnSequenceFinished()
 		MyController->SetLoginID(Login_ID);
 		//CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 
-		//TODO : 색깔이 번쩍번쩍 하게 변합니다. 찾아보면 알림도 있음
-		//Ingame BGM ON
-		Sound_Play(SOUND_TYPE::BGM_Ingame, 1, FVector(0, 0, 0), FRotator(0, 0, 0));
-
+		
 		
 		////서버 전용 함수 기능
 		//if (MyController->GetPawn()->GetLocalRole() == ROLE_Authority)

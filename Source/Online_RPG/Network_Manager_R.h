@@ -137,7 +137,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void CallSpawn(int Player_Idx);
 	
-	
+	TArray<TSharedPtr<FJsonValue>> ValuesArray;
 	
 	bool CreateSession(ULocalPlayer* Player, int32 NumPublicConnections, bool bIsLAN);
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
