@@ -560,11 +560,6 @@ void APlayerCharacter::StopUpperSlash_Implementation()
 	bIsAttacking = false;
 }
 
-bool APlayerCharacter::GetIsUpperSlash() const
-{
-	return bIsUpperSlash;
-}
-
 void APlayerCharacter::OnRep_IsUpperSlash()
 {
 	

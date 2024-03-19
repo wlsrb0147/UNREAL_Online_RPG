@@ -95,6 +95,9 @@ public:
 
 	void CreateWidget_OX(bool bIsSuccess);
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> Player_Widget;
+
 
 	//======================================로그인 후 세팅 값======================================
 	//ID
