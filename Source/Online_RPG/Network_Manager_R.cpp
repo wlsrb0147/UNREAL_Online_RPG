@@ -846,9 +846,12 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 									TSharedPtr<FJsonObject> ItemsObject = FieldsObject->GetObjectField(TEXT("Items"));
 									TSharedPtr<FJsonObject> ArrayValueObject = ItemsObject->GetObjectField(TEXT("arrayValue"));
 									ValuesArray = ArrayValueObject->GetArrayField(TEXT("values"));
-
 									
-
+									/// 동재추가코드
+									TSharedPtr<FJsonObject> MoneyObject = FieldsObject->GetObjectField(TEXT("Money"));
+									MoneyFromServer = MoneyObject->GetIntegerField(TEXT("integerValue"));
+						
+									/// 끝
 								}
 							}
 						}

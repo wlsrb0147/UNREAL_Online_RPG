@@ -16,6 +16,12 @@ UInventoryComponent::UInventoryComponent(): InventorySlotCapacity(0)
 }
 
 
+void UInventoryComponent::AddMoney(const uint64 AmountToAddMoney)
+{
+	CurrentMoney += AmountToAddMoney;
+	OnInventoryUpdated.Broadcast();
+}
+
 UItemBase* UInventoryComponent::FindMatchingItem(UItemBase* ItemIn) const
 {
 	if (!ItemIn) return nullptr;
@@ -170,6 +176,7 @@ int32 UInventoryComponent::CalculateNumberForFullStack(const UItemBase* Stackabl
 }
 
 
+
 FItemAddResultData UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 {
 	if (!GetOwner()) return FItemAddResultData::AddNone(FText::FromString("오류발생"));
@@ -184,7 +191,7 @@ FItemAddResultData UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 	if (InputItem->BaseItemType == EItemType::Money)
 	{
 		AddMoney(InitialRequestedAddAmount);
-		OnInventoryUpdated.Broadcast();
+		
 		
 		return FItemAddResultData::AddAll(InitialRequestedAddAmount,
 			FText::Format(FText::FromString("{0}원을 획득하였습니다"),InitialRequestedAddAmount));
