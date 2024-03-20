@@ -15,7 +15,8 @@
 #include "EnemyAIController.h"
 #include "CMSpawnManager.h"
 #include "EnemyAIController.h"
-
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
 AEnemyDog::AEnemyDog()
 {
@@ -151,6 +152,8 @@ void AEnemyDog::Dead()
 	FRotator MyRotator(0.0f, 0.0f, 190.0f);
 	this->AddActorLocalRotation(MyRotator);
 	AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
+	//콜리전 끔
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	if (OwnerController)
 	{
 		OwnerController->Dead();
