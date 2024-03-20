@@ -14,7 +14,6 @@ void ItemManager::Initialize(UDataTable* InItemDataTable,UWorld* World)
 	if (!ItemDataTable)
 	{
 		ItemDataTable = InItemDataTable;
-		UE_LOG(LogTemp,Warning,TEXT("초기화 성공"))
 	}
 	else
 	{
@@ -24,7 +23,6 @@ void ItemManager::Initialize(UDataTable* InItemDataTable,UWorld* World)
 	if (!CurrentWorld)
 	{
 		CurrentWorld = World;
-		UE_LOG(LogTemp,Warning,TEXT("월드 초기화 성공"))
 	}
 	else
 	{

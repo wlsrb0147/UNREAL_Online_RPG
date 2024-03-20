@@ -1360,7 +1360,6 @@ void UNetwork_Manager_R::Init()
 	if (ItemDataTable)
 	{
 		ItemManagerInstance.Initialize(ItemDataTable,GetWorld());
-		UE_LOG(LogTemp,Warning,TEXT("DB 설정됨"))
 	}
 	else
 	{

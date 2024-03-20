@@ -82,7 +82,6 @@ public:
 	void UpdateInteractionWidget() const;
 	void DropItem(UItemBase* ItemToDrop,const int32 QuantityToDrop);
 	void CheckInteraction();
-//	UItemBase* MakeItemBase(const FItemData* ItemData,int32 Quantity);
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// �κ��丮 ���� �κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 ���� ////

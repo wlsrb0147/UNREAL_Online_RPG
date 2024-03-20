@@ -146,33 +146,19 @@ void APlayerCharacter::UpdateInteractionWidget() const
 
 void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop)
 {
-	UE_LOG(LogTemp, Warning, TEXT("드롭1"))
-		if (!PlayerInventory->FindMatchingItem(ItemToDrop))
-		{
-			return;
-		}
+	if (!PlayerInventory->FindMatchingItem(ItemToDrop))
+	{
+		return;
+	}
 
-	UE_LOG(LogTemp, Warning, TEXT("아이템 찾음"))
-
-		/*
-		FActorSpawnParameters SpawnParameters;
-	SpawnParameters.Owner = this;
-	SpawnParameters.bNoFail = true;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	*/
 
 	const FVector SpawnLocation{ GetActorLocation() + GetActorForwardVector() * 50.0f };
 	FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
 	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop, QuantityToDrop);
 
-//	APickUpItem* Item = GetWorld()->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), SpawnTransform, SpawnParameters);
-
-	//Item->InitializeDropItem(ItemToDrop, RemovedQuantity);
-
 	ItemManager& ItemManagerInstance = ItemManager::Get();
 	ItemManagerInstance.SpawnItem(this,ItemToDrop,SpawnTransform,RemovedQuantity);
 
-	UE_LOG(LogTemp, Warning, TEXT("끝"))
 }
 
 
@@ -282,28 +268,6 @@ void APlayerCharacter::OnRep_Owner()
 	}
 	//UE_LOG(LogTemp, Log, TEXT("========================="));
 }
-
-/*
-UItemBase* APlayerCharacter::MakeItemBase(const FItemData* ItemData, const int32 Quantity)
-{
-	UItemBase* ItemCopy = NewObject<UItemBase>(this,UItemBase::StaticClass());
-	
-	ItemCopy->BaseItemID = ItemData->ItemID;
-	ItemCopy->BaseItemType = ItemData->ItemType;
-	ItemCopy->BaseItemNumericData = ItemData->ItemNumericData;
-	ItemCopy->BaseItemTextData = ItemData->ItemTextData;
-	ItemCopy->BaseItemAssetData = ItemData->ItemAssetData;
-	ItemCopy->BaseItemStatistics = ItemData->ItemStatistics;
-	ItemCopy->SetQuantity(Quantity);
-
-	if (ItemCopy->BaseItemNumericData.bIsStackable && ItemCopy->BaseItemNumericData.MaxStackSize < 2 )
-	{
-		ItemCopy->BaseItemNumericData.MaxStackSize = 2;
-	}
-	
-	return ItemCopy;
-}
-*/
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
