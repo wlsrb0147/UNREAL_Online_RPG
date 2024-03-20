@@ -22,6 +22,7 @@
 #include "InventoryPanel.h"
 #include "ItemInteractionInterface.h"
 #include "LoginController.h"
+#include "Network_Manager_R.h"
 #include "PickUpItem.h"
 #include "Particles/ParticleSystemComponent.h"
 #include <cmath>
@@ -65,6 +66,8 @@ void APlayerCharacter::CheckInteraction()
 		return;
 	}
 }
+
+
 
 void APlayerCharacter::FoundNoInteract()
 {
@@ -273,15 +276,53 @@ void APlayerCharacter::OnRep_Owner()
 	//UE_LOG(LogTemp, Log, TEXT("========================="));
 }
 
+UItemBase* APlayerCharacter::MakeItemBase(const FItemData* ItemData, const int32 Quantity)
+{
+	UItemBase* ItemCopy = NewObject<UItemBase>(this,UItemBase::StaticClass());
+	
+	ItemCopy->BaseItemID = ItemData->ItemID;
+	ItemCopy->BaseItemType = ItemData->ItemType;
+	ItemCopy->BaseItemNumericData = ItemData->ItemNumericData;
+	ItemCopy->BaseItemTextData = ItemData->ItemTextData;
+	ItemCopy->BaseItemAssetData = ItemData->ItemAssetData;
+	ItemCopy->BaseItemStatistics = ItemData->ItemStatistics;
+	ItemCopy->SetQuantity(Quantity);
+
+	if (ItemCopy->BaseItemNumericData.bIsStackable && ItemCopy->BaseItemNumericData.MaxStackSize < 2 )
+	{
+		ItemCopy->BaseItemNumericData.MaxStackSize = 2;
+	}
+	
+	return ItemCopy;
+}
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	HUD = Cast<AInventoryHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	HUD->InventoryPanel->InitializePanel(this);
+	
+	TArray<TSharedPtr<FJsonValue>> ValuesArray = Cast<UNetwork_Manager_R>(GetGameInstance())->ValuesArray;
+	for (const TSharedPtr<FJsonValue>& Value : ValuesArray)
+	{
+		// 각 항목을 mapValue 객체로 추출합니다.
+		const TSharedPtr<FJsonObject> MapValueObject = Value->AsObject()->GetObjectField(TEXT("mapValue"));
+		const TSharedPtr<FJsonObject> TheObject = MapValueObject->GetObjectField(TEXT("fields"));
+    
+		// 이제 key와 quantity를 fields 객체에서 추출할 수 있습니다.
+		FString ItemKey = TheObject->GetObjectField(TEXT("key"))->GetStringField(TEXT("stringValue"));
+		const int32 ItemQuantity = TheObject->GetObjectField(TEXT("quantity"))->GetIntegerField(TEXT("integerValue"));
 
+		const FName RealKey = FName(ItemKey);
+		const FItemData* ItemData = ItemDataTable->FindRow<FItemData>(RealKey,TEXT("dd"));
+
+		UItemBase* MakeItem = MakeItemBase(ItemData,ItemQuantity);
+		PlayerInventory->HandleAddItem(MakeItem);
+		
+	}
+	
 	// 현재 실행 환경이 서버인지 클라이언트인지 확인
 	// FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
 	// //UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
