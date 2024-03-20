@@ -1287,7 +1287,7 @@ void UNetwork_Manager_R::OnSequenceFinished()
 		MyController->SetLoginID(Login_ID);
 		//CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 
-		
+		CreateWidget(this, Player_Widget)->AddToViewport();
 		
 		////서버 전용 함수 기능
 		//if (MyController->GetPawn()->GetLocalRole() == ROLE_Authority)

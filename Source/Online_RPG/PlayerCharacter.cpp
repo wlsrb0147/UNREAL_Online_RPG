@@ -443,9 +443,11 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	//서버 전용 함수 기능
 	if (GetLocalRole() == ROLE_Authority) {
-		CurrentCountdown_Rep = ceil(GetWorldTimerManager().GetTimerRemaining(FiringTimer));
-		if (ceil(CurrentCountdown_Temp) != CurrentCountdown_Rep)
+		int Temp = ceil(GetWorldTimerManager().GetTimerRemaining(FiringTimer));
+		if (CurrentCountdown_Rep != Temp) {
+			CurrentCountdown_Rep = Temp;
 			CurrentCountdown_Temp = (float)CurrentCountdown_Rep;
+		}
 	}
 
 	//클라이언트 전용 함수 기능
@@ -804,20 +806,10 @@ void APlayerCharacter::HandleFire()
 
 }
 
-void APlayerCharacter::OnRep_CurrentCountdown_Rep()
+void APlayerCharacter::OnRep_CurrentCountdown_Rep() //OnRep_ : client에서만 실행됨
 {
 	CurrentCountdown_Temp = (float)CurrentCountdown_Rep;
 
-	//서버 전용 함수 기능
-	if (GetLocalRole() == ROLE_Authority) {
-
-	}
-
-	//클라이언트 전용 함수 기능
-	if (IsLocallyControlled())
-	{
-
-	}
 }
 
 void APlayerCharacter::SetIsShoot(bool IsShoot)
@@ -928,7 +920,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 		//GetCapsuleComponent()->SetEnableGravity(false);
 		//콜리전 끔
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		// 죽음 상태에서는 물리 효과 제거
+		// 죽음 상태에서는 무브먼트 끔
 		GetCharacterMovement()->DisableMovement();
 		//GetCapsuleComponent()->SetHiddenInGame(true);
 		//SetActorTickEnabled(false);

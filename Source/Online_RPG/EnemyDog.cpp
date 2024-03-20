@@ -14,6 +14,9 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "EnemyAIController.h"
 #include "CMSpawnManager.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 // Sets default values
 AEnemyDog::AEnemyDog()
@@ -129,6 +132,9 @@ void AEnemyDog::Dead()
 		//UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
 	}
 	
+	//콜리전 끔
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	//SpawnSelf();
 	this->SetLifeSpan(5.0f);
 }
