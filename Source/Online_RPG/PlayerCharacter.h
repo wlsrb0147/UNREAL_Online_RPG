@@ -9,6 +9,7 @@
 #include "PlayerCharacter.generated.h"
 
 
+class ItemManager;
 struct FItemData;
 class UItemBase;
 class IItemInteractionInterface;
@@ -71,7 +72,6 @@ public:
 	UPROPERTY(EditAnywhere, Category ="Character | Database")
 	UDataTable* ItemDataTable;
 	
-	
 	FInteractingData InteractionData;
 	void FoundNoInteract();
 	void FoundInteract(AActor* NewInteract);
@@ -82,7 +82,7 @@ public:
 	void UpdateInteractionWidget() const;
 	void DropItem(UItemBase* ItemToDrop,const int32 QuantityToDrop);
 	void CheckInteraction();
-	UItemBase* MakeItemBase(const FItemData* ItemData,int32 Quantity);
+//	UItemBase* MakeItemBase(const FItemData* ItemData,int32 Quantity);
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////

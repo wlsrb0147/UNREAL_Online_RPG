@@ -51,6 +51,9 @@ class ONLINE_RPG_API UNetwork_Manager_R : public UGameInstance
 public:
 	UNetwork_Manager_R();
 
+	UPROPERTY(EditAnywhere,Category="DataBase")
+	UDataTable* ItemDataTable;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ASound_Manager_R> Sound_Class;
 	ASound_Manager_R* Sound_Instance ;
@@ -145,6 +148,7 @@ public:
 	
 	bool CreateSession(ULocalPlayer* Player, int32 NumPublicConnections, bool bIsLAN);
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
+	virtual void Init() override;
 	/*void FindSessions(APlayerController* PlayerController, bool bIsLAN, int32 MaxSearchResults);
 	void OnFindSessionsComplete(bool bWasSuccessful);*/
 	
