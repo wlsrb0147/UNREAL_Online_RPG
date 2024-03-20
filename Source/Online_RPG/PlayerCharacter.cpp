@@ -154,18 +154,23 @@ void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDro
 
 	UE_LOG(LogTemp, Warning, TEXT("아이템 찾음"))
 
+		/*
 		FActorSpawnParameters SpawnParameters;
 	SpawnParameters.Owner = this;
 	SpawnParameters.bNoFail = true;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	*/
 
 	const FVector SpawnLocation{ GetActorLocation() + GetActorForwardVector() * 50.0f };
-	const FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
+	FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
 	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop, QuantityToDrop);
 
-	APickUpItem* Item = GetWorld()->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), SpawnTransform, SpawnParameters);
+//	APickUpItem* Item = GetWorld()->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), SpawnTransform, SpawnParameters);
 
-	Item->InitializeDropItem(ItemToDrop, RemovedQuantity);
+	//Item->InitializeDropItem(ItemToDrop, RemovedQuantity);
+
+	ItemManager& ItemManagerInstance = ItemManager::Get();
+	ItemManagerInstance.SpawnItem(this,ItemToDrop,SpawnTransform,RemovedQuantity);
 
 	UE_LOG(LogTemp, Warning, TEXT("끝"))
 }

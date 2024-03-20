@@ -1359,7 +1359,7 @@ void UNetwork_Manager_R::Init()
 	ItemManager& ItemManagerInstance = ItemManager::Get();
 	if (ItemDataTable)
 	{
-		ItemManagerInstance.Initialize(ItemDataTable);
+		ItemManagerInstance.Initialize(ItemDataTable,GetWorld());
 		UE_LOG(LogTemp,Warning,TEXT("DB 설정됨"))
 	}
 	else

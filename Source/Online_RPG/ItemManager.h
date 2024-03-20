@@ -20,16 +20,17 @@ public:
 		return Instance;
 	}
 	
-	void Initialize(UDataTable* InItemDataTable);
+	void Initialize(UDataTable* InItemDataTable,UWorld* World);
 	
     UItemBase* MakeItemBaseByKey(UObject* Outer,const FName Key, const int32 Quantity, const FString& Context = TEXT("")) const;
     UItemBase* MakeItemBaseByKey(UObject* Outer,const FString& Key, const int32 Quantity, const FString& Context = TEXT("")) const;
 	UItemBase* FindAndMakeItemBase(UObject* Outer,const FName Key, const int32 Quantity, const FString& Context = TEXT("")) const;
 	static UItemBase* MakeItemBase(UObject* Outer, const FItemData* ItemData, const int32 Quantity);
 	
-	static void SpawnItem(UObject* Outer,UItemBase* ItemBase,const FVector& Location, const FRotator& Rotation);
+	APickUpItem* SpawnItem(AActor* Outer,UItemBase* ItemBase, FTransform& Transform, int32 Quantity);
 
 	UDataTable* ItemDataTable = nullptr;
+	UWorld* CurrentWorld = nullptr;
 	
 private:
 	

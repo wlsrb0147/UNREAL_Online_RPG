@@ -3,11 +3,12 @@
 
 #include "ItemManager.h"
 
+#include "AITestsCommon.h"
 #include "ItemBase.h"
 #include "ItemStruct.h"
 
 
-void ItemManager::Initialize(UDataTable* InItemDataTable)
+void ItemManager::Initialize(UDataTable* InItemDataTable,UWorld* World)
 {
 	
 	if (!ItemDataTable)
@@ -18,6 +19,16 @@ void ItemManager::Initialize(UDataTable* InItemDataTable)
 	else
 	{
 		UE_LOG(LogTemp,Warning,TEXT("Else 실행"))
+	}
+
+	if (!CurrentWorld)
+	{
+		CurrentWorld = World;
+		UE_LOG(LogTemp,Warning,TEXT("월드 초기화 성공"))
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("월드 Else 실행"))
 	}
 }
 
@@ -59,7 +70,15 @@ UItemBase* ItemManager::MakeItemBase(UObject* Outer, const FItemData* ItemData, 
 	return ItemCopy;
 }
 
-void ItemManager::SpawnItem(UObject* Outer, UItemBase* ItemBase, const FVector& Location, const FRotator& Rotation)
+APickUpItem* ItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase, FTransform& Transform, int32 Quantity)
 {
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Owner = Outer;
+	SpawnParameters.bNoFail = true;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	
+	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), Transform, SpawnParameters);
+	DropItem->InitializeDropItem(ItemBase, Quantity);
+	return DropItem;
 }
 
