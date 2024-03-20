@@ -166,8 +166,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "State")
 	AGun* MyGun;
 
-	
-
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE float GetCoolTime() const { return CoolTime; }
 
 protected:
 
@@ -193,7 +193,7 @@ protected:
 
 	/** */
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
-	float CoolTime;
+	float CoolTime = 10.f;
 
 
 	UPROPERTY(ReplicatedUsing = OnRep_IsAttacking)
@@ -217,13 +217,23 @@ protected:
 
 	void AttackCoolTime();
 
+	UFUNCTION(BlueprintCallable)
+	float GetCountDown();
+
 	/** ?????? ??????? ???? ???*/
 	UFUNCTION(BlueprintCallable)
 	void HandleFire();
 
-	/** ???? ????? ??? ??? ?????????? ???? ???*/
+	UPROPERTY(Replicated)
 	FTimerHandle FiringTimer;
 
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentCountdown_Rep)
+	int CurrentCountdown_Rep;
+	float CurrentCountdown_Temp;
+	float CurrentCountdown;
+
+	UFUNCTION()
+	void OnRep_CurrentCountdown_Rep();
 
 	/** ???? ?????*/
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
@@ -297,6 +307,8 @@ protected:
 	//?????????
 	UPROPERTY(ReplicatedUsing = OnRep_IsUpperSlash)
 	bool bIsUpperSlash;
+	UPROPERTY(Replicated)
+	bool bIsUpperSlashCooldown;
 	float UpperSlash_Rate = 2.0f;
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)

@@ -24,6 +24,7 @@
 #include "LoginController.h"
 #include "PickUpItem.h"
 #include "Particles/ParticleSystemComponent.h"
+#include <cmath>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
@@ -32,17 +33,17 @@
 
 void APlayerCharacter::CheckInteraction()
 {
-	FVector TraceStart{GetPawnViewLocation()};
-	FVector TraceEnd{TraceStart + GetViewRotation().Vector() * InteractionDistance};
-	
-	DrawDebugLine(GetWorld(),TraceStart,TraceEnd,FColor::Red,false,-1,0,2);
+	FVector TraceStart{ GetPawnViewLocation() };
+	FVector TraceEnd{ TraceStart + GetViewRotation().Vector() * InteractionDistance };
+
+	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, -1, 0, 2);
 
 	//FCollisionQueryParams
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
-	
-	if (!GetWorld()->LineTraceSingleByChannel(HitResult,TraceStart,TraceEnd,
+
+	if (!GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd,
 		ECC_Visibility,
 		QueryParams)
 		)
@@ -83,24 +84,24 @@ void APlayerCharacter::FoundNoInteract()
 
 void APlayerCharacter::FoundInteract(AActor* NewInteract)
 {
-	
+
 	if (InteractionData.CurrentInteracting)
 	{
 		InteractionTarget = InteractionData.CurrentInteracting;
 		InteractionTarget->EndFocus();
 	}
-	
+
 	InteractionData.CurrentInteracting = NewInteract;
 	InteractionTarget = NewInteract;
-	
+
 	HUD->UpdateInteractionWidget(&InteractionTarget->InteractionData);
 	InteractionTarget->BeginFocus();
 }
 
 void APlayerCharacter::BeginInteract()
 {
-	UE_LOG(LogTemp,Display,TEXT("%d"),PlayerInventory->GetInventoryCapacity())
-	CheckInteraction();
+	UE_LOG(LogTemp, Display, TEXT("%d"), PlayerInventory->GetInventoryCapacity())
+		CheckInteraction();
 
 	if (!InteractionData.CurrentInteracting) return;
 
@@ -140,28 +141,28 @@ void APlayerCharacter::UpdateInteractionWidget() const
 
 void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop)
 {
-	UE_LOG(LogTemp,Warning,TEXT("드롭1"))
-	if (!PlayerInventory->FindMatchingItem(ItemToDrop))
-	{
-		return;
-	}
+	UE_LOG(LogTemp, Warning, TEXT("드롭1"))
+		if (!PlayerInventory->FindMatchingItem(ItemToDrop))
+		{
+			return;
+		}
 
-	UE_LOG(LogTemp,Warning,TEXT("아이템 찾음"))
+	UE_LOG(LogTemp, Warning, TEXT("아이템 찾음"))
 
-	FActorSpawnParameters SpawnParameters;
+		FActorSpawnParameters SpawnParameters;
 	SpawnParameters.Owner = this;
 	SpawnParameters.bNoFail = true;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-	const FVector SpawnLocation{GetActorLocation() + GetActorForwardVector()*50.0f};
-	const FTransform SpawnTransform(GetActorRotation(),SpawnLocation);
-	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop,QuantityToDrop);
+	const FVector SpawnLocation{ GetActorLocation() + GetActorForwardVector() * 50.0f };
+	const FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
+	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop, QuantityToDrop);
 
-	APickUpItem* Item = GetWorld()->SpawnActor<APickUpItem>(APickUpItem::StaticClass(),SpawnTransform,SpawnParameters);
+	APickUpItem* Item = GetWorld()->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), SpawnTransform, SpawnParameters);
 
-	Item->InitializeDropItem(ItemToDrop,RemovedQuantity);
+	Item->InitializeDropItem(ItemToDrop, RemovedQuantity);
 
-	UE_LOG(LogTemp,Warning,TEXT("끝"))
+	UE_LOG(LogTemp, Warning, TEXT("끝"))
 }
 
 
@@ -173,9 +174,9 @@ void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDro
 
 
 // Sets default values
-APlayerCharacter::APlayerCharacter(): HUD(nullptr)
+APlayerCharacter::APlayerCharacter() : HUD(nullptr)
 {
-	
+
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -213,7 +214,7 @@ APlayerCharacter::APlayerCharacter(): HUD(nullptr)
 	PlayerInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("인벤토리"));
 	PlayerInventory->SetInventoryCapacity(24);
 
-	
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -280,7 +281,7 @@ void APlayerCharacter::BeginPlay()
 
 	HUD = Cast<AInventoryHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	HUD->InventoryPanel->InitializePanel(this);
-	
+
 	// 현재 실행 환경이 서버인지 클라이언트인지 확인
 	// FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
 	// //UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
@@ -366,7 +367,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 
 	CheckInteraction();
-	
+
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
@@ -375,7 +376,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 
 
-	
+
 	/*if (GetMovementComponent()->IsFalling()) {
 		//UE_LOG(LogTemp, Warning, TEXT("IsFalling : True"));
 	}
@@ -388,7 +389,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	FRotator Rotation = GetActorRotation();
 	FVector End = Location + Rotation.Vector() * ShootAttackRange;
 
-	if(GetController())
+	if (GetController())
 	{
 		Cast<ALoginController>(GetController())->Current_Location = Location;
 		Cast<ALoginController>(GetController())->Current_Rotatation = Rotation;
@@ -397,6 +398,23 @@ void APlayerCharacter::Tick(float DeltaTime)
 	DrawDebugLine(GetWorld(), Location, End, FColor::Cyan, false);
 	DrawDebugBox(GetWorld(), End, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Cyan, false);
 	DrawDebugBox(GetWorld(), Location, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Cyan, false);
+
+
+	//서버 전용 함수 기능
+	if (GetLocalRole() == ROLE_Authority) {
+		CurrentCountdown_Rep = ceil(GetWorldTimerManager().GetTimerRemaining(FiringTimer));
+		if (ceil(CurrentCountdown_Temp) != CurrentCountdown_Rep)
+			CurrentCountdown_Temp = (float)CurrentCountdown_Rep;
+	}
+
+	//클라이언트 전용 함수 기능
+	if (IsLocallyControlled())
+	{
+
+	}
+
+	CurrentCountdown_Temp -= DeltaTime;
+	CurrentCountdown = FMath::Clamp(CurrentCountdown_Temp, 0.f, CoolTime);
 
 	/*if (bIsAttacking) {
 		//UE_LOG(LogTemp, Display, TEXT("bIsAttacking TRUE"));
@@ -459,11 +477,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	PlayerInputComponent->BindAction("Interact",IE_Pressed,this,&APlayerCharacter::BeginInteract);
-	PlayerInputComponent->BindAction("Interact",IE_Released,this,&APlayerCharacter::EndInteract);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::BeginInteract);
+	PlayerInputComponent->BindAction("Interact", IE_Released, this, &APlayerCharacter::EndInteract);
 
-	PlayerInputComponent->BindAction("OpenInventory",IE_Pressed,this,&APlayerCharacter::OpenInventory);
-	
+	PlayerInputComponent->BindAction("OpenInventory", IE_Pressed, this, &APlayerCharacter::OpenInventory);
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -544,25 +562,29 @@ void APlayerCharacter::Look(const FInputActionInstance& Instance)
 
 void APlayerCharacter::UpperSlash_Implementation()
 {
-	if (bIsAttacking) return;
-	//UE_LOG(LogTemp, Log, TEXT("Upper Slash init"));
-	//FTimerHandle Handle;
-	//GetWorldTimerManager().SetTimer(Handle, this, &APlayerCharacter::StopUpperSlash, UpperSlash_Rate, false);
+	if (bIsAttacking || bIsUpperSlashCooldown) return;
+
+	bIsUpperSlashCooldown = true;
 	bIsUpperSlash = true;
 	bIsAttacking = true;
+
+	//UE_LOG(LogTemp, Log, TEXT("Upper Slash init"));
+	//FTimerHandle Handle;
+	GetWorldTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::AttackCoolTime, CoolTime, false);
+
+	//GetWorldTimerManager().SetTimer(Handle, this, &APlayerCharacter::StopUpperSlash, UpperSlash_Rate, false);
+
 }
 
 void APlayerCharacter::StopUpperSlash_Implementation()
 {
 	bIsUpperSlash = false;
-	FTimerHandle Handle;
-	GetWorldTimerManager().SetTimer(Handle, this, &APlayerCharacter::AttackCoolTime, CoolTime, false);
 	bIsAttacking = false;
 }
 
 void APlayerCharacter::OnRep_IsUpperSlash()
 {
-	
+
 }
 
 void APlayerCharacter::HandleUpperSlash()
@@ -596,10 +618,14 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Ou
 
 	//현재 죽음 상태 리플리케이트
 	DOREPLIFETIME(APlayerCharacter, bIsDead);
+
 	DOREPLIFETIME(APlayerCharacter, bIsUpperSlash);
 	DOREPLIFETIME(APlayerCharacter, bIsShoot);
 	DOREPLIFETIME(APlayerCharacter, bIsShootAnim);
 	DOREPLIFETIME(APlayerCharacter, bIsAttacking);
+	DOREPLIFETIME(APlayerCharacter, FiringTimer);
+	DOREPLIFETIME(APlayerCharacter, bIsUpperSlashCooldown);
+	DOREPLIFETIME(APlayerCharacter, CurrentCountdown_Rep);
 	//DOREPLIFETIME(APlayerCharacter, bIsPossessed);
 
 }
@@ -683,8 +709,8 @@ void APlayerCharacter::StartFire_Implementation()
 
 void APlayerCharacter::StopFire_Implementation()
 {
-	
-	
+
+
 	if (!bIsShoot) return;
 
 	UseControllerRotationYaw_Toggle_Multi(false);
@@ -707,7 +733,12 @@ void APlayerCharacter::OnIsAttackingUpdate()
 }
 
 void APlayerCharacter::AttackCoolTime() {
-	bIsAttacking = false;
+	bIsUpperSlashCooldown = false;
+}
+
+float APlayerCharacter::GetCountDown()
+{
+	return CurrentCountdown;
 }
 
 void APlayerCharacter::HandleFire()
@@ -730,6 +761,22 @@ void APlayerCharacter::HandleFire()
 		ShootAttack();
 	}
 
+}
+
+void APlayerCharacter::OnRep_CurrentCountdown_Rep()
+{
+	CurrentCountdown_Temp = (float)CurrentCountdown_Rep;
+
+	//서버 전용 함수 기능
+	if (GetLocalRole() == ROLE_Authority) {
+
+	}
+
+	//클라이언트 전용 함수 기능
+	if (IsLocallyControlled())
+	{
+
+	}
 }
 
 void APlayerCharacter::SetIsShoot(bool IsShoot)

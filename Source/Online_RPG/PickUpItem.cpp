@@ -137,24 +137,24 @@ void APickUpItem::InitializeDropItem(UItemBase* ItemToDrop, const int32 Quantity
 	UpdateItemInteractionData();
 }
 
-//void APickUpItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-//{
-//	Super::PostEditChangeProperty(PropertyChangedEvent);
-//
-//	const FName ChangedPropertyName = PropertyChangedEvent.Property?
-//		PropertyChangedEvent.Property->GetFName() : NAME_None;
-//	
-//	if (ChangedPropertyName == GET_MEMBER_NAME_CHECKED(APickUpItem,InstanceItemID))
-//	{
-//		if (InstanceItemDataTable)
-//		{
-//			const FItemData* ChangeItemData =
-//				InstanceItemDataTable->FindRow<FItemData>(InstanceItemID,"Error");
-//			if (ChangeItemData)
-//			{
-//				InstanceMesh->SetStaticMesh(ChangeItemData->ItemAssetData.Mesh);
-//			}
-//		}
-//	}
-//}
+void APickUpItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	const FName ChangedPropertyName = PropertyChangedEvent.Property?
+		PropertyChangedEvent.Property->GetFName() : NAME_None;
+	
+	if (ChangedPropertyName == GET_MEMBER_NAME_CHECKED(APickUpItem,InstanceItemID))
+	{
+		if (InstanceItemDataTable)
+		{
+			const FItemData* ChangeItemData =
+				InstanceItemDataTable->FindRow<FItemData>(InstanceItemID,"Error");
+			if (ChangeItemData)
+			{
+				InstanceMesh->SetStaticMesh(ChangeItemData->ItemAssetData.Mesh);
+			}
+		}
+	}
+}
 
