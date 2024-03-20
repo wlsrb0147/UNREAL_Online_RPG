@@ -141,6 +141,7 @@ public:
 	void CallSpawn(int Player_Idx);
 	
 	TArray<TSharedPtr<FJsonValue>> ValuesArray;
+	uint64 MoneyFromServer = 0;
 	
 	bool CreateSession(ULocalPlayer* Player, int32 NumPublicConnections, bool bIsLAN);
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);

@@ -304,7 +304,9 @@ void APlayerCharacter::BeginPlay()
 	HUD = Cast<AInventoryHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	HUD->InventoryPanel->InitializePanel(this);
 	
-	TArray<TSharedPtr<FJsonValue>> ValuesArray = Cast<UNetwork_Manager_R>(GetGameInstance())->ValuesArray;
+	const UNetwork_Manager_R* Network_Manager =  Cast<UNetwork_Manager_R>(GetGameInstance());
+	
+	TArray<TSharedPtr<FJsonValue>> ValuesArray = Network_Manager->ValuesArray;
 	for (const TSharedPtr<FJsonValue>& Value : ValuesArray)
 	{
 		// 각 항목을 mapValue 객체로 추출합니다.
@@ -322,6 +324,8 @@ void APlayerCharacter::BeginPlay()
 		PlayerInventory->HandleAddItem(MakeItem);
 		
 	}
+
+	PlayerInventory->AddMoney(Network_Manager->MoneyFromServer);
 	
 	// 현재 실행 환경이 서버인지 클라이언트인지 확인
 	// FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");

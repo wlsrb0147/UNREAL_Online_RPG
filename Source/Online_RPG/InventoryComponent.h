@@ -74,7 +74,7 @@ public:
 	FORCEINLINE TArray<UItemBase*> GetInventory() const {return InventoryContents;}
 	FORCEINLINE int32 GetInventoryCapacity() const {return InventorySlotCapacity;}
 	FORCEINLINE void SetInventoryCapacity(const int32 Capacity) {InventorySlotCapacity = Capacity;}
-	void AddMoney(const uint64 AmountToAddMoney){CurrentMoney += AmountToAddMoney;}
+	void AddMoney(const uint64 AmountToAddMoney);
 	uint64 GetMoney() const {return CurrentMoney;}
 	UItemBase* FindMatchingItem(UItemBase* ItemIn) const;
 protected:
@@ -88,7 +88,7 @@ protected:
 	TArray<TObjectPtr<UItemBase>> InventoryContents;
 
 	UPROPERTY(VisibleAnywhere, Category = "Inventory")
-	uint64 CurrentMoney = 0;
+	int32 CurrentMoney = 0;
 
 public:	
 	// Called every frame

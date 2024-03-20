@@ -846,9 +846,12 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 									TSharedPtr<FJsonObject> ItemsObject = FieldsObject->GetObjectField(TEXT("Items"));
 									TSharedPtr<FJsonObject> ArrayValueObject = ItemsObject->GetObjectField(TEXT("arrayValue"));
 									ValuesArray = ArrayValueObject->GetArrayField(TEXT("values"));
-
 									
-
+									/// 동재추가코드
+									TSharedPtr<FJsonObject> MoneyObject = FieldsObject->GetObjectField(TEXT("Money"));
+									MoneyFromServer = MoneyObject->GetIntegerField(TEXT("integerValue"));
+						
+									/// 끝
 								}
 							}
 						}
@@ -1073,6 +1076,7 @@ void UNetwork_Manager_R::UpdateSpawnData()
 		
 		const APlayerCharacter* CurrentCharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 		const UInventoryComponent* PlayerInventory = CurrentCharacter->GetInventory();
+		uint64 MyMoney = PlayerInventory->GetMoney();
 
 		FString ItemJson = TEXT("[");
 		
@@ -1123,7 +1127,8 @@ void UNetwork_Manager_R::UpdateSpawnData()
 		"\"SpawnRotator_Roll\": {\"doubleValue\": %f},"
 		"\"SpawnRotator_Yaw\": {\"doubleValue\": %f},"
 		"\"SwordName\": {\"stringValue\": \"blue\"},"
-		"\"Items\": {\"arrayValue\": {\"values\": [%s]}}"
+		"\"Items\": {\"arrayValue\": {\"values\": [%s]}},"
+		"\"Money\": {\"integerValue\": %d}"
 		//"\"Items\": {\"arrayValue\": {\"values\": [%s]}}"
 		
 		//"\"Items\": {\"arrayValue\": {\"values\": [{\"key\": \"red\", \"quantity\": 4}]}}"
@@ -1149,7 +1154,7 @@ void UNetwork_Manager_R::UpdateSpawnData()
 		"}"), *Login_ID,
 		SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z,
 		SpawnRotator.Pitch, SpawnRotator.Roll, SpawnRotator.Yaw
-		,*ItemJson
+		,*ItemJson, MyMoney
 		);
 //
 		Request->SetContentAsString(FieldsJson);
@@ -1173,7 +1178,7 @@ void UNetwork_Manager_R::InsertSpawnData()
 	{
 		const APlayerCharacter* CurrentCharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 		const UInventoryComponent* PlayerInventory = CurrentCharacter->GetInventory();
-
+		uint64 MyMoney = PlayerInventory->GetMoney();
 		FString ItemJson = TEXT("[");
 		
 
@@ -1223,12 +1228,13 @@ void UNetwork_Manager_R::InsertSpawnData()
 			"\"SpawnRotator_Roll\": {\"doubleValue\": %f},"
 			"\"SpawnRotator_Yaw\": {\"doubleValue\": %f},"
 			"\"SwordName\": {\"stringValue\": \"blue\"},"
-			"\"Items\": {\"arrayValue\": {\"values\": [%s]}}"
+			"\"Items\": {\"arrayValue\": {\"values\": [%s]}},"
+			"\"Money\": {\"integerValue\": %d}"
 			"}"
 			"}"), *Login_ID,
 			SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z,
 			SpawnRotator.Pitch, SpawnRotator.Roll, SpawnRotator.Yaw
-			,*ItemJson
+			,*ItemJson, MyMoney
 			);
 
 		Request->SetContentAsString(InsertJson);

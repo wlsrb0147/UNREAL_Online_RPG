@@ -33,8 +33,9 @@ void AEnemyDog::BeginPlay()
 	Health = MaxHealth;
 	RangeCheck();
 	//AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
+	SpawnLocation = GetActorLocation() + FVector(100.0f, 100.0f, 0.0f);
 
-	
+
 }
 
 // Called every frame
@@ -60,10 +61,13 @@ void AEnemyDog::Attack_Implementation()
 
 float AEnemyDog::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (IsDead) return 0;
+
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
 	AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
-	OwnerController->SetPlayer(Cast<APawn>(DamageCauser));
-	if (IsDead) return ActualDamage;
+	if (OwnerController)
+		OwnerController->SetPlayer(Cast<APawn>(DamageCauser));
 
 	if (Health - ActualDamage <= 0)
 	{
@@ -136,21 +140,46 @@ void AEnemyDog::Dead()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	//SpawnSelf();
-	this->SetLifeSpan(5.0f);
+	UWorld* World = GetWorld();
+	UE_LOG(LogTemp, Warning, TEXT("죽음"));
+
+	if (!World)
+	{
+		return;
+	}
+	else if (SpawnManager == nullptr)
+	{
+		SpawnManager = Cast<ACMSpawnManager>(UGameplayStatics::GetActorOfClass(World, ACMSpawnManager::StaticClass()));
+		if (SpawnManager == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("스폰못찾음"));
+			return;
+		}
+
+	}
+
+
+	if (SpawnManager)
+	{
+		SpawnManager->SetSpawnEnemyDog(SpawnLocation, 5.0f);
+		UE_LOG(LogTemp, Warning, TEXT("스폰함수 시작"));
+	}
+	this->SetLifeSpan(2.0f);
 }
 
 void AEnemyDog::SpawnSelf()
 {
-	/*SpawnLocation = this->GetActorLocation();
-	SpawnRotation = { 0.f,0.f,0.f };
 	
-	SpawnLocation.X += 5;*/
-	//if (EnemySelf)
-	//{
-	//	ACMSpawnManager* Q = ACMSpawnManager::GetInstance();
+}
 
-	//	Q->SpawnActor(EnemySelf, SpawnLocation, SpawnRotation);
+ACMSpawnManager* FindSpawnManager(UWorld* World)
+{
+	if (!World)
+	{
+		return nullptr;
+	}
 
-	//	//ACMSpawnManager::SpawnActor(GetWorld(), EnemySelf, SpawnLocation, SpawnRotation);
-	//}
+	ACMSpawnManager* SpawnManager = Cast<ACMSpawnManager>(UGameplayStatics::GetActorOfClass(World, ACMSpawnManager::StaticClass()));
+
+	return SpawnManager;
 }
