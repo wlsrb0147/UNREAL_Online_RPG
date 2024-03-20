@@ -68,7 +68,7 @@ UItemBase* ItemManager::MakeItemBase(UObject* Outer, const FItemData* ItemData, 
 	return ItemCopy;
 }
 
-APickUpItem* ItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase, FTransform& Transform, int32 Quantity)
+APickUpItem* ItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase, const FTransform& Transform, const int32 Quantity) const
 {
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.Owner = Outer;

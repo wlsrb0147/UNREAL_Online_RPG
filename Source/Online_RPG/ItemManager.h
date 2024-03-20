@@ -27,7 +27,7 @@ public:
 	UItemBase* FindAndMakeItemBase(UObject* Outer,const FName Key, const int32 Quantity, const FString& Context = TEXT("")) const;
 	static UItemBase* MakeItemBase(UObject* Outer, const FItemData* ItemData, const int32 Quantity);
 	
-	APickUpItem* SpawnItem(AActor* Outer,UItemBase* ItemBase, FTransform& Transform, int32 Quantity);
+	APickUpItem* SpawnItem(AActor* Outer,UItemBase* ItemBase, const FTransform& Transform, int32 Quantity) const;
 
 	UDataTable* ItemDataTable = nullptr;
 	UWorld* CurrentWorld = nullptr;
