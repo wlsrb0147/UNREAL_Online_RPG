@@ -133,8 +133,8 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 			ServerDestroyActor();
 			break;
 		default:
-			UE_LOG(LogTemp,Warning,TEXT("Default실행"))
-			;
+			UE_LOG(LogTemp, Warning, TEXT("Default실행"));
+			
 		}
 	}
 }
