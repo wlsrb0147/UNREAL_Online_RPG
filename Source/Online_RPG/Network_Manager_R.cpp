@@ -3,6 +3,7 @@
 #include "Network_Manager_R.h"
 
 #include "InventoryComponent.h"
+#include "ItemManager.h"
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
@@ -31,23 +32,22 @@ const char* db = "mydb";
 
 UNetwork_Manager_R::UNetwork_Manager_R()
 {
-
+	
+	
 	//SelectUser(TEXT("fffl"),TEXT("fppp1"));
 
 	//InsertUser(TEXT("RED77"), TEXT("RED77"), TEXT("REDRED77"));
 	//ULevelSequence* LevelSequence = LoadObject<ULevelSequence>(nullptr, TEXT("/Game/Path/To/YourSequence.YourSequence"));
 
 	Level_Sequence = LoadObject<ULevelSequence>(nullptr, TEXT("/Game/MAIN/Sequence/SQ_GameStart.SQ_GameStart"));
+	
 	if (Level_Sequence == nullptr)
 	{
 		////UE_LOG(LogTemp, Error, TEXT("Nope11"));
 		// 에셋을 찾지 못한 경우 에러 처리
 		return;
 	}
-
-
-
-
+	
 }
 
 
@@ -1286,7 +1286,7 @@ void UNetwork_Manager_R::OnSequenceFinished()
 		MyController->SetLoginID(Login_ID);
 		//CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 
-		
+		CreateWidget(this, Player_Widget)->AddToViewport();
 		
 		////서버 전용 함수 기능
 		//if (MyController->GetPawn()->GetLocalRole() == ROLE_Authority)
@@ -1343,6 +1343,20 @@ void UNetwork_Manager_R::OnCreateSessionComplete(FName SessionName, bool bWasSuc
 	{
 		// 세션 생성 실패 처리
 		//UE_LOG(LogTemp, Log, TEXT("Create Fail"));
+	}
+}
+
+void UNetwork_Manager_R::Init()
+{
+	Super::Init();
+	ItemManager& ItemManagerInstance = ItemManager::Get();
+	if (ItemDataTable)
+	{
+		ItemManagerInstance.Initialize(ItemDataTable,GetWorld());
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("DB 설정안됨"))
 	}
 }
 

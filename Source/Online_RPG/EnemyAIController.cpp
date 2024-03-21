@@ -8,18 +8,19 @@
 #include "PlayerCharacter.h"
 AEnemyAIController::AEnemyAIController()
 {
-	
+	bReplicates = true;
+
 }
 
 void AEnemyAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if(IsDead)
+	if (IsDead)
 	{
 		ClearFocus(EAIFocusPriority::Gameplay);
 		return;
 	}
-	if(AttackPawn)
+	if (AttackPawn)
 	{
 		if (LineOfSightTo(AttackPawn))
 		{
@@ -39,9 +40,10 @@ void AEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(AIBehavior != nullptr)
+	if (AIBehavior != nullptr)
 	{
 		RunBehaviorTree(AIBehavior);
+		if(GetPawn()&& GetBlackboardComponent())
 		GetBlackboardComponent()->SetValueAsVector(TEXT("SpawnLocation"), GetPawn()->GetActorLocation());
 	}
 }
@@ -56,7 +58,6 @@ void AEnemyAIController::Dead()
 		//UE_LOG(LogTemp,Display,TEXT("AIController IsDead True"))
 		StopBehaviorTree();
 	}
-	
 }
 
 
@@ -67,8 +68,6 @@ void AEnemyAIController::StopBehaviorTree()
 	if (nullptr != BehaviorTreeComponent)
 	{
 		BehaviorTreeComponent->StopTree(EBTStopMode::Safe);
-		
-		
 	}
 }
 
