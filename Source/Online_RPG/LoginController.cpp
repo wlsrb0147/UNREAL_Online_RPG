@@ -102,6 +102,8 @@ void ALoginController::ChangePawn_Implementation(int PlayerIdx, FVector _SpawnLo
 				PlayerController->Possess(NewPawn);
 				//NewPawn->SetOwner(PlayerController);
 
+
+				if (_CurrentHealth == 0) _CurrentHealth = _MaxHealth;
 				Cast<APlayerCharacter>(PlayerController->GetPawn())->SetCurrentHealth(_CurrentHealth);
 				Cast<APlayerCharacter>(PlayerController->GetPawn())->SetMaxHealth(_MaxHealth);
 
