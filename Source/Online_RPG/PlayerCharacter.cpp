@@ -27,8 +27,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include <cmath>
 
-
-#include "ItemManager.h"
+#include "AItemManager.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
@@ -158,9 +157,11 @@ void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDro
 	const FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
 	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop, QuantityToDrop);
 
-	ItemManager& ItemManagerInstance = ItemManager::Get();
-	ItemManagerInstance.SpawnItem(this,ItemToDrop,SpawnTransform,RemovedQuantity);
+//	ItemManager& ItemManagerInstance = ItemManager::Get();
+	
+	ItemManagerInstance->SpawnItem(this,ItemToDrop,SpawnTransform,RemovedQuantity);
 
+	
 }
 
 
@@ -279,11 +280,12 @@ void APlayerCharacter::BeginPlay()
 	HUD = Cast<AInventoryHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	HUD->InventoryPanel->InitializePanel(this);
 	
-	const UNetwork_Manager_R* Network_Manager =  Cast<UNetwork_Manager_R>(GetGameInstance());
+	UNetwork_Manager_R* Network_Manager =  Cast<UNetwork_Manager_R>(GetGameInstance());
+	//const ItemManager& ItemManagerInstance = ItemManager::Get();
 
-	const ItemManager& ItemManagerInstance = ItemManager::Get();
-
-	if (!ItemManagerInstance.ItemDataTable)
+	ItemManagerInstance = Network_Manager->GetItemManager();
+	
+	if (!ItemManagerInstance->ItemDataTable)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("DB 널"))
 	}
@@ -300,7 +302,7 @@ void APlayerCharacter::BeginPlay()
 			const FString ItemKey = TheObject->GetObjectField(TEXT("key"))->GetStringField(TEXT("stringValue"));
 			const int32 ItemQuantity = TheObject->GetObjectField(TEXT("quantity"))->GetIntegerField(TEXT("integerValue"));
 			
-			UItemBase* MakeItem = ItemManagerInstance.MakeItemBaseByKey(this,ItemKey,ItemQuantity);
+			UItemBase* MakeItem = ItemManagerInstance->MakeItemBaseByKey(this,ItemKey,ItemQuantity);
 			PlayerInventory->HandleAddItem(MakeItem);
 		
 		}

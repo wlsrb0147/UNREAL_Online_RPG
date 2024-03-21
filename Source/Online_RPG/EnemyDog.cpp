@@ -15,7 +15,8 @@
 #include "EnemyAIController.h"
 #include "CMSpawnManager.h"
 #include "EnemyAIController.h"
-#include "ItemManager.h"
+#include "AItemManager.h"
+#include "Network_Manager_R.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
@@ -163,9 +164,12 @@ void AEnemyDog::Dead()
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
 	}
-	ItemManager& ItemManager = ItemManager::Get();
+//	ItemManager& ItemManager = ItemManager::Get();
+
+	ItemManagerInstance = Cast<UNetwork_Manager_R>(GetGameInstance())->GetItemManager();
 	
-	ItemManager.SpawnItem(this,ItemManager.MakeItemBaseByKey(this,7,7),GetActorTransform(),5);
+	UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 7, 7);
+	ItemManagerInstance->SpawnItem(this, Base,GetActorTransform(),5);
 	this->SetLifeSpan(2.0f);
 }
 

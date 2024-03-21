@@ -9,7 +9,7 @@
 #include "PlayerCharacter.generated.h"
 
 
-class ItemManager;
+class AItemManager;
 struct FItemData;
 class UItemBase;
 class IItemInteractionInterface;
@@ -73,6 +73,8 @@ public:
 	UDataTable* ItemDataTable;
 	
 	FInteractingData InteractionData;
+
+	AItemManager* ItemManagerInstance;
 	void FoundNoInteract();
 	void FoundInteract(AActor* NewInteract);
 	void BeginInteract();

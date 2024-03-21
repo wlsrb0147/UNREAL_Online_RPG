@@ -36,7 +36,7 @@ public:
 	UDataTable* InstanceItemDataTable;
 	
 	UPROPERTY(EditInstanceOnly,Category = "ItemData")
-	FName InstanceItemID = TEXT("001");
+	FName InstanceItemID = TEXT("1");
 	
 	UPROPERTY(VisibleAnywhere,Category = "ItemData")
 	UItemBase* InstanceItemData;
