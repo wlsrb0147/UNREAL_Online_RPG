@@ -68,11 +68,18 @@ void AItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase,const FTransform
 	//SpawnParameters.Owner = Outer;
 	SpawnParameters.Owner = GetWorld()->GetFirstPlayerController();  // ���� ����
 	SpawnParameters.bNoFail = true;
-	//SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	//SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 
 	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), Transform, SpawnParameters);
+	DropItem->SetOwner(GetWorld()->GetFirstPlayerController());
+	if (DropItem->HasNetOwner()) {
+		UE_LOG(LogTemp, Log, TEXT("HasNetOwner"));
+	}
+	else {
+		UE_LOG(LogTemp, Log, TEXT("HasNetOwner XXXXXXXXXX"));
+	}
 	
 	int32 Key = FCString::Atoi(*ItemBase->BaseItemID.ToString());
 	DropItem->InitializeDropItem(Key, Quantity);

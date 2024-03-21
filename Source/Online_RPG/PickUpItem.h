@@ -56,6 +56,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerDestroyActor();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerRequestSetOwner(APlayerController* NewOwner);
+
 protected:
 	virtual void BeginFocus() override;
 	virtual void EndFocus() override;
