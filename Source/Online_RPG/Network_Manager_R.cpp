@@ -1286,7 +1286,12 @@ void UNetwork_Manager_R::OnSequenceFinished()
 		MyController->SetLoginID(Login_ID);
 		//CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);
 
-		CreateWidget(this, Player_Widget)->AddToViewport();
+		Player_Widget = CreateWidget(this, Player_Widget_Class);
+		Player_Widget->AddToViewport();
+		Respawn_Widget = CreateWidget(this, Respawn_Widget_Class);
+		Respawn_Widget->AddToViewport();
+		Respawn_Widget->SetVisibility(ESlateVisibility::Collapsed);
+
 		
 		////서버 전용 함수 기능
 		//if (MyController->GetPawn()->GetLocalRole() == ROLE_Authority)

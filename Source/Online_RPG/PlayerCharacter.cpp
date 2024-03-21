@@ -27,6 +27,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include <cmath>
 
+
 #include "ItemManager.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -660,6 +661,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Ou
 
 void APlayerCharacter::SetCurrentHealth(float healthValue)
 {
+	//서버 전용 함수 기능
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		CurrentHealth = FMath::Clamp(healthValue, 0.f, MaxHealth);
@@ -882,9 +884,20 @@ void APlayerCharacter::OnIsDeadUpdate()
 	//클라이언트 전용 함수 기능
 	if (IsLocallyControlled())
 	{
+		UNetwork_Manager_R* Network_Manager = Cast<UNetwork_Manager_R>(GetGameInstance());
 		if (bIsDead)
 		{
-
+			Network_Manager->Respawn_Widget->SetVisibility(ESlateVisibility::Visible);
+			FInputModeGameAndUI InputMode;
+			InputMode.SetWidgetToFocus(Network_Manager->Respawn_Widget->TakeWidget());
+			GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
+			GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+		}
+		else {
+			Network_Manager->Respawn_Widget->SetVisibility(ESlateVisibility::Collapsed);
+			FInputModeGameOnly InputMode;
+			GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
+			GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(false);
 		}
 	}
 
