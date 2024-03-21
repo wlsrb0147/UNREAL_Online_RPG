@@ -44,6 +44,7 @@ APickUpItem::APickUpItem()
 void APickUpItem::BeginPlay()
 {
 	Super::BeginPlay();
+	bReplicates = true;
 	InitializeItem(UItemBase::StaticClass(),InstanceItemQuantity);
 	
 }
@@ -141,6 +142,7 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 
 void APickUpItem::InitializeDropItem(UItemBase* ItemToDrop, const int32 Quantity)
 {
+	if (!InstanceItemData) return;
 	InstanceItemData = ItemToDrop;
 	InstanceItemData->SetQuantity(Quantity);
 	InstanceItemData->OwningInventory = nullptr;
