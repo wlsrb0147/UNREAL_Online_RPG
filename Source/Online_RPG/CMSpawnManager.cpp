@@ -24,10 +24,10 @@ void ACMSpawnManager::SpawnEnemyDog(FVector Location)
 
         FActorSpawnParameters SpawnParams;
         SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
+        UE_LOG(LogTemp, Warning, TEXT("1"));
         // EnemyDog 액터 스폰
         AEnemyDog* SpawnedActor = GetWorld()->SpawnActor<AEnemyDog>(ActorToSpawn, Location, FRotator::ZeroRotator, SpawnParams);
-        SpawnedActor->BeginPlay();
+        //SpawnedActor->BeginPlay();
 
         if (SpawnedActor != nullptr)
         {

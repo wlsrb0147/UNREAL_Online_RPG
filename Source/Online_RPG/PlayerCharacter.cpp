@@ -898,6 +898,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 		else {
 			Network_Manager->Respawn_Widget->SetVisibility(ESlateVisibility::Collapsed);
 			FInputModeGameOnly InputMode;
+			//FInputModeDataBase
 			GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
 			GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(false);
 		}
