@@ -3,6 +3,7 @@
 
 #include "PickUpItem.h"
 
+#include "AItemManager.h"
 #include "InventoryComponent.h"
 #include "ItemBase.h"
 #include "ItemC.h"
@@ -181,15 +182,20 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 	}
 }
 
-void APickUpItem::InitializeDropItem(UItemBase* ItemToDrop, const int32 Quantity)
+void APickUpItem::InitializeDropItem_Implementation(int32 ItemToDrop, const int32 Quantity)
 {
+	const AItemManager* ItemManager = Cast<UNetwork_Manager_R>(GetGameInstance())->GetItemManager();
+	
+	UItemBase* Base = ItemManager->MakeItemBaseByKey(this,ItemToDrop,Quantity);
+	
 	UE_LOG(LogTemp, Log, TEXT("InitializeDropItem..."));
-	InstanceItemData = ItemToDrop;
+	InstanceItemData = Base;
 	InstanceItemData->SetQuantity(Quantity);
 	InstanceItemData->OwningInventory = nullptr;
-	InstanceMesh->SetStaticMesh(ItemToDrop->BaseItemAssetData.Mesh);
-	UE_LOG(LogTemp, Log, TEXT(" mesh .. %s"), *ItemToDrop->BaseItemAssetData.Mesh->GetName());
-
+	InstanceMesh->SetStaticMesh(Base->BaseItemAssetData.Mesh);
+	UE_LOG(LogTemp, Log, TEXT(" mesh .. %s"), *Base->BaseItemAssetData.Mesh->GetName());
+	
+	
 	UpdateItemInteractionData();
 }
 
