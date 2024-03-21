@@ -26,7 +26,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	bool bIsConstructing = false;
 public:	
 
 	UPROPERTY(VisibleAnywhere,Category = "ItemData")

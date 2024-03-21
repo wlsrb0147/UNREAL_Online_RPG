@@ -76,23 +76,17 @@ UItemBase* ItemManager::MakeItemBase(UObject* Outer, const FItemData* ItemData, 
 
 APickUpItem* ItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase,const FTransform& Transform, const int32 Quantity) const
 {
-	UE_LOG(LogTemp, Warning, TEXT("1"));
 	FActorSpawnParameters SpawnParameters;
-	UE_LOG(LogTemp, Warning, TEXT("2"));
 	SpawnParameters.Owner = Outer;
-	UE_LOG(LogTemp, Warning, TEXT("3"));
 	SpawnParameters.bNoFail = true;
-	UE_LOG(LogTemp, Warning, TEXT("4"));
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	UE_LOG(LogTemp, Warning, TEXT("5"));
 
 
 	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), Transform, SpawnParameters);
-	UE_LOG(LogTemp, Warning, TEXT("6"));
+
 	DropItem->InitializeDropItem(ItemBase, Quantity);
-	UE_LOG(LogTemp, Warning, TEXT("7"));
+
 	return DropItem;
-	
 	
 }
 
