@@ -66,14 +66,16 @@ void AItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase,const FTransform
 {
 	FActorSpawnParameters SpawnParameters;
 	//SpawnParameters.Owner = Outer;
-	SpawnParameters.Owner = GetWorld()->GetFirstPlayerController();  // ¿À³Ê ¼³Á¤
+	SpawnParameters.Owner = GetWorld()->GetFirstPlayerController();  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	SpawnParameters.bNoFail = true;
 	//SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 
-	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(Pickup_Class, Transform, SpawnParameters);
-	DropItem->InitializeDropItem(ItemBase, Quantity);
+	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), Transform, SpawnParameters);
+	
+	int32 Key = FCString::Atoi(*ItemBase->BaseItemID.ToString());
+	DropItem->InitializeDropItem(Key, Quantity);
 	
 }
 

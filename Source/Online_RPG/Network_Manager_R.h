@@ -104,7 +104,16 @@ public:
 	void CreateWidget_OX(bool bIsSuccess);
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> Player_Widget;
+	UUserWidget* Player_Widget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> Player_Widget_Class;
+
+	UPROPERTY(EditAnywhere)
+	UUserWidget* Respawn_Widget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> Respawn_Widget_Class;
 
 
 	//======================================로그인 후 세팅 값======================================

@@ -11,40 +11,43 @@ class APlayerCharacter;
 class UItemBase;
 
 UCLASS()
-class ONLINE_RPG_API APickUpItem : public AActor,public IItemInteractionInterface
+class ONLINE_RPG_API APickUpItem : public AActor, public IItemInteractionInterface
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	APickUpItem(int32 InitialQuantity);
 	APickUpItem();
 
-	void InitializeItem(const TSubclassOf<UItemBase> BaseClass,const int32 InQuantity);
+	void InitializeItem(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity);
 	void PickUpItem(const APlayerCharacter* Taker);
-	void InitializeDropItem(UItemBase* ItemToDrop,const int32 Quantity);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void InitializeDropItem(int32 ItemToDrop, const int32 Quantity);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	bool bIsConstructing = false;
-public:	
 
-	UPROPERTY(VisibleAnywhere,Category = "ItemData")
+public:
+	UPROPERTY(VisibleAnywhere, Category = "ItemData")
 	UStaticMeshComponent* InstanceMesh;
-	
-	UPROPERTY(EditDefaultsOnly,Category = "ItemData")
+
+	UPROPERTY(EditDefaultsOnly, Category = "ItemData")
 	UDataTable* InstanceItemDataTable;
-	
-	UPROPERTY(EditInstanceOnly,Category = "ItemData")
+
+	UPROPERTY(EditInstanceOnly, Category = "ItemData")
 	FName InstanceItemID = TEXT("1");
-	
-	UPROPERTY(VisibleAnywhere,Category = "ItemData")
+
+	UPROPERTY(VisibleAnywhere, Category = "ItemData")
 	UItemBase* InstanceItemData;
-	
-	UPROPERTY(EditInstanceOnly,Category = "ItemData")
+
+	UPROPERTY(EditInstanceOnly, Category = "ItemData")
 	int32 InstanceItemQuantity;
-	
-	UPROPERTY(EditInstanceOnly,Category = "ItemData")
+
+	UPROPERTY(EditInstanceOnly, Category = "ItemData")
 	FInteractionData InstanceItemInteractData;
 
 	void UpdateItemInteractionData();
@@ -53,15 +56,14 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerDestroyActor();
 
-	
 protected:
 	virtual void BeginFocus() override;
 	virtual void EndFocus() override;
-	
+
 	virtual void Interact(APlayerCharacter* PlayerCharacter) override;
 
 
-//#if WITH_EDITOR
+	//#if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-//#endif
+	//#endif
 };
