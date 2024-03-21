@@ -164,6 +164,8 @@ void AEnemyDog::Dead()
 		SpawnManager->SetSpawnEnemyDog(SpawnLocation, 5.0f);
 		UE_LOG(LogTemp, Warning, TEXT("스폰함수 시작"));
 	}
+
+
 	this->SetLifeSpan(2.0f);
 }
 
