@@ -6,6 +6,7 @@
 #include "InventoryComponent.h"
 #include "ItemBase.h"
 #include "ItemC.h"
+#include "Network_Manager_R.h"
 
 // Sets default values
 APickUpItem::APickUpItem(int32 InitialQuantity)
@@ -24,9 +25,12 @@ APickUpItem::APickUpItem(int32 InitialQuantity)
 	
 	InteractionData.InteractionType = EInteractionType::PickUp;
 	bReplicates = true;
-
-	
-	
+	if (bReplicates) {
+		UE_LOG(LogTemp, Log, TEXT(" item init by repli"));
+	}
+	else {
+		UE_LOG(LogTemp, Log, TEXT(" item init by XXXX repli"));
+	}
 }
 
 APickUpItem::APickUpItem()
@@ -40,6 +44,13 @@ APickUpItem::APickUpItem()
 	InstanceMesh->SetSimulatePhysics(true);
 	SetRootComponent(InstanceMesh);
 	bReplicates = true;
+	if (bReplicates) {
+		UE_LOG(LogTemp, Log, TEXT(" item init by repli"));
+	}
+	else {
+		UE_LOG(LogTemp, Log, TEXT(" item init by XXXX repli"));
+	}
+	
 }
 
 // Called when the game starts or when spawned
@@ -48,11 +59,35 @@ void APickUpItem::BeginPlay()
 	Super::BeginPlay();
 	InitializeItem(UItemBase::StaticClass(),InstanceItemQuantity);
 
+	if (bReplicates) {
+		UE_LOG(LogTemp, Log, TEXT(" item begin by repli"));
+		FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
+		UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	}
+	else {
+		UE_LOG(LogTemp, Log, TEXT(" item begin by XXXX repli"));
+		FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
+		UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	}
 }
 
 void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
 {
-	UE_LOG(LogTemp,Warning,TEXT("비긴 이니셜1"))
+	UE_LOG(LogTemp, Warning, TEXT("비긴 이니셜1"));
+	if (InstanceItemDataTable) {
+		UE_LOG(LogTemp, Warning, TEXT("flag1"));
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("flag3"));
+	}
+	if (InstanceItemID.IsNone()) {
+
+		UE_LOG(LogTemp, Warning, TEXT("flag2"));
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("flag4"));
+	}
+
 	if (InstanceItemDataTable && !InstanceItemID.IsNone())
 	{
 		const FItemData* ItemData = InstanceItemDataTable->FindRow<FItemData>(InstanceItemID,TEXT("Error"));
@@ -76,6 +111,8 @@ void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const i
 
 		InstanceMesh->SetStaticMesh(ItemData->ItemAssetData.Mesh);
 		UpdateItemInteractionData();
+
+		UE_LOG(LogTemp, Log, TEXT(" mesh .. %s"), *ItemData->ItemAssetData.Mesh->GetName());
 		
 	}
 
@@ -146,10 +183,12 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 
 void APickUpItem::InitializeDropItem(UItemBase* ItemToDrop, const int32 Quantity)
 {
+	UE_LOG(LogTemp, Log, TEXT("InitializeDropItem..."));
 	InstanceItemData = ItemToDrop;
 	InstanceItemData->SetQuantity(Quantity);
 	InstanceItemData->OwningInventory = nullptr;
 	InstanceMesh->SetStaticMesh(ItemToDrop->BaseItemAssetData.Mesh);
+	UE_LOG(LogTemp, Log, TEXT(" mesh .. %s"), *ItemToDrop->BaseItemAssetData.Mesh->GetName());
 
 	UpdateItemInteractionData();
 }

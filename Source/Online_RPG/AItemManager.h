@@ -25,7 +25,9 @@ public:
 		return Instance;
 	}*/
 	
-	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class APickUpItem> Pickup_Class;
+
     UItemBase* MakeItemBaseByKey(UObject* Outer,const FName Key, const int32 Quantity, const FString& Context = TEXT("")) const;
     UItemBase* MakeItemBaseByKey(UObject* Outer,const FString& Key, const int32 Quantity, const FString& Context = TEXT("")) const;
 	UItemBase* MakeItemBaseByKey(UObject* Outer,const int32 Key, const int32 Quantity, const FString& Context = TEXT("")) const;

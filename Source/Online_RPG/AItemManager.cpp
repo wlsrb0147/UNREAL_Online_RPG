@@ -65,13 +65,14 @@ UItemBase* AItemManager::MakeItemBase(UObject* Outer, const FItemData* ItemData,
 void AItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase,const FTransform& Transform, const int32 Quantity) const
 {
 	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.Owner = Outer;
+	//SpawnParameters.Owner = Outer;
+	SpawnParameters.Owner = GetWorld()->GetFirstPlayerController();  // 오너 설정
 	SpawnParameters.bNoFail = true;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	//SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 
-	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), Transform, SpawnParameters);
-
+	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(Pickup_Class, Transform, SpawnParameters);
 	DropItem->InitializeDropItem(ItemBase, Quantity);
 	
 }

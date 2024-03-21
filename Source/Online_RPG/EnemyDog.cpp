@@ -168,7 +168,8 @@ void AEnemyDog::Dead()
 
 	ItemManagerInstance = Cast<UNetwork_Manager_R>(GetGameInstance())->GetItemManager();
 	
-	ItemManagerInstance->SpawnItem(this,ItemManagerInstance->MakeItemBaseByKey(this,7,7),GetActorTransform(),5);
+	UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 7, 7);
+	ItemManagerInstance->SpawnItem(this, Base,GetActorTransform(),5);
 	this->SetLifeSpan(2.0f);
 }
 
