@@ -10,7 +10,6 @@
 // Sets default values
 APickUpItem::APickUpItem(int32 InitialQuantity)
 {
-	bIsConstructing = true;
 	// 드랍템
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -31,7 +30,6 @@ APickUpItem::APickUpItem(int32 InitialQuantity)
 
 APickUpItem::APickUpItem()
 {
-	bIsConstructing = true;
 	// 엔피씨
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -46,12 +44,13 @@ APickUpItem::APickUpItem()
 void APickUpItem::BeginPlay()
 {
 	Super::BeginPlay();
+	bReplicates = true;
 	InitializeItem(UItemBase::StaticClass(),InstanceItemQuantity);
+	
 }
 
 void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
 {
-	UE_LOG(LogTemp,Warning,TEXT("비긴 이니셜1"))
 	if (InstanceItemDataTable && !InstanceItemID.IsNone())
 	{
 		const FItemData* ItemData = InstanceItemDataTable->FindRow<FItemData>(InstanceItemID,TEXT("Error"));
@@ -77,8 +76,6 @@ void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const i
 		UpdateItemInteractionData();
 		
 	}
-
-	bIsConstructing = false;
 }
 
 void APickUpItem::UpdateItemInteractionData()
@@ -145,8 +142,7 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 
 void APickUpItem::InitializeDropItem(UItemBase* ItemToDrop, const int32 Quantity)
 {
-	InitializeItem(UItemBase::StaticClass(),Quantity);
-	
+	if (!InstanceItemData) return;
 	InstanceItemData = ItemToDrop;
 	InstanceItemData->SetQuantity(Quantity);
 	InstanceItemData->OwningInventory = nullptr;

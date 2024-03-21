@@ -73,7 +73,7 @@ void ALoginController::ChangePawn_Implementation(int PlayerIdx, FVector _SpawnLo
 
 	// 현재 실행 환경이 서버인지 클라이언트인지 확인
 	FString _Role = World->GetNetMode() == NM_DedicatedServer || World->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
-	//UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	UE_LOG(LogTemp, Log, TEXT("health set: %f %f"), _MaxHealth, _CurrentHealth);
 
 	// 게임 내의 모든 플레이어 컨트롤러의 수를 로깅
 	int32 NumPlayerControllers = World->GetNumPlayerControllers();
@@ -103,7 +103,7 @@ void ALoginController::ChangePawn_Implementation(int PlayerIdx, FVector _SpawnLo
 				//NewPawn->SetOwner(PlayerController);
 
 
-				if (_CurrentHealth == 0) _MaxHealth = 100, _CurrentHealth = _MaxHealth;
+				if (_CurrentHealth < 1e-5) _MaxHealth = 100, _CurrentHealth = _MaxHealth;
 				Cast<APlayerCharacter>(PlayerController->GetPawn())->SetCurrentHealth(_CurrentHealth);
 				Cast<APlayerCharacter>(PlayerController->GetPawn())->SetMaxHealth(_MaxHealth);
 

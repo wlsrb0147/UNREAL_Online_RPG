@@ -789,7 +789,7 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 			// JSON 응답을 배열로 파싱 시도합니다.
 			TSharedPtr<FJsonValue> JsonValue;
 			TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-			////UE_LOG(LogTemp, Error, TEXT("response...  %s"), *Response->GetContentAsString());
+			UE_LOG(LogTemp, Error, TEXT("response...  %s"), *Response->GetContentAsString());
 			if (FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid() && JsonValue->Type == EJson::Array)
 			{
 				TArray<TSharedPtr<FJsonValue>> JsonArray = JsonValue->AsArray();
@@ -852,12 +852,12 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 									MoneyFromServer = MoneyObject->GetIntegerField(TEXT("integerValue"));
 						
 									/// 끝
-
 									TSharedPtr<FJsonObject> Cur_Health_obj = FieldsObject->GetObjectField(TEXT("Health"));
-									CurrentHealthFromServer = Cur_Health_obj->GetNumberField(TEXT("doubleValue"));
+									CurrentHealthFromServer = Cur_Health_obj->GetNumberField(TEXT("integerValue"));
 
 									TSharedPtr<FJsonObject> Max_Health_obj = FieldsObject->GetObjectField(TEXT("MaxHealth"));
-									MaxHealthFromServer = Max_Health_obj->GetNumberField(TEXT("doubleValue"));
+									MaxHealthFromServer = Max_Health_obj->GetNumberField(TEXT("integerValue"));
+									UE_LOG(LogTemp, Log, TEXT("FROM SERVER ::  %f %f"), CurrentHealthFromServer, MaxHealthFromServer);
 								}
 							}
 						}
