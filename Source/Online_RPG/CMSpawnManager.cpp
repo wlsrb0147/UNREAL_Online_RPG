@@ -5,6 +5,7 @@
 #include "TimerManager.h"
 #include "EnemyDog.h"
 #include "Net/UnrealNetwork.h"
+#include "EnemyAIController.h"
 
 // Sets default values
 
@@ -26,6 +27,17 @@ void ACMSpawnManager::SpawnEnemyDog(FVector Location)
 
         // EnemyDog 액터 스폰
         AEnemyDog* SpawnedActor = GetWorld()->SpawnActor<AEnemyDog>(ActorToSpawn, Location, FRotator::ZeroRotator, SpawnParams);
+        SpawnedActor->BeginPlay();
+
+        if (SpawnedActor != nullptr)
+        {
+            // AI Controller 생성 및 할당
+            AEnemyAIController* NewAIController = GetWorld()->SpawnActor<AEnemyAIController>(EnemyAICon , FVector::ZeroVector, FRotator::ZeroRotator);
+            if (NewAIController != nullptr)
+            {
+                NewAIController->Possess(SpawnedActor);
+            }
+        }
 
         // GetWorld()->GetTimerManager()를 사용하여 타이머 스케줄링
         //GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDel, RespawnTime, false);

@@ -27,6 +27,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include <cmath>
 
+#include "ItemManager.h"
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,28 +146,19 @@ void APlayerCharacter::UpdateInteractionWidget() const
 
 void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop)
 {
-	UE_LOG(LogTemp, Warning, TEXT("드롭1"))
-		if (!PlayerInventory->FindMatchingItem(ItemToDrop))
-		{
-			return;
-		}
+	if (!PlayerInventory->FindMatchingItem(ItemToDrop))
+	{
+		return;
+	}
 
-	UE_LOG(LogTemp, Warning, TEXT("아이템 찾음"))
-
-		FActorSpawnParameters SpawnParameters;
-	SpawnParameters.Owner = this;
-	SpawnParameters.bNoFail = true;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	const FVector SpawnLocation{ GetActorLocation() + GetActorForwardVector() * 50.0f };
 	const FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
 	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop, QuantityToDrop);
 
-	APickUpItem* Item = GetWorld()->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), SpawnTransform, SpawnParameters);
+	ItemManager& ItemManagerInstance = ItemManager::Get();
+	ItemManagerInstance.SpawnItem(this,ItemToDrop,SpawnTransform,RemovedQuantity);
 
-	Item->InitializeDropItem(ItemToDrop, RemovedQuantity);
-
-	UE_LOG(LogTemp, Warning, TEXT("끝"))
 }
 
 
@@ -210,7 +203,7 @@ APlayerCharacter::APlayerCharacter() : HUD(nullptr)
 	bIsUpperSlash = false;
 
 	//bReplicates = true;
-
+	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -276,26 +269,6 @@ void APlayerCharacter::OnRep_Owner()
 	//UE_LOG(LogTemp, Log, TEXT("========================="));
 }
 
-UItemBase* APlayerCharacter::MakeItemBase(const FItemData* ItemData, const int32 Quantity)
-{
-	UItemBase* ItemCopy = NewObject<UItemBase>(this,UItemBase::StaticClass());
-	
-	ItemCopy->BaseItemID = ItemData->ItemID;
-	ItemCopy->BaseItemType = ItemData->ItemType;
-	ItemCopy->BaseItemNumericData = ItemData->ItemNumericData;
-	ItemCopy->BaseItemTextData = ItemData->ItemTextData;
-	ItemCopy->BaseItemAssetData = ItemData->ItemAssetData;
-	ItemCopy->BaseItemStatistics = ItemData->ItemStatistics;
-	ItemCopy->SetQuantity(Quantity);
-
-	if (ItemCopy->BaseItemNumericData.bIsStackable && ItemCopy->BaseItemNumericData.MaxStackSize < 2 )
-	{
-		ItemCopy->BaseItemNumericData.MaxStackSize = 2;
-	}
-	
-	return ItemCopy;
-}
-
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
@@ -305,28 +278,33 @@ void APlayerCharacter::BeginPlay()
 	HUD->InventoryPanel->InitializePanel(this);
 	
 	const UNetwork_Manager_R* Network_Manager =  Cast<UNetwork_Manager_R>(GetGameInstance());
-	
-	TArray<TSharedPtr<FJsonValue>> ValuesArray = Network_Manager->ValuesArray;
-	for (const TSharedPtr<FJsonValue>& Value : ValuesArray)
+
+	const ItemManager& ItemManagerInstance = ItemManager::Get();
+
+	if (!ItemManagerInstance.ItemDataTable)
 	{
-		// 각 항목을 mapValue 객체로 추출합니다.
-		const TSharedPtr<FJsonObject> MapValueObject = Value->AsObject()->GetObjectField(TEXT("mapValue"));
-		const TSharedPtr<FJsonObject> TheObject = MapValueObject->GetObjectField(TEXT("fields"));
-    
-		// 이제 key와 quantity를 fields 객체에서 추출할 수 있습니다.
-		FString ItemKey = TheObject->GetObjectField(TEXT("key"))->GetStringField(TEXT("stringValue"));
-		const int32 ItemQuantity = TheObject->GetObjectField(TEXT("quantity"))->GetIntegerField(TEXT("integerValue"));
-
-		const FName RealKey = FName(ItemKey);
-		const FItemData* ItemData = ItemDataTable->FindRow<FItemData>(RealKey,TEXT("dd"));
-
-		UItemBase* MakeItem = MakeItemBase(ItemData,ItemQuantity);
-		PlayerInventory->HandleAddItem(MakeItem);
-		
+		UE_LOG(LogTemp,Warning,TEXT("DB 널"))
 	}
+	else
+	{
+		TArray<TSharedPtr<FJsonValue>> ValuesArray = Network_Manager->ValuesArray;
+		for (const TSharedPtr<FJsonValue>& Value : ValuesArray)
+		{
+			// 각 항목을 mapValue 객체로 추출합니다.
+			const TSharedPtr<FJsonObject> MapValueObject = Value->AsObject()->GetObjectField(TEXT("mapValue"));
+			const TSharedPtr<FJsonObject> TheObject = MapValueObject->GetObjectField(TEXT("fields"));
+    
+			// 이제 key와 quantity를 fields 객체에서 추출할 수 있습니다.
+			const FString ItemKey = TheObject->GetObjectField(TEXT("key"))->GetStringField(TEXT("stringValue"));
+			const int32 ItemQuantity = TheObject->GetObjectField(TEXT("quantity"))->GetIntegerField(TEXT("integerValue"));
+			
+			UItemBase* MakeItem = ItemManagerInstance.MakeItemBaseByKey(this,ItemKey,ItemQuantity);
+			PlayerInventory->HandleAddItem(MakeItem);
+		
+		}
 
-	PlayerInventory->AddMoney(Network_Manager->MoneyFromServer);
-	
+		PlayerInventory->AddMoney(Network_Manager->MoneyFromServer);
+	}
 	// 현재 실행 환경이 서버인지 클라이언트인지 확인
 	// FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
 	// //UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
@@ -691,6 +669,12 @@ void APlayerCharacter::SetCurrentHealth(float healthValue)
 
 		OnHealthUpdate();
 	}
+}
+
+void APlayerCharacter::SetMaxHealth(float healthValue)
+{
+	MaxHealth = healthValue;
+	if (GetCurrentHealth() > MaxHealth) SetCurrentHealth(healthValue);
 }
 
 void APlayerCharacter::OnRep_CurrentHealth()

@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "CMSpawnManager.generated.h"
 class AEnemyDog;
+class AEnemyAIController;
 UCLASS()
 class ONLINE_RPG_API ACMSpawnManager : public AActor
 {
@@ -16,7 +17,8 @@ public:
 
     void SpawnEnemyDog(FVector Location);
     void SetSpawnEnemyDog(FVector Location, float RespawnTime);
-
+    UPROPERTY(EditAnywhere)
+    TSubclassOf<class AEnemyAIController> EnemyAICon;
     UPROPERTY(EditAnywhere, Replicated)
     TSubclassOf<class AEnemyDog> ActorToSpawn;
 protected:

@@ -9,6 +9,7 @@
 #include "PlayerCharacter.generated.h"
 
 
+class ItemManager;
 struct FItemData;
 class UItemBase;
 class IItemInteractionInterface;
@@ -71,7 +72,6 @@ public:
 	UPROPERTY(EditAnywhere, Category ="Character | Database")
 	UDataTable* ItemDataTable;
 	
-	
 	FInteractingData InteractionData;
 	void FoundNoInteract();
 	void FoundInteract(AActor* NewInteract);
@@ -82,7 +82,6 @@ public:
 	void UpdateInteractionWidget() const;
 	void DropItem(UItemBase* ItemToDrop,const int32 QuantityToDrop);
 	void CheckInteraction();
-	UItemBase* MakeItemBase(const FItemData* ItemData,int32 Quantity);
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// �κ��丮 ���� �κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 ���� ////
@@ -118,6 +117,9 @@ public:
 	/** ???? ??? ????. ???? 0?? MaxHealth ????? ??????????? OnHealthUpdate?? ???????. ?????????? ?????? ????.*/
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void SetCurrentHealth(float healthValue);
+
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void SetMaxHealth(float healthValue);
 
 	/** ??????????? ????. APawn???? ?????????????*/
 	UFUNCTION(BlueprintCallable, Category = "Health")

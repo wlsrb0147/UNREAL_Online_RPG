@@ -62,7 +62,7 @@ void ALoginController::OnPossess(APawn* InPawn)
 	//UE_LOG(LogTemp, Log, TEXT(" possess success  %s   in Controller <<<   "), *InPawn->GetActorNameOrLabel());
 }
 
-void ALoginController::ChangePawn_Implementation(int PlayerIdx, FVector _SpawnLocation, FRotator _SpawnRotation)
+void ALoginController::ChangePawn_Implementation(int PlayerIdx, FVector _SpawnLocation, FRotator _SpawnRotation, float _MaxHealth, float _CurrentHealth)
 {
 	//UE_LOG(LogTemp, Error, TEXT("ITS OLDB %s %s "),*_SpawnLocation.ToCompactString(), *_SpawnRotation.ToCompactString());
 	//UE_LOG(LogTemp, Error, TEXT("콜 스폰 -->  %d 번 %d"), PlayerIdx, UGameplayStatics::GetNumPlayerControllers(this));
@@ -101,6 +101,9 @@ void ALoginController::ChangePawn_Implementation(int PlayerIdx, FVector _SpawnLo
 				// 새로 생성된 Pawn을 PlayerController에 빙의시킵니다.
 				PlayerController->Possess(NewPawn);
 				//NewPawn->SetOwner(PlayerController);
+
+				Cast<APlayerCharacter>(PlayerController->GetPawn())->SetCurrentHealth(_CurrentHealth);
+				Cast<APlayerCharacter>(PlayerController->GetPawn())->SetMaxHealth(_MaxHealth);
 
 				
 				//Cast<APlayerCharacter>(NewPawn)->SetupPlayerInputComponent();

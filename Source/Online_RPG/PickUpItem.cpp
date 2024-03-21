@@ -121,7 +121,7 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 			Destroy();
 			break;
 		default:
-			//UE_LOG(LogTemp,Error,TEXT("디폴트 실행"))
+			UE_LOG(LogTemp,Warning,TEXT("Default실행"))
 			;
 		}
 	}

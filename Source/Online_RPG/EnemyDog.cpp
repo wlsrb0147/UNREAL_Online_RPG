@@ -14,25 +14,27 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "EnemyAIController.h"
 #include "CMSpawnManager.h"
+#include "EnemyAIController.h"
+#include "ItemManager.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
-
 // Sets default values
 AEnemyDog::AEnemyDog()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
+	
 }
 
 // Called when the game starts or when spawned
 void AEnemyDog::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	Health = MaxHealth;
 	RangeCheck();
-	//AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
+	
 	SpawnLocation = GetActorLocation() + FVector(100.0f, 100.0f, 0.0f);
 
 
@@ -109,6 +111,7 @@ void AEnemyDog::SpawnProjectile()
 
 bool AEnemyDog::RangeCheck()
 {
+	
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	float TargetDis = FVector::Dist(this->GetActorLocation(), PlayerPawn->GetActorLocation());
 
@@ -122,27 +125,8 @@ bool AEnemyDog::RangeCheck()
 void AEnemyDog::Dead()
 {
 	if (IsDead) return;
-	Health = 0;
-	IsDead = true;
-	FRotator MyRotator(0.0f, 0.0f, 190.0f);
-	this->AddActorLocalRotation(MyRotator);
-	AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
-	if (OwnerController)
-	{
-		OwnerController->Dead();
-	}
-	else
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
-	}
-	
-	//콜리전 끔
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	//SpawnSelf();
 	UWorld* World = GetWorld();
 	UE_LOG(LogTemp, Warning, TEXT("죽음"));
-
 	if (!World)
 	{
 		return;
@@ -164,8 +148,24 @@ void AEnemyDog::Dead()
 		SpawnManager->SetSpawnEnemyDog(SpawnLocation, 5.0f);
 		UE_LOG(LogTemp, Warning, TEXT("스폰함수 시작"));
 	}
-
-
+	Health = 0;
+	IsDead = true;
+	FRotator MyRotator(0.0f, 0.0f, 190.0f);
+	this->AddActorLocalRotation(MyRotator);
+	AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
+	//콜리전 끔
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	if (OwnerController)
+	{
+		OwnerController->Dead();
+	}
+	else
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
+	}
+	ItemManager& ItemManager = ItemManager::Get();
+	
+	ItemManager.SpawnItem(this,ItemManager.MakeItemBaseByKey(this,7,7),GetActorTransform(),5);
 	this->SetLifeSpan(2.0f);
 }
 

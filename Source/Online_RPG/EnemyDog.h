@@ -5,7 +5,7 @@
 #include "EnemyProjectile.h"
 #include "CMSpawnManager.h"
 #include "EnemyDog.generated.h"
-
+class AEnemyAIController;
 UCLASS()
 class ONLINE_RPG_API AEnemyDog : public ACharacter
 {
@@ -16,10 +16,10 @@ public:
 	AEnemyDog();
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Attack();
+	virtual void BeginPlay() override;
 
 protected:
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 public:
 	// Called every frame
@@ -53,6 +53,8 @@ private:
 	TSubclassOf<class AActor> AttackProjectile;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AEnemyDog> EnemySelf;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AEnemyAIController> EnemyAICon;
 	void SpawnSelf();
 	FTimerHandle TimerHandle_MyFunction;
 

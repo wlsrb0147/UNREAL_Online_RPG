@@ -41,7 +41,7 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(Server, Reliable)
-	void ChangePawn(int PlayerIdx, FVector _SpawnLocation, FRotator _SpawnRotation);
+	void ChangePawn(int PlayerIdx, FVector _SpawnLocation, FRotator _SpawnRotation, float _MaxHealth, float _CurrentHealth);
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<APawn> SpawnPawn;

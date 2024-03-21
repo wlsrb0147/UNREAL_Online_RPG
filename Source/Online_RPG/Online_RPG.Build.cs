@@ -6,6 +6,7 @@ public class Online_RPG : ModuleRules
 {
 	public Online_RPG(ReadOnlyTargetRules Target) : base(Target)
 	{
+		PrivateDependencyModuleNames.AddRange(new string[] { "AITestSuite" });
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput","Networking",  "Sockets" , "UMG", "HTTP", "Json", "JsonUtilities", "GameplayTasks", "AIModule", "LevelSequence", "MovieScene", "OnlineSubsystem", "OnlineSubsystemUtils" });

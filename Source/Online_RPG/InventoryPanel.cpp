@@ -21,7 +21,6 @@ void UInventoryPanel::InitializePanel(APlayerCharacter* Player)
 	
 	Inventory->OnInventoryUpdated.AddUObject(this,&UInventoryPanel::RefreshInventory);
 	WriteInfoText();
-	UE_LOG(LogTemp,Warning,TEXT("패널 이니셜라이즈 성공"))
 	ActiveInitialize = true;
 }
 
