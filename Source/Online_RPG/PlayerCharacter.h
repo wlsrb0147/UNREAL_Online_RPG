@@ -178,6 +178,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE float GetCoolTime() const { return CoolTime; }
 
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Respawn();
+
 protected:
 
 

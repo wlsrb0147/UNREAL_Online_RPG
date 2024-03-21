@@ -588,7 +588,7 @@ void APlayerCharacter::Look(const FInputActionInstance& Instance)
 
 void APlayerCharacter::UpperSlash_Implementation()
 {
-	if (bIsAttacking || bIsUpperSlashCooldown) return;
+	if (bIsAttacking || bIsUpperSlashCooldown || GetCharacterMovement()->IsFalling()) return;
 
 	bIsUpperSlashCooldown = true;
 	bIsUpperSlash = true;
@@ -724,7 +724,7 @@ void APlayerCharacter::OnHealthUpdate()
 void APlayerCharacter::StartFire_Implementation()
 {
 
-	if (bIsAttacking) return;
+	if (bIsAttacking || GetCharacterMovement()->IsFalling()) return;
 	//UE_LOG(LogTemp, Log, TEXT("START RFIRE"));
 
 	UseControllerRotationYaw_Toggle_Multi(true);
@@ -884,8 +884,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 	{
 		if (bIsDead)
 		{
-			//...
-			//UE_LOG(LogTemp, Display, TEXT("7777"));
+
 		}
 	}
 
@@ -894,8 +893,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 	{
 		if (bIsDead)
 		{
-			//...
-			//UE_LOG(LogTemp, Display, TEXT("8888"));
+			
 		}
 	}
 
@@ -913,9 +911,24 @@ void APlayerCharacter::OnIsDeadUpdate()
 		GetCharacterMovement()->DisableMovement();
 		//GetCapsuleComponent()->SetHiddenInGame(true);
 		//SetActorTickEnabled(false);
-
+		UE_LOG(LogTemp, Display, TEXT("플레이어 죽음"));
 	}
+	else {
+		//콜리전 켬
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		// 죽음 상태에서는 무브먼트 켬
+		GetCharacterMovement()->SetDefaultMovementMode();
+		//GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		UE_LOG(LogTemp, Display, TEXT("플레이어 부활"));
+	}
+	
+}
 
+void APlayerCharacter::Respawn_Implementation()
+{
+	SetIsDead(false);
+	SetCurrentHealth(MaxHealth);
+	SetActorLocation(FVector(-4236.f, -11883.f, 200.f));
 }
 
 void APlayerCharacter::OnRep_IsShoot()
