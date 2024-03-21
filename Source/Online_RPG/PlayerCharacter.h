@@ -119,6 +119,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void SetCurrentHealth(float healthValue);
 
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void SetMaxHealth(float healthValue);
+
 	/** ??????????? ????. APawn???? ?????????????*/
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	virtual float TakeDamage(float DamageTaken, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;

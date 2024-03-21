@@ -691,6 +691,12 @@ void APlayerCharacter::SetCurrentHealth(float healthValue)
 	}
 }
 
+void APlayerCharacter::SetMaxHealth(float healthValue)
+{
+	MaxHealth = healthValue;
+	if (GetCurrentHealth() > MaxHealth) SetCurrentHealth(healthValue);
+}
+
 void APlayerCharacter::OnRep_CurrentHealth()
 {
 	OnHealthUpdate();

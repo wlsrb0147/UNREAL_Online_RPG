@@ -852,6 +852,12 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 									MoneyFromServer = MoneyObject->GetIntegerField(TEXT("integerValue"));
 						
 									/// 끝
+
+									TSharedPtr<FJsonObject> Cur_Health_obj = FieldsObject->GetObjectField(TEXT("Health"));
+									CurrentHealthFromServer = Cur_Health_obj->GetNumberField(TEXT("doubleValue"));
+
+									TSharedPtr<FJsonObject> Max_Health_obj = FieldsObject->GetObjectField(TEXT("MaxHealth"));
+									MaxHealthFromServer = Max_Health_obj->GetNumberField(TEXT("doubleValue"));
 								}
 							}
 						}
@@ -1077,7 +1083,8 @@ void UNetwork_Manager_R::UpdateSpawnData()
 		const APlayerCharacter* CurrentCharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 		const UInventoryComponent* PlayerInventory = CurrentCharacter->GetInventory();
 		uint64 MyMoney = PlayerInventory->GetMoney();
-
+		float MyHealth = CurrentCharacter->GetCurrentHealth();
+		float MyMaxHealth = CurrentCharacter->GetMaxHealth();
 		FString ItemJson = TEXT("[");
 		
 
@@ -1128,33 +1135,15 @@ void UNetwork_Manager_R::UpdateSpawnData()
 		"\"SpawnRotator_Yaw\": {\"doubleValue\": %f},"
 		"\"SwordName\": {\"stringValue\": \"blue\"},"
 		"\"Items\": {\"arrayValue\": {\"values\": [%s]}},"
-		"\"Money\": {\"integerValue\": %d}"
-		//"\"Items\": {\"arrayValue\": {\"values\": [%s]}}"
-		
-		//"\"Items\": {\"arrayValue\": {\"values\": [{\"key\": \"red\", \"quantity\": 4}]}}"
-		// "\"Items\": {\"arrayValue\": {\"values\": ["
-  //  "{"
-  //  "\"mapValue\": {"
-  //  "\"fields\": {"
-  //  "\"key\": {\"stringValue\": \"itemKey1\"},"
-  //  "\"quantity\": {\"integerValue\": 1}"
-  //  "}"
-  //  "}"
-  //  "},"
-  //  "{"
-  //  "\"mapValue\": {"
-  //  "\"fields\": {"
-  //  "\"key\": {\"stringValue\": \"itemKey2\"},"
-  //  "\"quantity\": {\"integerValue\": 2}"
-  //  "}"
-  //  "}"
-  //  "}"
-  // "]}}"
+		"\"Money\": {\"integerValue\": %d},"
+		"\"Health\": {\"doubleValue\": %f},"
+		"\"MaxHealth\": {\"doubleValue\": %f}"
+
 		"}"
 		"}"), *Login_ID,
 		SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z,
 		SpawnRotator.Pitch, SpawnRotator.Roll, SpawnRotator.Yaw
-		,*ItemJson, MyMoney
+		,*ItemJson, MyMoney, MyHealth, MyMaxHealth
 		);
 //
 		Request->SetContentAsString(FieldsJson);
@@ -1179,6 +1168,8 @@ void UNetwork_Manager_R::InsertSpawnData()
 		const APlayerCharacter* CurrentCharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 		const UInventoryComponent* PlayerInventory = CurrentCharacter->GetInventory();
 		uint64 MyMoney = PlayerInventory->GetMoney();
+		float MyHealth = CurrentCharacter->GetCurrentHealth();
+		float MyMaxHealth = CurrentCharacter->GetMaxHealth();
 		FString ItemJson = TEXT("[");
 		
 
@@ -1229,12 +1220,14 @@ void UNetwork_Manager_R::InsertSpawnData()
 			"\"SpawnRotator_Yaw\": {\"doubleValue\": %f},"
 			"\"SwordName\": {\"stringValue\": \"blue\"},"
 			"\"Items\": {\"arrayValue\": {\"values\": [%s]}},"
-			"\"Money\": {\"integerValue\": %d}"
+			"\"Money\": {\"integerValue\": %d},"
+			"\"Health\": {\"doubleValue\": %f},"
+			"\"MaxHealth\": {\"doubleValue\": %f}"
 			"}"
 			"}"), *Login_ID,
 			SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z,
 			SpawnRotator.Pitch, SpawnRotator.Roll, SpawnRotator.Yaw
-			,*ItemJson, MyMoney
+			,*ItemJson, MyMoney, MyHealth, MyMaxHealth
 			);
 
 		Request->SetContentAsString(InsertJson);
@@ -1288,7 +1281,7 @@ void UNetwork_Manager_R::OnSequenceFinished()
 		ALoginController* MyController = Cast<ALoginController>(GetFirstLocalPlayerController());
 		//UE_LOG(LogTemp, Error, TEXT("얘 컨트롤러꺼를 바꿔야되는게 맞아 : %s"), *GetFirstLocalPlayerController()->GetName());
 		//UE_LOG(LogTemp, Error, TEXT("ITS OLDB %s %s %s %s %s"), *SpawnLocation.ToCompactString(), *SpawnRotator.ToCompactString(), *GunName, *Login_ID, *SwordName);
-		MyController->ChangePawn(MyController->INDEX_OF_PLAYER_CONTROLLER, SpawnLocation, SpawnRotator);
+		MyController->ChangePawn(MyController->INDEX_OF_PLAYER_CONTROLLER, SpawnLocation, SpawnRotator, MaxHealthFromServer, CurrentHealthFromServer);
 		//MyController->Login_ID = Login_ID;
 		MyController->SetLoginID(Login_ID);
 		//CallSpawn(MyController->INDEX_OF_PLAYER_CONTROLLER);

@@ -142,6 +142,8 @@ public:
 	
 	TArray<TSharedPtr<FJsonValue>> ValuesArray;
 	uint64 MoneyFromServer = 0;
+	float CurrentHealthFromServer = 100;
+	float MaxHealthFromServer = 100;
 	
 	bool CreateSession(ULocalPlayer* Player, int32 NumPublicConnections, bool bIsLAN);
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
