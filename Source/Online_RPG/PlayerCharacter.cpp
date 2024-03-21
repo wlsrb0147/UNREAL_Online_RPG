@@ -153,7 +153,7 @@ void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDro
 
 
 	const FVector SpawnLocation{ GetActorLocation() + GetActorForwardVector() * 50.0f };
-	FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
+	const FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
 	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop, QuantityToDrop);
 
 	ItemManager& ItemManagerInstance = ItemManager::Get();

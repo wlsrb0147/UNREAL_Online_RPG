@@ -40,6 +40,12 @@ UItemBase* ItemManager::MakeItemBaseByKey(UObject* Outer, const FString& Key, co
 	return FindAndMakeItemBase(Outer,FName(Key),Quantity,Context);
 }
 
+UItemBase* ItemManager::MakeItemBaseByKey(UObject* Outer, const int32 Key, const int32 Quantity,
+	const FString& Context) const
+{
+	return FindAndMakeItemBase(Outer,FName(FString::FromInt(Key)),Quantity,Context);
+}
+
 UItemBase* ItemManager::FindAndMakeItemBase(UObject* Outer, const FName Key, const int32 Quantity, const FString& Context) const
 {
 	const FItemData* ItemData = ItemDataTable->FindRow<FItemData>(FName(Key), *Context);
@@ -68,15 +74,25 @@ UItemBase* ItemManager::MakeItemBase(UObject* Outer, const FItemData* ItemData, 
 	return ItemCopy;
 }
 
-APickUpItem* ItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase, const FTransform& Transform, const int32 Quantity) const
+APickUpItem* ItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase,const FTransform& Transform, const int32 Quantity) const
 {
+	UE_LOG(LogTemp, Warning, TEXT("1"));
 	FActorSpawnParameters SpawnParameters;
+	UE_LOG(LogTemp, Warning, TEXT("2"));
 	SpawnParameters.Owner = Outer;
+	UE_LOG(LogTemp, Warning, TEXT("3"));
 	SpawnParameters.bNoFail = true;
+	UE_LOG(LogTemp, Warning, TEXT("4"));
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	
+	UE_LOG(LogTemp, Warning, TEXT("5"));
+
+
 	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), Transform, SpawnParameters);
+	UE_LOG(LogTemp, Warning, TEXT("6"));
 	DropItem->InitializeDropItem(ItemBase, Quantity);
+	UE_LOG(LogTemp, Warning, TEXT("7"));
 	return DropItem;
+	
+	
 }
 
