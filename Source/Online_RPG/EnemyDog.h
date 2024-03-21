@@ -5,6 +5,7 @@
 #include "EnemyProjectile.h"
 #include "CMSpawnManager.h"
 #include "EnemyDog.generated.h"
+class AItemManager;
 class AEnemyAIController;
 UCLASS()
 class ONLINE_RPG_API AEnemyDog : public ACharacter
@@ -17,6 +18,9 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Attack();
 	virtual void BeginPlay() override;
+
+
+	AItemManager* ItemManagerInstance;
 
 protected:
 	// Called when the game starts or when spawned

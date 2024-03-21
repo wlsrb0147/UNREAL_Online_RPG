@@ -14,6 +14,7 @@
 
 #include "Network_Manager_R.generated.h"
 
+class AItemManager;
 class ASound_Manager_R;
 struct FMovieSceneSequencePlaybackSettings;
 class UWIdget_Login;
@@ -59,6 +60,10 @@ public:
 	ASound_Manager_R* Sound_Instance ;
 	ASound_Manager_R* Get_Sound_Instance();
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AItemManager> ItemManagerInstance_Class;
+	AItemManager* ItemManagerInstance;
+	AItemManager* GetItemManager();
 
 	//에셋 매니저 관련
 	UFUNCTION(BlueprintCallable)
@@ -150,7 +155,6 @@ public:
 	
 	bool CreateSession(ULocalPlayer* Player, int32 NumPublicConnections, bool bIsLAN);
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
-	virtual void Init() override;
 	/*void FindSessions(APlayerController* PlayerController, bool bIsLAN, int32 MaxSearchResults);
 	void OnFindSessionsComplete(bool bWasSuccessful);*/
 	

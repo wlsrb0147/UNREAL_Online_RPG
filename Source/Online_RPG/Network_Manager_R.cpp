@@ -3,7 +3,7 @@
 #include "Network_Manager_R.h"
 
 #include "InventoryComponent.h"
-#include "ItemManager.h"
+#include "AItemManager.h"
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
@@ -58,6 +58,15 @@ ASound_Manager_R* UNetwork_Manager_R::Get_Sound_Instance()
 		Sound_Instance = GetWorld()->SpawnActor<ASound_Manager_R>(Sound_Class, FVector(0, 0, 0), FRotator(0, 0, 0), SpawnParams);
 
 	return Sound_Instance;
+}
+
+AItemManager* UNetwork_Manager_R::GetItemManager()
+{
+	FActorSpawnParameters SpawnParams;
+	if (!ItemManagerInstance)
+		ItemManagerInstance = GetWorld()->SpawnActor<AItemManager>(ItemManagerInstance_Class, FVector(0, 0, 0), FRotator(0, 0, 0), SpawnParams);
+
+	return ItemManagerInstance;
 }
 
 
@@ -1346,19 +1355,6 @@ void UNetwork_Manager_R::OnCreateSessionComplete(FName SessionName, bool bWasSuc
 	}
 }
 
-void UNetwork_Manager_R::Init()
-{
-	Super::Init();
-	ItemManager& ItemManagerInstance = ItemManager::Get();
-	if (ItemDataTable)
-	{
-		ItemManagerInstance.Initialize(ItemDataTable,GetWorld());
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("DB 설정안됨"))
-	}
-}
 
 //void UNetwork_Manager_R::FindSessions(APlayerController* PlayerController, bool bIsLAN, int32 MaxSearchResults)
 //{

@@ -4,41 +4,48 @@
 
 #include "CoreMinimal.h"
 #include "ItemBase.h"
-#include "PickUpItem.h"
+#include "GameFramework/Actor.h"
+#include "AItemManager.generated.h"
 
 struct FItemData;
 class UItemBase;
 /**
  * 
  */
-class ONLINE_RPG_API ItemManager final
+UCLASS()
+class ONLINE_RPG_API AItemManager : public AActor
 {
+	GENERATED_BODY()
 public:
-	static ItemManager& Get()
+
+	virtual void BeginPlay() override;
+	/*static ItemManager& Get()
 	{
 		static ItemManager Instance;
 		return Instance;
-	}
+	}*/
 	
-	void Initialize(UDataTable* InItemDataTable,UWorld* World);
 	
     UItemBase* MakeItemBaseByKey(UObject* Outer,const FName Key, const int32 Quantity, const FString& Context = TEXT("")) const;
     UItemBase* MakeItemBaseByKey(UObject* Outer,const FString& Key, const int32 Quantity, const FString& Context = TEXT("")) const;
 	UItemBase* MakeItemBaseByKey(UObject* Outer,const int32 Key, const int32 Quantity, const FString& Context = TEXT("")) const;
 	
-	APickUpItem* SpawnItem(AActor* Outer,UItemBase* ItemBase,const FTransform& Transform, int32 Quantity) const;
+	void SpawnItem(AActor* Outer,UItemBase* ItemBase,const FTransform& Transform, int32 Quantity) const;
 
+	UPROPERTY(EditAnywhere)
 	UDataTable* ItemDataTable = nullptr;
+
+	UPROPERTY()
 	UWorld* CurrentWorld = nullptr;
 	
 private:
 	UItemBase* FindAndMakeItemBase(UObject* Outer,const FName Key, const int32 Quantity, const FString& Context = TEXT("")) const;
 	static UItemBase* MakeItemBase(UObject* Outer, const FItemData* ItemData, const int32 Quantity);
 	
-	ItemManager() = default;
+	/*ItemManager() = default;
 	~ItemManager() = default;
 	
 	ItemManager(const ItemManager&) = delete;
-	ItemManager& operator=(const ItemManager&) = delete;
+	ItemManager& operator=(const ItemManager&) = delete;*/
 	
 };

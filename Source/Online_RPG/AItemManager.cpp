@@ -1,52 +1,40 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ItemManager.h"
+#include "AItemManager.h"
 
 #include "AITestsCommon.h"
 #include "ItemBase.h"
 #include "ItemStruct.h"
+#include "PickUpItem.h"
 
 
-void ItemManager::Initialize(UDataTable* InItemDataTable,UWorld* World)
+class APickUpItem;
+
+void AItemManager::BeginPlay()
 {
-	
-	if (!ItemDataTable)
-	{
-		ItemDataTable = InItemDataTable;
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Else 실행"))
-	}
-
-	if (!CurrentWorld)
-	{
-		CurrentWorld = World;
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("월드 Else 실행"))
-	}
+	Super::BeginPlay();
+	CurrentWorld = GetWorld();
 }
 
-UItemBase* ItemManager::MakeItemBaseByKey(UObject* Outer, const FName Key, const int32 Quantity, const FString& Context) const
+
+UItemBase* AItemManager::MakeItemBaseByKey(UObject* Outer, const FName Key, const int32 Quantity, const FString& Context) const
 {
 	return FindAndMakeItemBase(Outer,Key,Quantity,Context);
 }
 
-UItemBase* ItemManager::MakeItemBaseByKey(UObject* Outer, const FString& Key, const int32 Quantity, const FString& Context) const
+UItemBase* AItemManager::MakeItemBaseByKey(UObject* Outer, const FString& Key, const int32 Quantity, const FString& Context) const
 {
 	return FindAndMakeItemBase(Outer,FName(Key),Quantity,Context);
 }
 
-UItemBase* ItemManager::MakeItemBaseByKey(UObject* Outer, const int32 Key, const int32 Quantity,
+UItemBase* AItemManager::MakeItemBaseByKey(UObject* Outer, const int32 Key, const int32 Quantity,
 	const FString& Context) const
 {
 	return FindAndMakeItemBase(Outer,FName(FString::FromInt(Key)),Quantity,Context);
 }
 
-UItemBase* ItemManager::FindAndMakeItemBase(UObject* Outer, const FName Key, const int32 Quantity, const FString& Context) const
+UItemBase* AItemManager::FindAndMakeItemBase(UObject* Outer, const FName Key, const int32 Quantity, const FString& Context) const
 {
 	const FItemData* ItemData = ItemDataTable->FindRow<FItemData>(FName(Key), *Context);
 	MakeItemBase(Outer,ItemData,Quantity);
@@ -54,7 +42,7 @@ UItemBase* ItemManager::FindAndMakeItemBase(UObject* Outer, const FName Key, con
 	return MakeItemBase(Outer,ItemData,Quantity);
 }
 
-UItemBase* ItemManager::MakeItemBase(UObject* Outer, const FItemData* ItemData, const int32 Quantity)
+UItemBase* AItemManager::MakeItemBase(UObject* Outer, const FItemData* ItemData, const int32 Quantity)
 {
 	UItemBase* ItemCopy = NewObject<UItemBase>(Outer,UItemBase::StaticClass());
 	
@@ -74,7 +62,7 @@ UItemBase* ItemManager::MakeItemBase(UObject* Outer, const FItemData* ItemData, 
 	return ItemCopy;
 }
 
-APickUpItem* ItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase,const FTransform& Transform, const int32 Quantity) const
+void AItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase,const FTransform& Transform, const int32 Quantity) const
 {
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.Owner = Outer;
@@ -85,8 +73,6 @@ APickUpItem* ItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase,const FTr
 	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), Transform, SpawnParameters);
 
 	DropItem->InitializeDropItem(ItemBase, Quantity);
-
-	return DropItem;
 	
 }
 
