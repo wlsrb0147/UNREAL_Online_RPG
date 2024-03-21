@@ -22,6 +22,9 @@ APickUpItem::APickUpItem(int32 InitialQuantity)
     else InstanceItemQuantity = InitialQuantity;
 	
 	InteractionData.InteractionType = EInteractionType::PickUp;
+	bReplicates = true;
+
+	
 	
 }
 
@@ -34,8 +37,7 @@ APickUpItem::APickUpItem()
 	InstanceMesh = CreateDefaultSubobject<UStaticMeshComponent>("CurrentMesh");
 	InstanceMesh->SetSimulatePhysics(true);
 	SetRootComponent(InstanceMesh);
-	
-	
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -85,6 +87,12 @@ void APickUpItem::UpdateItemInteractionData()
 	InteractionData = InstanceItemInteractData;
 }
 
+void APickUpItem::ServerDestroyActor_Implementation()
+{
+	UE_LOG(LogTemp, Log, TEXT("실행됨!!!!!!777"));
+	Destroy();
+}
+
 void APickUpItem::BeginFocus()
 {
 	IItemInteractionInterface::BeginFocus();
@@ -105,6 +113,9 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 	if (IsPendingKillPending()) return;
 
 	if (!InstanceItemData) return;
+	// 아이템 액터의 소유자를 설정
+	
+	SetOwner(Taker->GetController());
 
 	if (UInventoryComponent* PlayerInventory = Taker->GetInventory())
 	{
@@ -118,11 +129,12 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 			Taker->UpdateInteractionWidget();
 			break;
 		case EItemAddOperationResult::IAR_AllItemAdded:
-			Destroy();
+			//Destroy();
+			ServerDestroyActor();
 			break;
 		default:
-			UE_LOG(LogTemp,Warning,TEXT("Default실행"))
-			;
+			UE_LOG(LogTemp, Warning, TEXT("Default실행"));
+			
 		}
 	}
 }

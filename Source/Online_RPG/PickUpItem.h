@@ -49,6 +49,10 @@ public:
 
 	void UpdateItemInteractionData();
 
+	// Server RPC 함수 선언
+	UFUNCTION(Server, Reliable)
+	void ServerDestroyActor();
+
 	
 protected:
 	virtual void BeginFocus() override;

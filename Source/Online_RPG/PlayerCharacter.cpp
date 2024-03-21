@@ -36,6 +36,7 @@
 
 void APlayerCharacter::CheckInteraction()
 {
+	if (!IsLocallyControlled()) return;
 	FVector TraceStart{ GetPawnViewLocation() };
 	FVector TraceEnd{ TraceStart + GetViewRotation().Vector() * InteractionDistance };
 
