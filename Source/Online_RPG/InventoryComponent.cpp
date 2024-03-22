@@ -84,7 +84,7 @@ int32 UInventoryComponent::AddStackableItem(UItemBase* InputItem, int32 AddAmoun
 		AmountToDistribute -= AmountToAdd;
 	}
 
-	InputItem->SetQuantity(AddAmount - AmountToDistribute);
+	InputItem->SetQuantity(AmountToDistribute);
 	OnInventoryUpdated.Broadcast();
 	 return AddAmount - AmountToDistribute;
 }
