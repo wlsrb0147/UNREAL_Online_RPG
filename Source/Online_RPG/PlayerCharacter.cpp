@@ -49,7 +49,7 @@ void APlayerCharacter::CheckInteraction()
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
-	
+
 	DrawDebugSphere(
 		GetWorld(),
 		TraceEnd,
@@ -59,7 +59,7 @@ void APlayerCharacter::CheckInteraction()
 		false  // true로 설정하면 지속적으로 그려집니다.
 	);
 
-	
+
 	if (!GetWorld()->SweepSingleByChannel(HitResult, TraceStart, TraceEnd,
 		FQuat::Identity,
 		ECC_GameTraceChannel3,
@@ -70,17 +70,10 @@ void APlayerCharacter::CheckInteraction()
 		FoundNoInteract();
 		return;
 	}
-	
-	/*if (!GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd,
-		ECC_Visibility,
-		QueryParams)
-		)
-	{
-		FoundNoInteract();
-		return;
-	}*/
 
-	if (!HitResult.GetActor()->GetClass()->ImplementsInterface(UItemInteractionInterface::StaticClass())) return;
+	
+
+		if (!HitResult.GetActor()->GetClass()->ImplementsInterface(UItemInteractionInterface::StaticClass())) return;
 
 	if (HitResult.GetActor() != InteractionData.CurrentInteracting)
 	{
