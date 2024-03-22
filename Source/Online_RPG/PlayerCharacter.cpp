@@ -41,21 +41,44 @@ void APlayerCharacter::CheckInteraction()
 	FVector TraceStart{ GetPawnViewLocation() };
 	FVector TraceEnd{ TraceStart + GetViewRotation().Vector() * InteractionDistance };
 
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, -1, 0, 2);
+	//DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, -1, 0, 2);
+
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(150.0);
 
 	//FCollisionQueryParams
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
+	
+	DrawDebugSphere(
+		GetWorld(),
+		TraceEnd,
+		Sphere.GetSphereRadius(),
+		6,  // 스피어의 세그먼트 수
+		FColor::Red,
+		false  // true로 설정하면 지속적으로 그려집니다.
+	);
 
-	if (!GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd,
-		ECC_Visibility,
+	
+	if (!GetWorld()->SweepSingleByChannel(HitResult, TraceStart, TraceEnd,
+		FQuat::Identity,
+		ECC_GameTraceChannel3,
+		Sphere,
 		QueryParams)
 		)
 	{
 		FoundNoInteract();
 		return;
 	}
+	
+	/*if (!GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd,
+		ECC_Visibility,
+		QueryParams)
+		)
+	{
+		FoundNoInteract();
+		return;
+	}*/
 
 	if (!HitResult.GetActor()->GetClass()->ImplementsInterface(UItemInteractionInterface::StaticClass())) return;
 
