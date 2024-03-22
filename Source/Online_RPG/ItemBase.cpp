@@ -30,10 +30,19 @@ UItemBase* UItemBase::CreateCopy() const
 void UItemBase::SetQuantity(const int32 NewQuantity)
 {
 	if (NewQuantity == BaseItemQuantity) return;
-	
-	BaseItemQuantity = FMath::Clamp(NewQuantity,0,
-		BaseItemNumericData.bIsStackable? BaseItemNumericData.MaxStackSize:1);
 
+	if(!OwningInventory)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("실행"))
+		BaseItemQuantity = NewQuantity;
+	}
+	else
+	{
+		BaseItemQuantity = FMath::Clamp(NewQuantity,0,
+		BaseItemNumericData.bIsStackable? BaseItemNumericData.MaxStackSize:1);
+	}
+	
+	
 	if (BaseItemQuantity <= 0)
 	{
 		if (OwningInventory)
