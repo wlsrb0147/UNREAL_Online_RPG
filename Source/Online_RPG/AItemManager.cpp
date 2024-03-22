@@ -72,7 +72,7 @@ void AItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase,const FTransform
 	//SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 
-	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), Transform, SpawnParameters);
+	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(Pickup_Class, Transform, SpawnParameters);
 	DropItem->SetOwner(GetWorld()->GetFirstPlayerController());
 	DropItem->ReplicatedOwner = GetWorld()->GetFirstPlayerController()->GetPawn();
 	//DropItem->a++;
