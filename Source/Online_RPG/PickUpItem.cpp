@@ -13,6 +13,7 @@
 APickUpItem::APickUpItem(int32 InitialQuantity)
 {
 	bIsConstructing = true;
+
 	// 드랍템
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -185,17 +186,16 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 void APickUpItem::InitializeDropItem_Implementation(int32 ItemToDrop, const int32 Quantity)
 {
 	const AItemManager* ItemManager = Cast<UNetwork_Manager_R>(GetGameInstance())->GetItemManager();
-	
-	UItemBase* Base = ItemManager->MakeItemBaseByKey(this,ItemToDrop,Quantity);
-	
+
+	UItemBase* Base = ItemManager->MakeItemBaseByKey(this, ItemToDrop, Quantity);
+
 	UE_LOG(LogTemp, Log, TEXT("InitializeDropItem..."));
 	InstanceItemData = Base;
 	InstanceItemData->SetQuantity(Quantity);
 	InstanceItemData->OwningInventory = nullptr;
 	InstanceMesh->SetStaticMesh(Base->BaseItemAssetData.Mesh);
 	UE_LOG(LogTemp, Log, TEXT(" mesh .. %s"), *Base->BaseItemAssetData.Mesh->GetName());
-	
-	
+
 	UpdateItemInteractionData();
 }
 

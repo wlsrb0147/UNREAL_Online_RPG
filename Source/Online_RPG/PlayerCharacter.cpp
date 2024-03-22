@@ -26,6 +26,7 @@
 #include "PickUpItem.h"
 #include "Particles/ParticleSystemComponent.h"
 #include <cmath>
+#include "RED_Projectile.h"
 
 #include "AItemManager.h"
 
