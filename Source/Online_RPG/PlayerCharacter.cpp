@@ -119,13 +119,17 @@ void APlayerCharacter::BeginInteract()
 
 void APlayerCharacter::Interact()
 {
-	UE_LOG(LogTemp, Display, TEXT(" flag000 "));
+	UE_LOG(LogTemp, Log, TEXT("interact 1"));
 	if (!IsValid(InteractionTarget.GetObject())) return;
-	UE_LOG(LogTemp, Display, TEXT(" flag111 "));
-	InteractionTarget->Interact(this);
-	UE_LOG(LogTemp, Display, TEXT(" flag222 "));
+	UE_LOG(LogTemp, Log, TEXT("interact 2"));
+	//InteractionTarget->Interact(this);
+	APickUpItem* Tem = Cast<APickUpItem>(InteractionTarget.GetObject());
+	Tem->SetOwner(this);
+	
+	RPC_Item_Owner(Tem, this);
+	UE_LOG(LogTemp, Log, TEXT("interact 3"));
 	FoundNoInteract();
-	UE_LOG(LogTemp, Display, TEXT(" flag333 "));
+
 }
 
 void APlayerCharacter::EndInteract()
@@ -266,6 +270,7 @@ void APlayerCharacter::OnRep_Owner()
 	OwnerActor = GetOwner();
 	if (OwnerActor)
 	{
+		
 		//UE_LOG(LogTemp, Log, TEXT("OnRep_Owner!!!!!!!!!!!!!!!!:  %s"), *GetOwner()->GetActorNameOrLabel());
 	}
 	else
@@ -273,6 +278,27 @@ void APlayerCharacter::OnRep_Owner()
 		//UE_LOG(LogTemp, Log, TEXT("No Owner "));
 	}
 	//UE_LOG(LogTemp, Log, TEXT("========================="));
+}
+
+void APlayerCharacter::RPC_Item_Owner_Success_Implementation(APickUpItem* InteractItem, APawn* TargetPawn)
+{
+	if (TargetPawn->IsLocallyControlled()) {
+		UE_LOG(LogTemp, Log, TEXT("대박 여기까지 왔다22222?"));
+		InteractItem->Interact(this);
+	}
+	if (TargetPawn->HasAuthority()) {
+		UE_LOG(LogTemp, Log, TEXT("대박 여기까지 왔다?"));
+	}
+	UE_LOG(LogTemp, Log, TEXT("interact 4"));
+	UE_LOG(LogTemp, Log, TEXT("Owner RPC  SUCCESS 성공 !!! %s %s"), *InteractItem->GetName(), *TargetPawn->GetName());
+}
+
+void APlayerCharacter::RPC_Item_Owner_Implementation(APickUpItem* InteractItem, APawn* TargetPawn)
+{
+	UE_LOG(LogTemp, Log, TEXT("interact 4"));
+	UE_LOG(LogTemp, Log, TEXT("Owner RPC 성공 !!! %s %s"), *InteractItem->GetName(), *TargetPawn->GetName());
+	InteractItem->SetOwner(TargetPawn);
+	RPC_Item_Owner_Success(InteractItem, TargetPawn);
 }
 
 // Called when the game starts or when spawned

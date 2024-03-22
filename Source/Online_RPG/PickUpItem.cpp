@@ -8,42 +8,42 @@
 #include "ItemBase.h"
 #include "ItemC.h"
 #include "Network_Manager_R.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
-APickUpItem::APickUpItem(int32 InitialQuantity)
-{
-	SetReplicateMovement(true);
-	SetReplicates(true);
-	bReplicates = true;
-	bIsConstructing = true;
-	// 드랍템
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
-
-	InstanceMesh = CreateDefaultSubobject<UStaticMeshComponent>("CurrentMesh");
-	InstanceMesh->SetSimulatePhysics(true);
-	SetRootComponent(InstanceMesh);
-
-    if (InitialQuantity <=0) InstanceItemQuantity = 1;
-    else InstanceItemQuantity = InitialQuantity;
-	
-	InteractionData.InteractionType = EInteractionType::PickUp;
-	
-	if (bReplicates) {
-		UE_LOG(LogTemp, Log, TEXT(" item init by repli"));
-	}
-	else {
-		UE_LOG(LogTemp, Log, TEXT(" item init by XXXX repli"));
-	}
-	
-}
+//APickUpItem::APickUpItem(int32 InitialQuantity)
+//{
+//	SetReplicateMovement(true);
+//	SetReplicates(true);
+//	
+//	bReplicates = true;
+//	// 드랍템
+// 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+//	PrimaryActorTick.bCanEverTick = false;
+//
+//	InstanceMesh = CreateDefaultSubobject<UStaticMeshComponent>("CurrentMesh");
+//	InstanceMesh->SetSimulatePhysics(true);
+//	SetRootComponent(InstanceMesh);
+//
+//    if (InitialQuantity <=0) InstanceItemQuantity = 1;
+//    else InstanceItemQuantity = InitialQuantity;
+//	
+//	InteractionData.InteractionType = EInteractionType::PickUp;
+//	
+//	if (bReplicates) {
+//		UE_LOG(LogTemp, Log, TEXT(" item init by repli"));
+//	}
+//	else {
+//		UE_LOG(LogTemp, Log, TEXT(" item init by XXXX repli"));
+//	}
+//	
+//}
 
 APickUpItem::APickUpItem()
 {
 	SetReplicateMovement(true);
-	SetReplicates(true);
+	//SetReplicates(true);
 	bReplicates = true;
-	//bIsConstructing = true;
 	// 엔피씨
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -65,7 +65,6 @@ void APickUpItem::BeginPlay()
 {
 	Super::BeginPlay();
 	InitializeItem(UItemBase::StaticClass(),InstanceItemQuantity);
-	//bIsConstructing = false;
 	if (bReplicates) {
 		UE_LOG(LogTemp, Log, TEXT(" item begin by repli"));
 		FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
@@ -123,7 +122,6 @@ void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const i
 		
 	}
 
-	bIsConstructing = false;
 }
 
 void APickUpItem::UpdateItemInteractionData()
@@ -157,6 +155,24 @@ bool APickUpItem::ServerRequestSetOwner_Validate(APlayerController* NewOwner)
 	return true; // 간단한 유효성 검사 예제
 }
 
+void APickUpItem::OnRep_ReplicatedOwner()
+{
+	UE_LOG(LogTemp, Log, TEXT("Owner 바뀐거 감지!!!"));
+	SetOwner(ReplicatedOwner);
+	if (ReplicatedOwner) {
+		UE_LOG(LogTemp, Log, TEXT("Owner 바뀐거 감지2!!! %s"), *ReplicatedOwner->GetName());
+	}
+	//SetOwner(GetWorld()->GetFirstPlayerController());
+}
+
+void APickUpItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APickUpItem, a);
+	DOREPLIFETIME(APickUpItem, ReplicatedOwner);
+}
+
 void APickUpItem::BeginFocus()
 {
 	IItemInteractionInterface::BeginFocus();
@@ -174,15 +190,33 @@ void APickUpItem::Interact(APlayerCharacter* PlayerCharacter)
 
 void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 {
-	UE_LOG(LogTemp, Display, TEXT(" flag555 "));
+	
+	
 	if (IsPendingKillPending()) return;
-	UE_LOG(LogTemp, Display, TEXT(" flag666 "));
 
 	if (!InstanceItemData) return;
 	// 아이템 액터의 소유자를 설정
 	// 아이템을 픽업하는 로직을 처리하는 함수 내에서
 	//SetOwner(Taker->GetController());
 	//SetOwner(GetWorld()->GetFirstPlayerController());
+	if (GetOwner())
+	{
+		// 객체에 Owner가 설정되어 있는 경우, Owner의 이름을 로그에 출력
+		UE_LOG(LogTemp, Log, TEXT("The owner of this object is: %s"), *GetOwner()->GetName());
+
+		// Owner의 타입이 PlayerController인지 확인
+		APlayerController* PC = Cast<APlayerController>(GetOwner());
+		if (PC)
+		{
+			// Owner가 PlayerController인 경우, 추가 정보 로그에 출력
+			UE_LOG(LogTemp, Log, TEXT("The owner is a PlayerController. Player Name: %s"), *PC->GetPawn()->GetName());
+		}
+	}
+	else
+	{
+		// Owner가 설정되지 않은 경우
+		UE_LOG(LogTemp, Warning, TEXT("This object does not have an owner."));
+	}
 	if (HasAuthority())
 	{
 		UE_LOG(LogTemp, Display, TEXT(" ppp "));
@@ -196,6 +230,10 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 		// 클라이언트에서 실행 중인 경우, 서버에 소유자 변경을 요청합니다.
 		ServerRequestSetOwner(Cast<APlayerController>(Taker->GetController()));
 		//ServerRequestSetOwner(GetWorld()->GetFirstPlayerController());
+	}
+	if (HasAuthority()) {
+		// 서버에서 실행 중인 경우, 플레이어 컨트롤러를 소유자로 설정
+		SetOwner(Taker->GetController());
 	}
 	UE_LOG(LogTemp, Display, TEXT(" flag777 "));
 	
