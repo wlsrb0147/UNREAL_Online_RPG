@@ -107,7 +107,7 @@ void APlayerCharacter::FoundInteract(AActor* NewInteract)
 
 void APlayerCharacter::BeginInteract()
 {
-	UE_LOG(LogTemp, Display, TEXT("%d"), PlayerInventory->GetInventoryCapacity())
+	UE_LOG(LogTemp, Display, TEXT(" blue111 %d"), PlayerInventory->GetInventoryCapacity())
 		CheckInteraction();
 
 	if (!InteractionData.CurrentInteracting) return;
@@ -120,10 +120,13 @@ void APlayerCharacter::BeginInteract()
 
 void APlayerCharacter::Interact()
 {
+	UE_LOG(LogTemp, Display, TEXT(" flag000 "));
 	if (!IsValid(InteractionTarget.GetObject())) return;
-
+	UE_LOG(LogTemp, Display, TEXT(" flag111 "));
 	InteractionTarget->Interact(this);
+	UE_LOG(LogTemp, Display, TEXT(" flag222 "));
 	FoundNoInteract();
+	UE_LOG(LogTemp, Display, TEXT(" flag333 "));
 }
 
 void APlayerCharacter::EndInteract()
