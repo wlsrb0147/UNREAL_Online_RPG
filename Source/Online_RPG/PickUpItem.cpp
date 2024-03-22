@@ -75,6 +75,14 @@ void APickUpItem::BeginPlay()
 		FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
 		UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
 	}
+
+	float CurrentZRotation = InstanceMesh->GetComponentRotation().Yaw;
+
+	// X와 Y 회전값을 0으로, Z 회전값은 현재 값으로 설정
+	InstanceMesh->SetSimulatePhysics(true);
+	FRotator DesiredRotation = FRotator(0.0f, CurrentZRotation,0.0f );
+	InstanceMesh->SetWorldRotation(DesiredRotation);
+
 }
 
 void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
