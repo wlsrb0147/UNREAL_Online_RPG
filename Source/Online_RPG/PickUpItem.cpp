@@ -181,7 +181,7 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 	if (!InstanceItemData) return;
 	// 아이템 액터의 소유자를 설정
 	// 아이템을 픽업하는 로직을 처리하는 함수 내에서
-	SetOwner(Taker->GetController());
+	//SetOwner(Taker->GetController());
 	//SetOwner(GetWorld()->GetFirstPlayerController());
 	if (HasAuthority())
 	{
