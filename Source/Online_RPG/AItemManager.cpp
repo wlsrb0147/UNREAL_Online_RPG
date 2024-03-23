@@ -76,7 +76,7 @@ void AItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase,const FTransform
 	DropItem->SetOwner(GetWorld()->GetFirstPlayerController());
 	DropItem->ReplicatedOwner = GetWorld()->GetFirstPlayerController()->GetPawn();
 	//DropItem->a++;
-	
+	UE_LOG(LogTemp, Log, TEXT("서버에서 스폰했어: %s"), *ItemBase->BaseItemID.ToString());
 	int32 Key = FCString::Atoi(*ItemBase->BaseItemID.ToString());
 	DropItem->InitializeDropItem(Key, Quantity);
 	

@@ -64,7 +64,7 @@ APickUpItem::APickUpItem()
 void APickUpItem::BeginPlay()
 {
 	Super::BeginPlay();
-	InitializeItem(UItemBase::StaticClass(),InstanceItemQuantity);
+	//InitializeItem(UItemBase::StaticClass(),InstanceItemQuantity);
 	if (bReplicates) {
 		UE_LOG(LogTemp, Log, TEXT(" item begin by repli"));
 		FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
@@ -278,8 +278,9 @@ void APickUpItem::InitializeDropItem_Implementation(int32 ItemToDrop, const int3
 	const AItemManager* ItemManager = Cast<UNetwork_Manager_R>(GetGameInstance())->GetItemManager();
 	
 	UItemBase* Base = ItemManager->MakeItemBaseByKey(this,ItemToDrop,Quantity);
-	
-	UE_LOG(LogTemp, Log, TEXT("InitializeDropItem..."));
+	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
+	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	UE_LOG(LogTemp, Log, TEXT("InitializeDropItem... %d"), ItemToDrop);
 	InstanceItemData = Base;
 	InstanceItemData->SetQuantity(Quantity);
 	InstanceItemData->OwningInventory = nullptr;
