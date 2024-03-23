@@ -139,6 +139,7 @@ void APickUpItem::UpdateItemInteractionData()
 	// 정보 탐색은 interface에서 하고있음
 	InstanceItemInteractData.Name = InstanceItemData->BaseItemTextData.NameText;
 	InstanceItemInteractData.Quantity = InstanceItemData->BaseItemQuantity;
+	this->InstanceItemQuantity = InstanceItemData->BaseItemQuantity;
 	InteractionData = InstanceItemInteractData;
 }
 
