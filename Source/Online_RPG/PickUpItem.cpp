@@ -154,6 +154,7 @@ void APickUpItem::SetAllQuantity(int32 ChangeValue)
 
 	UE_LOG(LogTemp, Display, TEXT("SetAllQuantity ... %d"), ChangeValue);
 	InstanceItemInteractData.Quantity = ChangeValue;
+	InteractionData = InstanceItemInteractData;
 	InstanceItemQuantity = ChangeValue;
 	InstanceItemData->SetQuantity(ChangeValue);
 
