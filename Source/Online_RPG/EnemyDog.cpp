@@ -224,10 +224,31 @@ void AEnemyDog::Dead()
 	const FVector UpvVector{0,0,1};
 	const FVector SpawnLoc{ GetActorLocation() + UpvVector * 10.0f };
 	const FTransform SpawnTransform(GetActorRotation(), SpawnLoc);
+
+	float RandomValue = FMath::FRandRange(0.0f, 1.0f);
+
+	if (RandomValue > 0.3f)
+	{
+		int RandomMoney = FMath :: RandRange(80,1000);
+		while (RandomMoney > 100)
+		{
+			UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 8, 7);
+			ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, 100);
+			RandomMoney -= 100;
+		}
+		UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 8, 7);
+		ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, RandomMoney);
+	}
 	
-	UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 8, 7);
-	
-	ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, 100);
+	RandomValue = FMath::FRandRange(0.0f, 1.0f);
+
+	if (RandomValue > 0.6f)
+	{
+		int RandomPotion = FMath :: RandRange(1,5);
+		
+		UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 4, 7);
+		ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, RandomPotion);
+	}
 
 	this->SetLifeSpan(5.0f);
 }
