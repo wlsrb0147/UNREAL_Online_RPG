@@ -117,6 +117,10 @@ void APlayerCharacter::FoundInteract(AActor* NewInteract)
 	InteractionData.CurrentInteracting = NewInteract;
 	InteractionTarget = NewInteract;
 
+	APickUpItem* Item = Cast<APickUpItem>(NewInteract);
+
+	UE_LOG(LogTemp,Warning,TEXT("개수 %d"),Item->InstanceItemData->BaseItemQuantity)
+	
 	HUD->UpdateInteractionWidget(&InteractionTarget->InteractionData);
 	InteractionTarget->BeginFocus();
 }

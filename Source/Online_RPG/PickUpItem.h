@@ -53,10 +53,11 @@ public:
 	void UpdateItemInteractionData();
 
 	UFUNCTION(Server, Reliable)
-	void RPC_Set_Quantity(int _Quantity);
+	void RPC_Set_Quantity(int32 _Quantity);
 
 	UFUNCTION()
 	void OnRep_InstanceItemQuantity() {
+		UE_LOG(LogTemp, Log, TEXT("OnRep_InstanceItemQuantity ...%d "), InstanceItemQuantity);
 		SetAllQuantity(InstanceItemQuantity);
 	}
 
