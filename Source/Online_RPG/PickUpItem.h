@@ -51,7 +51,9 @@ public:
 	FInteractionData InstanceItemInteractData;
 
 	void UpdateItemInteractionData();
-
+		
+	void SetAllQuantity(int32 ChangeValue);
+	
 	// Server RPC 함수 선언
 	UFUNCTION(Server, Reliable)
 	void ServerDestroyActor();
