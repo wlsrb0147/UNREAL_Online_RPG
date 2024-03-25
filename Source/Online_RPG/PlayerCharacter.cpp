@@ -735,9 +735,9 @@ void APlayerCharacter::SetCurrentHealth(float healthValue)
 	{
 		CurrentHealth = FMath::Clamp(healthValue, 0.f, MaxHealth);
 
-		//화면 출력
-		FString HealthMessage = FString::Printf(TEXT("CurrentHealth : %f"), CurrentHealth);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, HealthMessage);
+		////화면 출력
+		//FString HealthMessage = FString::Printf(TEXT("CurrentHealth : %f"), CurrentHealth);
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, HealthMessage);
 
 		OnHealthUpdate();
 	}
@@ -1063,10 +1063,10 @@ float APlayerCharacter::TakeDamage(float DamageTaken, FDamageEvent const& Damage
 
 	HitEffectEvent_RPC();
 
-	//화면 출력
-	FString TakeDamageMessage = FString::Printf(TEXT("TakeDamage Damage : %f"), DamageTaken);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TakeDamageMessage);
-	//UE_LOG(LogTemp, Warning, TEXT("TakeDamage Damage : %f"), DamageTaken);
+	////화면 출력
+	//FString TakeDamageMessage = FString::Printf(TEXT("TakeDamage Damage : %f"), DamageTaken);
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TakeDamageMessage);
+	////UE_LOG(LogTemp, Warning, TEXT("TakeDamage Damage : %f"), DamageTaken);
 
 	return damageApplied;
 }
@@ -1108,14 +1108,14 @@ void APlayerCharacter::CMAttack()
 
 
 
-			//화면 출력
-			FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), ShootAttackDamage);
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
-			//UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
+			////화면 출력
+			//FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), ShootAttackDamage);
+			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
+			////UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
 
-			FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
-			//UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+			//FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
+			////UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
 		}
 
 	}
@@ -1185,14 +1185,14 @@ void APlayerCharacter::ShootAttack()
 			FPointDamageEvent DamageEvent(ShootAttackDamage, Hit, ShotDirection, nullptr);
 			HitActor->TakeDamage(ShootAttackDamage, DamageEvent, GetController(), this);
 
-			//화면 출력
-			FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), ShootAttackDamage);
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
-			//UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
+			////화면 출력
+			//FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), ShootAttackDamage);
+			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
+			////UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
 
-			FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
-			//UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+			//FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
+			////UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
 		}
 
 		DrawDebugLine(GetWorld(), Location, End, FColor::Red, false, 3, 0, 5);
@@ -1258,14 +1258,14 @@ void APlayerCharacter::UpperSlashAttack()
 				FPointDamageEvent DamageEvent(UpperSlashAttackDamage, Hits[i], ShotDirection, nullptr);
 				HitActor->TakeDamage(UpperSlashAttackDamage, DamageEvent, GetController(), this);
 
-				//화면 출력
-				FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), ShootAttackDamage);
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
-				//UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
+				////화면 출력
+				//FString AttackMessage = FString::Printf(TEXT("Attack Damage : %f"), ShootAttackDamage);
+				//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, AttackMessage);
+				////UE_LOG(LogTemp, Warning, TEXT("Attack Damage : %f"), ShootAttackDamage);
 
-				FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
-				//UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+				//FString HitActorMessage = FString::Printf(TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
+				//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, HitActorMessage);
+				////UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
 			}
 		}
 
