@@ -263,6 +263,8 @@ void AEnemyDog::OnIsCollisionUpdate()
 	if (bIsCollision) {
 		//콜리전 끔
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		// 죽음 상태에서는 무브먼트 끔
+		GetCharacterMovement()->DisableMovement();
 	}
 	
 }
