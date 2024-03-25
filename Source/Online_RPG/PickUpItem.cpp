@@ -143,16 +143,24 @@ void APickUpItem::UpdateItemInteractionData()
 	InteractionData = InstanceItemInteractData;
 }
 
-void APickUpItem::RPC_Set_Quantity_Implementation(int _Quantity)
+void APickUpItem::RPC_Set_Quantity_Implementation(int32 _Quantity)
 {
-	SetAllQuantity(InstanceItemQuantity);
+	UE_LOG(LogTemp, Display, TEXT("RPC_Set_Quantity_Implementation %d"), _Quantity);
+	SetAllQuantity(_Quantity);
 }
 
 void APickUpItem::SetAllQuantity(int32 ChangeValue)
 {
+
+	UE_LOG(LogTemp, Display, TEXT("SetAllQuantity ... %d"), ChangeValue);
 	InstanceItemInteractData.Quantity = ChangeValue;
 	InstanceItemQuantity = ChangeValue;
 	InstanceItemData->SetQuantity(ChangeValue);
+
+	if (!GetWorld() || !GetWorld()->GetFirstPlayerController() || !GetWorld()->GetFirstPlayerController()->GetPawn()) return;
+
+	APlayerCharacter* MyCharacter = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	if (MyCharacter) MyCharacter->UpdateInteractionWidget();
 }
 
 void APickUpItem::ServerDestroyActor_Implementation()
@@ -192,6 +200,8 @@ void APickUpItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 	DOREPLIFETIME(APickUpItem, a);
 	DOREPLIFETIME(APickUpItem, ReplicatedOwner);
+	DOREPLIFETIME(APickUpItem, InstanceItemQuantity);
+	
 }
 
 void APickUpItem::BeginFocus()
