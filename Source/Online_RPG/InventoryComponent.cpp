@@ -65,7 +65,7 @@ int32 UInventoryComponent::AddStackableItem(UItemBase* InputItem, int32 AddAmoun
 	{
 		if (AmountToDistribute == 0) break;
 		
-		const int32 AmountToMakeFullStack = CalculateNumberForFullStack(InputItem,AmountToDistribute);
+		const int32 AmountToMakeFullStack = CalculateNumberForFullStack(CurrentStackingItem,AmountToDistribute);
 		
 		CurrentStackingItem->SetQuantity(CurrentStackingItem->BaseItemQuantity + AmountToMakeFullStack);
 		

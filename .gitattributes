@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+Kraken/Textures/Tex_KRAKEN_BODY_RoughnessMetallicSpecular.uasset filter=lfs diff=lfs merge=lfs -text
+Tex_KRAKEN_BODY_RoughnessMetallicSpecular.uasset filter=lfs diff=lfs merge=lfs -text

@@ -749,6 +749,12 @@ void APlayerCharacter::SetMaxHealth(float healthValue)
 	if (GetCurrentHealth() > MaxHealth) SetCurrentHealth(healthValue);
 }
 
+
+void APlayerCharacter::HitEffectEvent_RPC_Implementation()
+{
+	HitEffectEvent();
+}
+
 void APlayerCharacter::OnRep_CurrentHealth()
 {
 	OnHealthUpdate();
@@ -1054,6 +1060,8 @@ float APlayerCharacter::TakeDamage(float DamageTaken, FDamageEvent const& Damage
 {
 	float damageApplied = CurrentHealth - DamageTaken;
 	SetCurrentHealth(damageApplied);
+
+	HitEffectEvent_RPC();
 
 	//화면 출력
 	FString TakeDamageMessage = FString::Printf(TEXT("TakeDamage Damage : %f"), DamageTaken);
