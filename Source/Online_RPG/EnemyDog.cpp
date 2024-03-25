@@ -24,10 +24,10 @@
 // Sets default values
 AEnemyDog::AEnemyDog()
 {
+	SetReplicateMovement(true);
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
-
 }
 
 // 리플리케이트된 프로퍼티
@@ -37,6 +37,9 @@ void AEnemyDog::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifeti
 
 	//현재 체력 리플리케이트
 	DOREPLIFETIME(AEnemyDog, bIsCollision);
+	DOREPLIFETIME(AEnemyDog, IsDead);
+	DOREPLIFETIME(AEnemyDog, IsHit);
+
 
 }
 
