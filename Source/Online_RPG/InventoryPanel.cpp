@@ -8,11 +8,22 @@
 #include "ItemDragDrop.h"
 #include "Components/TextBlock.h"
 #include "Components/WrapBox.h"
+#include "Kismet/GameplayStatics.h"
 
 void UInventoryPanel::InitializePanel(APlayerCharacter* Player)
 {
-	
-	PlayerCharacter = Player;
+	if (!PlayerCharacter)
+	{
+		PlayerCharacter = Player;
+	}
+	else if (UGameplayStatics::GetPlayerController(this,0)->GetPawn()->GetName() == "BP_Login_Pawn_C_0")
+	{
+		PlayerCharacter = Player;
+	}
+	else if (UGameplayStatics::GetPlayerController(this,0)->GetPawn() == Player)
+	{
+		PlayerCharacter = Player;
+	}
 	if (!PlayerCharacter) return;
 
 	Inventory = PlayerCharacter->GetInventory();

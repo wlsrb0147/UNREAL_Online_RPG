@@ -180,12 +180,13 @@ void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDro
 	const FVector SpawnLocation{ GetActorLocation() + GetActorForwardVector() * 50.0f };
 	const FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
 	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop, QuantityToDrop);
-
-//	ItemManager& ItemManagerInstance = ItemManager::Get();
 	
-	ItemManagerInstance->SpawnItem(this,ItemToDrop,SpawnTransform,RemovedQuantity);
-
-	
+	int32 Key = FCString::Atoi(*ItemToDrop->BaseItemID.ToString());
+	RPC_Drop_Item(Key, RemovedQuantity);
+//
+////	ItemManager& ItemManagerInstance = ItemManager::Get();
+//	
+//	ItemManagerInstance->SpawnItem(this,ItemToDrop,SpawnTransform,RemovedQuantity);
 }
 
 
@@ -682,6 +683,26 @@ void APlayerCharacter::HandleUpperSlash()
 // 		
 // 	}
 // }
+
+void APlayerCharacter::RPC_Drop_Item_Implementation(int key, const int32 RemovedQuantity)
+{
+
+
+	const FVector SpawnLocation{ GetActorLocation() + GetActorForwardVector() * 50.0f };
+	const FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
+
+	const AItemManager* ItemManager = Cast<UNetwork_Manager_R>(GetGameInstance())->GetItemManager();
+
+	UItemBase* ItemToDrop = ItemManager->MakeItemBaseByKey(this, key, RemovedQuantity);
+
+	//	ItemManager& ItemManagerInstance = ItemManager::Get();
+	if (!ItemToDrop) {
+		UE_LOG(LogTemp, Display, TEXT("itemtodrop null... "));
+		return;
+	}
+
+	ItemManagerInstance->SpawnItem(this, ItemToDrop, SpawnTransform, RemovedQuantity);
+}
 
 // 리플리케이트된 프로퍼티
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifetimeProps) const
