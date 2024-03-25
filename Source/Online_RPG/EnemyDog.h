@@ -33,8 +33,25 @@ public:
 	// Called to bind functionality to input
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	bool RangeCheck();
+	bool RangeCheck(int _AttackNum);
 
+	UFUNCTION(BlueprintPure, Category = "State")
+	FORCEINLINE bool GetIsDead() const { return IsDead; }
+
+	UFUNCTION(BlueprintPure, Category = "State")
+	FORCEINLINE bool GetIsHit() const { return IsHit; }
+
+	UFUNCTION(BlueprintCallable, Category = "State")
+	FORCEINLINE void SetIsDead(bool _tf)  { IsDead = _tf; }
+
+	UFUNCTION(BlueprintCallable, Category = "State")
+	FORCEINLINE void SetIsHit(bool _tf)  { IsHit = _tf; }
+	
+	void SetFreeze(bool _tf);
+	void HitOff();
+	float GetAttackRange(int _AttackNum);
+	
+	
 private:
 	UPROPERTY(EditAnywhere)
 	FVector SpawnLocation;
@@ -49,7 +66,10 @@ private:
 	float Damage1 = 1.f;
 	UPROPERTY(VisibleAnywhere)
 	bool IsDead = false;
-
+	UPROPERTY(VisibleAnywhere)
+	bool IsHit = false;
+	UPROPERTY(VisibleAnywhere)
+	float HitRecoveryTime = 0.5f;
 
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* Attack1Particle;
@@ -63,11 +83,15 @@ private:
 	FTimerHandle TimerHandle_MyFunction;
 
 	UPROPERTY(EditAnywhere)
-	float AttackRange = 500;
-
+	float AttackRange1 = 600;
+	UPROPERTY(EditAnywhere)
+	float AttackRange2 = 300;
 	void SpawnDebugSphere(FVector Location, float Radius);
 	void SpawnProjectile();
 	void Dead();
 	ACMSpawnManager* SpawnManager;
-
+	UPROPERTY(VisibleAnywhere)
+	float AttackTime = 0.f;
+	UPROPERTY(EditAnywhere)
+	float AttackDelay = 3.f;
 };

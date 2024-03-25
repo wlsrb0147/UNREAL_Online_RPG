@@ -26,6 +26,7 @@
 #include "PickUpItem.h"
 #include "Particles/ParticleSystemComponent.h"
 #include <cmath>
+#include "RED_Projectile.h"
 
 #include "AItemManager.h"
 
@@ -40,15 +41,29 @@ void APlayerCharacter::CheckInteraction()
 	FVector TraceStart{ GetPawnViewLocation() };
 	FVector TraceEnd{ TraceStart + GetViewRotation().Vector() * InteractionDistance };
 
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, -1, 0, 2);
+	//DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, -1, 0, 2);
+
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(150.0);
 
 	//FCollisionQueryParams
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 
-	if (!GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd,
-		ECC_Visibility,
+	DrawDebugSphere(
+		GetWorld(),
+		TraceEnd,
+		Sphere.GetSphereRadius(),
+		6,  // 스피어의 세그먼트 수
+		FColor::Red,
+		false  // true로 설정하면 지속적으로 그려집니다.
+	);
+
+
+	if (!GetWorld()->SweepSingleByChannel(HitResult, TraceStart, TraceEnd,
+		FQuat::Identity,
+		ECC_GameTraceChannel3,
+		Sphere,
 		QueryParams)
 		)
 	{
@@ -56,7 +71,9 @@ void APlayerCharacter::CheckInteraction()
 		return;
 	}
 
-	if (!HitResult.GetActor()->GetClass()->ImplementsInterface(UItemInteractionInterface::StaticClass())) return;
+	
+
+		if (!HitResult.GetActor()->GetClass()->ImplementsInterface(UItemInteractionInterface::StaticClass())) return;
 
 	if (HitResult.GetActor() != InteractionData.CurrentInteracting)
 	{
@@ -119,13 +136,17 @@ void APlayerCharacter::BeginInteract()
 
 void APlayerCharacter::Interact()
 {
-	UE_LOG(LogTemp, Display, TEXT(" flag000 "));
+	UE_LOG(LogTemp, Log, TEXT("interact 1"));
 	if (!IsValid(InteractionTarget.GetObject())) return;
-	UE_LOG(LogTemp, Display, TEXT(" flag111 "));
-	InteractionTarget->Interact(this);
-	UE_LOG(LogTemp, Display, TEXT(" flag222 "));
+	UE_LOG(LogTemp, Log, TEXT("interact 2"));
+	//InteractionTarget->Interact(this);
+	APickUpItem* Tem = Cast<APickUpItem>(InteractionTarget.GetObject());
+	Tem->SetOwner(this);
+	
+	RPC_Item_Owner(Tem, this);
+	UE_LOG(LogTemp, Log, TEXT("interact 3"));
 	FoundNoInteract();
-	UE_LOG(LogTemp, Display, TEXT(" flag333 "));
+
 }
 
 void APlayerCharacter::EndInteract()
@@ -159,12 +180,13 @@ void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDro
 	const FVector SpawnLocation{ GetActorLocation() + GetActorForwardVector() * 50.0f };
 	const FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
 	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop, QuantityToDrop);
-
-//	ItemManager& ItemManagerInstance = ItemManager::Get();
 	
-	ItemManagerInstance->SpawnItem(this,ItemToDrop,SpawnTransform,RemovedQuantity);
-
-	
+	int32 Key = FCString::Atoi(*ItemToDrop->BaseItemID.ToString());
+	RPC_Drop_Item(Key, RemovedQuantity);
+//
+////	ItemManager& ItemManagerInstance = ItemManager::Get();
+//	
+//	ItemManagerInstance->SpawnItem(this,ItemToDrop,SpawnTransform,RemovedQuantity);
 }
 
 
@@ -266,6 +288,7 @@ void APlayerCharacter::OnRep_Owner()
 	OwnerActor = GetOwner();
 	if (OwnerActor)
 	{
+		
 		//UE_LOG(LogTemp, Log, TEXT("OnRep_Owner!!!!!!!!!!!!!!!!:  %s"), *GetOwner()->GetActorNameOrLabel());
 	}
 	else
@@ -273,6 +296,27 @@ void APlayerCharacter::OnRep_Owner()
 		//UE_LOG(LogTemp, Log, TEXT("No Owner "));
 	}
 	//UE_LOG(LogTemp, Log, TEXT("========================="));
+}
+
+void APlayerCharacter::RPC_Item_Owner_Success_Implementation(APickUpItem* InteractItem, APawn* TargetPawn)
+{
+	if (TargetPawn->IsLocallyControlled()) {
+		UE_LOG(LogTemp, Log, TEXT("대박 여기까지 왔다22222?"));
+		InteractItem->Interact(this);
+	}
+	if (TargetPawn->HasAuthority()) {
+		UE_LOG(LogTemp, Log, TEXT("대박 여기까지 왔다?"));
+	}
+	UE_LOG(LogTemp, Log, TEXT("interact 4"));
+	UE_LOG(LogTemp, Log, TEXT("Owner RPC  SUCCESS 성공 !!! %s %s"), *InteractItem->GetName(), *TargetPawn->GetName());
+}
+
+void APlayerCharacter::RPC_Item_Owner_Implementation(APickUpItem* InteractItem, APawn* TargetPawn)
+{
+	UE_LOG(LogTemp, Log, TEXT("interact 4"));
+	UE_LOG(LogTemp, Log, TEXT("Owner RPC 성공 !!! %s %s"), *InteractItem->GetName(), *TargetPawn->GetName());
+	InteractItem->SetOwner(TargetPawn);
+	RPC_Item_Owner_Success(InteractItem, TargetPawn);
 }
 
 // Called when the game starts or when spawned
@@ -639,6 +683,26 @@ void APlayerCharacter::HandleUpperSlash()
 // 		
 // 	}
 // }
+
+void APlayerCharacter::RPC_Drop_Item_Implementation(int key, const int32 RemovedQuantity)
+{
+
+
+	const FVector SpawnLocation{ GetActorLocation() + GetActorForwardVector() * 50.0f };
+	const FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
+
+	const AItemManager* ItemManager = Cast<UNetwork_Manager_R>(GetGameInstance())->GetItemManager();
+
+	UItemBase* ItemToDrop = ItemManager->MakeItemBaseByKey(this, key, RemovedQuantity);
+
+	//	ItemManager& ItemManagerInstance = ItemManager::Get();
+	if (!ItemToDrop) {
+		UE_LOG(LogTemp, Display, TEXT("itemtodrop null... "));
+		return;
+	}
+
+	ItemManagerInstance->SpawnItem(this, ItemToDrop, SpawnTransform, RemovedQuantity);
+}
 
 // 리플리케이트된 프로퍼티
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifetimeProps) const

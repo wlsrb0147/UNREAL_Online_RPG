@@ -100,6 +100,15 @@ public:
 	
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_Owner() override;
+
+	UFUNCTION(Server, Reliable)
+	void RPC_Item_Owner(APickUpItem* InteractItem, APawn* TargetPawn);
+
+	UFUNCTION(Client, Reliable)
+	void RPC_Item_Owner_Success(APickUpItem* InteractItem, APawn* TargetPawn);
+
+	UFUNCTION(Server, Reliable)
+	void RPC_Drop_Item(int key, const int32 QuantityToDrop);
 	// UPROPERTY(ReplicatedUsing=OnRep_Possessed)
 	// bool bIsPossessed = false;
 	// UFUNCTION()

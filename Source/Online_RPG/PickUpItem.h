@@ -59,11 +59,25 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerRequestSetOwner(APlayerController* NewOwner);
 
+	// 리플리케이션을 위한 소유자 변수 선언
+	UPROPERTY(ReplicatedUsing = OnRep_ReplicatedOwner)
+	int a = 0;
+
+	UPROPERTY(ReplicatedUsing = OnRep_ReplicatedOwner)
+	APawn* ReplicatedOwner;
+
+	UFUNCTION()
+	void OnRep_ReplicatedOwner();
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	virtual void Interact(APlayerCharacter* PlayerCharacter) override;
+
 protected:
 	virtual void BeginFocus() override;
 	virtual void EndFocus() override;
 
-	virtual void Interact(APlayerCharacter* PlayerCharacter) override;
+	
 
 
 	//#if WITH_EDITOR

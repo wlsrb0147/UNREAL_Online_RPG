@@ -861,11 +861,12 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 									MoneyFromServer = MoneyObject->GetIntegerField(TEXT("integerValue"));
 						
 									/// 끝
+
 									TSharedPtr<FJsonObject> Cur_Health_obj = FieldsObject->GetObjectField(TEXT("Health"));
-									CurrentHealthFromServer = Cur_Health_obj->GetNumberField(TEXT("integerValue"));
+									CurrentHealthFromServer = Cur_Health_obj->GetNumberField(TEXT("doubleValue"));
 
 									TSharedPtr<FJsonObject> Max_Health_obj = FieldsObject->GetObjectField(TEXT("MaxHealth"));
-									MaxHealthFromServer = Max_Health_obj->GetNumberField(TEXT("integerValue"));
+									MaxHealthFromServer = Max_Health_obj->GetNumberField(TEXT("doubleValue"));
 									UE_LOG(LogTemp, Log, TEXT("FROM SERVER ::  %f %f"), CurrentHealthFromServer, MaxHealthFromServer);
 								}
 							}

@@ -66,21 +66,17 @@ void AItemManager::SpawnItem(AActor* Outer, UItemBase* ItemBase,const FTransform
 {
 	FActorSpawnParameters SpawnParameters;
 	//SpawnParameters.Owner = Outer;
-	SpawnParameters.Owner = GetWorld()->GetFirstPlayerController();  // ���� ����
+	SpawnParameters.Owner = GetWorld()->GetFirstPlayerController()->GetPawn();  // ���� ����
 	SpawnParameters.bNoFail = true;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	//SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 
-	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(APickUpItem::StaticClass(), Transform, SpawnParameters);
+	APickUpItem* DropItem = CurrentWorld->SpawnActor<APickUpItem>(Pickup_Class, Transform, SpawnParameters);
 	DropItem->SetOwner(GetWorld()->GetFirstPlayerController());
-	if (DropItem->HasNetOwner()) {
-		UE_LOG(LogTemp, Log, TEXT("HasNetOwner"));
-	}
-	else {
-		UE_LOG(LogTemp, Log, TEXT("HasNetOwner XXXXXXXXXX"));
-	}
-	
+	DropItem->ReplicatedOwner = GetWorld()->GetFirstPlayerController()->GetPawn();
+	//DropItem->a++;
+	UE_LOG(LogTemp, Log, TEXT("서버에서 스폰했어: %s"), *ItemBase->BaseItemID.ToString());
 	int32 Key = FCString::Atoi(*ItemBase->BaseItemID.ToString());
 	DropItem->InitializeDropItem(Key, Quantity);
 	
