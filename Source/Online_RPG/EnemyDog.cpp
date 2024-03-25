@@ -28,6 +28,16 @@ AEnemyDog::AEnemyDog()
 	
 }
 
+// 리플리케이트된 프로퍼티
+void AEnemyDog::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//현재 체력 리플리케이트
+	DOREPLIFETIME(AEnemyDog, bIsCollision);
+
+}
+
 // Called when the game starts or when spawned
 void AEnemyDog::BeginPlay()
 {
@@ -155,7 +165,7 @@ void AEnemyDog::Dead()
 	this->AddActorLocalRotation(MyRotator);
 	AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
 	//콜리전 끔
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SetIsCollision(true);
 	if (OwnerController)
 	{
 		OwnerController->Dead();
@@ -171,6 +181,41 @@ void AEnemyDog::Dead()
 	UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 7, 7);
 	ItemManagerInstance->SpawnItem(this, Base,GetActorTransform(),5);
 	this->SetLifeSpan(2.0f);
+}
+
+void AEnemyDog::SetIsCollision(bool IsCollision)
+{
+	//서버 전용 함수 기능
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		bIsCollision = IsCollision;
+		OnIsCollisionUpdate();
+	}
+}
+
+void AEnemyDog::OnRep_IsCollision()
+{
+	OnIsCollisionUpdate();
+}
+
+void AEnemyDog::OnIsCollisionUpdate()
+{
+	//클라이언트 전용 함수 기능
+	if (IsLocallyControlled()) {
+
+	}
+
+	//서버 전용 함수 기능
+	if (GetLocalRole() == ROLE_Authority)
+	{
+
+	}
+
+	if (bIsCollision) {
+		//콜리전 끔
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	
 }
 
 void AEnemyDog::SpawnSelf()

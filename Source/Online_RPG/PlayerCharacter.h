@@ -24,8 +24,8 @@ struct FInteractingData
 	UPROPERTY()
 	AActor* CurrentInteracting;
 
-	FInteractingData():CurrentInteracting(nullptr){}
-	
+	FInteractingData() :CurrentInteracting(nullptr) {}
+
 };
 
 
@@ -38,13 +38,13 @@ class ONLINE_RPG_API APlayerCharacter : public ACharacter
 public: // ����Ʈ
 	// Sets default values for this character's properties
 	APlayerCharacter();
-	
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 protected: // ����Ʈ
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -56,22 +56,22 @@ protected: // ����Ʈ
 
 public:
 
-	FORCEINLINE UInventoryComponent* GetInventory() const { return PlayerInventory;}
-	
+	FORCEINLINE UInventoryComponent* GetInventory() const { return PlayerInventory; }
+
 	UPROPERTY()
 	AInventoryHUD* HUD;
 
-	UPROPERTY(VisibleAnywhere,Category = "Character | Interaction")
+	UPROPERTY(VisibleAnywhere, Category = "Character | Interaction")
 	TScriptInterface<IItemInteractionInterface> InteractionTarget;
-	
+
 	float InteractionDistance = 300.0f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Character | Inventory")
 	UInventoryComponent* PlayerInventory;
 
-	UPROPERTY(EditAnywhere, Category ="Character | Database")
+	UPROPERTY(EditAnywhere, Category = "Character | Database")
 	UDataTable* ItemDataTable;
-	
+
 	FInteractingData InteractionData;
 
 	AItemManager* ItemManagerInstance;
@@ -82,9 +82,9 @@ public:
 	void EndInteract();
 	void OpenInventory();
 	void UpdateInteractionWidget() const;
-	void DropItem(UItemBase* ItemToDrop,const int32 QuantityToDrop);
+	void DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop);
 	void CheckInteraction();
-	
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// �κ��丮 ���� �κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 ���� ////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,10 +94,10 @@ public:
 
 
 
-	
+
 public:
-	
-	
+
+
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_Owner() override;
 
@@ -188,6 +188,12 @@ public:
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Respawn();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Custom Events")
+	void HitEffectEvent();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void HitEffectEvent_RPC();
 
 protected:
 

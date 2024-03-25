@@ -70,4 +70,14 @@ private:
 	void Dead();
 	ACMSpawnManager* SpawnManager;
 
+	void SetIsCollision(bool IsCollision);
+
+	UPROPERTY(ReplicatedUsing = OnRep_IsCollision)
+	bool bIsCollision;
+
+	UFUNCTION()
+	void OnRep_IsCollision();
+
+	void OnIsCollisionUpdate();
+
 };
