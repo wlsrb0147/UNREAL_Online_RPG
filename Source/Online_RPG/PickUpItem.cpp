@@ -143,9 +143,14 @@ void APickUpItem::UpdateItemInteractionData()
 	InteractionData = InstanceItemInteractData;
 }
 
+void APickUpItem::RPC_Set_Quantity_Implementation(int _Quantity)
+{
+	SetAllQuantity(InstanceItemQuantity);
+}
+
 void APickUpItem::SetAllQuantity(int32 ChangeValue)
 {
-	InteractionData.Quantity = ChangeValue;
+	InstanceItemInteractData.Quantity = ChangeValue;
 	InstanceItemQuantity = ChangeValue;
 	InstanceItemData->SetQuantity(ChangeValue);
 }
@@ -265,7 +270,8 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 			break;
 		case EItemAddOperationResult::IAR_PartialAmountItemAdded:
 			UpdateItemInteractionData();
-			
+			RPC_Set_Quantity(InstanceItemData->BaseItemQuantity);
+			//SetAllQuantity(InstanceItemData->BaseItemQuantity);
 			Taker->UpdateInteractionWidget();
 			break;
 		case EItemAddOperationResult::IAR_AllItemAdded:
@@ -289,7 +295,7 @@ void APickUpItem::InitializeDropItem_Implementation(int32 ItemToDrop, const int3
 	UItemBase* Base = ItemManager->MakeItemBaseByKey(this,ItemToDrop,Quantity);
 	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
 	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
-	UE_LOG(LogTemp, Log, TEXT("InitializeDropItem... %d"), ItemToDrop);
+	UE_LOG(LogTemp, Log, TEXT("InitializeDropItem... %d $d"), ItemToDrop, Quantity);
 	InstanceItemData = Base;
 	InstanceItemData->SetQuantity(Quantity);
 	InstanceItemData->OwningInventory = nullptr;

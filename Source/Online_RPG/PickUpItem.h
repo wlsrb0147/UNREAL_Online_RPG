@@ -52,9 +52,12 @@ public:
 
 	void UpdateItemInteractionData();
 
+	UFUNCTION(Server, Reliable)
+	void RPC_Set_Quantity(int _Quantity);
+
 	UFUNCTION()
 	void OnRep_InstanceItemQuantity() {
-
+		SetAllQuantity(InstanceItemQuantity);
 	}
 
 		
