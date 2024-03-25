@@ -258,6 +258,7 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 			break;
 		case EItemAddOperationResult::IAR_PartialAmountItemAdded:
 			UpdateItemInteractionData();
+			
 			Taker->UpdateInteractionWidget();
 			break;
 		case EItemAddOperationResult::IAR_AllItemAdded:

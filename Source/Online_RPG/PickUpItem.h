@@ -44,13 +44,18 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "ItemData")
 	UItemBase* InstanceItemData;
 
-	UPROPERTY(EditInstanceOnly, Category = "ItemData")
+	UPROPERTY(ReplicatedUsing=OnRep_InstanceItemQuantity, EditInstanceOnly, Category = "ItemData")
 	int32 InstanceItemQuantity;
 
 	UPROPERTY(EditInstanceOnly, Category = "ItemData")
 	FInteractionData InstanceItemInteractData;
 
 	void UpdateItemInteractionData();
+
+	UFUNCTION()
+	void OnRep_InstanceItemQuantity() {
+
+	}
 
 	// Server RPC 함수 선언
 	UFUNCTION(Server, Reliable)
