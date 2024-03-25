@@ -221,9 +221,14 @@ void AEnemyDog::Dead()
 	//	ItemManager& ItemManager = ItemManager::Get();
 
 	ItemManagerInstance = Cast<UNetwork_Manager_R>(GetGameInstance())->GetItemManager();
+	const FVector UpvVector{0,0,1};
+	const FVector SpawnLoc{ GetActorLocation() + UpvVector * 10.0f };
+	const FTransform SpawnTransform(GetActorRotation(), SpawnLoc);
+	
+	UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 8, 7);
+	
+	ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, 100);
 
-	UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 7, 7);
-	ItemManagerInstance->SpawnItem(this, Base, GetActorTransform(), 100);
 	this->SetLifeSpan(5.0f);
 }
 
