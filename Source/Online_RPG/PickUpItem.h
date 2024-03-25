@@ -64,14 +64,14 @@ public:
 		
 	void SetAllQuantity(int32 ChangeValue);
 	
-	// Server RPC ÇÔ¼ö ¼±¾ð
+	// Server RPC ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UFUNCTION(Server, Reliable)
 	void ServerDestroyActor();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerRequestSetOwner(APlayerController* NewOwner);
 
-	// ¸®ÇÃ¸®ÄÉÀÌ¼ÇÀ» À§ÇÑ ¼ÒÀ¯ÀÚ º¯¼ö ¼±¾ð
+	// ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(ReplicatedUsing = OnRep_ReplicatedOwner)
 	int a = 0;
 

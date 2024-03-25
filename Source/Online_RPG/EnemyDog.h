@@ -51,7 +51,10 @@ public:
 	void HitOff();
 	float GetAttackRange(int _AttackNum);
 	
-	
+	UPROPERTY(Replicated, VisibleAnywhere)
+	bool IsDead = false;
+	UPROPERTY(Replicated, VisibleAnywhere)
+	bool IsHit = false;
 private:
 	UPROPERTY(EditAnywhere)
 	FVector SpawnLocation;
@@ -64,10 +67,9 @@ private:
 	float MaxRange = 1000.f;
 	UPROPERTY(EditAnywhere)
 	float Damage1 = 1.f;
-	UPROPERTY(VisibleAnywhere)
-	bool IsDead = false;
-	UPROPERTY(VisibleAnywhere)
-	bool IsHit = false;
+
+	
+
 	UPROPERTY(VisibleAnywhere)
 	float HitRecoveryTime = 0.5f;
 
