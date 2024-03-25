@@ -44,7 +44,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "ItemData")
 	UItemBase* InstanceItemData;
 
-	UPROPERTY(EditInstanceOnly, Category = "ItemData")
+	UPROPERTY(ReplicatedUsing=OnRep_InstanceItemQuantity, EditInstanceOnly, Category = "ItemData")
 	int32 InstanceItemQuantity;
 
 	UPROPERTY(EditInstanceOnly, Category = "ItemData")
@@ -52,6 +52,17 @@ public:
 
 	void UpdateItemInteractionData();
 
+	UFUNCTION(Server, Reliable)
+	void RPC_Set_Quantity(int _Quantity);
+
+	UFUNCTION()
+	void OnRep_InstanceItemQuantity() {
+		SetAllQuantity(InstanceItemQuantity);
+	}
+
+		
+	void SetAllQuantity(int32 ChangeValue);
+	
 	// Server RPC 함수 선언
 	UFUNCTION(Server, Reliable)
 	void ServerDestroyActor();
