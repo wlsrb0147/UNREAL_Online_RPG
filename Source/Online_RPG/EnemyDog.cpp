@@ -140,7 +140,7 @@ void AEnemyDog::SpawnProjectile()
 	FVector ProjectileSpawnLocation = this->GetActorLocation();
 	FRotator ProjectileSpawnRotation = this->GetActorRotation();
 
-	FVector SpawnScale = this->GetActorScale();
+	FVector SpawnScale = this->GetActorScale()*2;
 
 	// FActorSpawnParameters를 초기화합니다.
 	FActorSpawnParameters SpawnParams;
@@ -149,7 +149,7 @@ void AEnemyDog::SpawnProjectile()
 	FTransform SpawnTransform(ProjectileSpawnRotation, ProjectileSpawnLocation, SpawnScale);
 	
 	
-	AActor* Projectile = GetWorld()->SpawnActor<AEnemyProjectile>(ActorClassToSpawn, SpawnTransform, SpawnParams);
+	AActor* Projectile = GetWorld()->SpawnActor<AEnemyProjectile>(AttackProjectile, SpawnTransform, SpawnParams);
 	//AActor* Projectile = GetWorld()->SpawnActor<AEnemyProjectile>(AttackProjectile, ProjectileSpawnLocation, ProjectileSpawnRotation);
 }
 
