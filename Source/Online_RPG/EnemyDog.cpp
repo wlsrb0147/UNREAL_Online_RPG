@@ -270,7 +270,7 @@ void AEnemyDog::Dead()
 	
 	if (bIsBoss)
 	{
-		UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 8, 7);
+		UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 7, 7);
 		ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, 1);
 	}
 
