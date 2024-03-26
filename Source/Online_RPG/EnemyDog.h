@@ -19,7 +19,9 @@ public:
 	void Attack();
 	virtual void BeginPlay() override;
 
-
+	UPROPERTY(EditAnywhere,Category = "IS BOSS")
+	bool bIsBoss = false;
+	
 	AItemManager* ItemManagerInstance;
 
 protected:

@@ -344,6 +344,16 @@ void APickUpItem::InitializeDropItem_Implementation(int32 ItemToDrop, const int3
 		InstanceMesh->SetWorldScale3D(NewScale);
 	}
 
+	S = "7";
+
+	if (Base->BaseItemID == FName(S))
+	{
+		// 새 스케일 벡터를 생성합니다. 여기서는 모든 축을 따라 2배로 확대하는 예시입니다.
+		NewScale = FVector(1.0f, 1.0f, 1.0f);
+		// Mesh Component의 스케일을 설정합니다.
+		InstanceMesh->SetWorldScale3D(NewScale);
+	}
+
 	//UE_LOG(LogTemp, Log, TEXT(" mesh .. %s"), *Base->BaseItemAssetData.Mesh->GetName());
 
 
