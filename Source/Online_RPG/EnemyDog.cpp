@@ -250,6 +250,15 @@ void AEnemyDog::Dead()
 		ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, RandomPotion);
 	}
 
+	RandomValue = FMath::FRandRange(0.0f, 1.0f);
+
+	if (RandomValue > 0.5f)
+	{
+
+		UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 1, 7);
+		ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, 1);
+	}
+
 	this->SetLifeSpan(5.0f);
 }
 

@@ -92,7 +92,7 @@ protected:
 	
 
 
-	//#if WITH_EDITOR
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	//#endif
+	////#if WITH_EDITOR
+	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	////#endif
 };
