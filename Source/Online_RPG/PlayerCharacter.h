@@ -66,6 +66,8 @@ public:
 
 	float InteractionDistance = 300.0f;
 
+	int8 IsQuestAccept = 0;
+
 	UPROPERTY(VisibleAnywhere, Category = "Character | Inventory")
 	UInventoryComponent* PlayerInventory;
 

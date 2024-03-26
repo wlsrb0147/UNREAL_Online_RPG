@@ -7,6 +7,8 @@
 #include "Blueprint/UserWidget.h"
 #include "NPCConversation.generated.h"
 
+class UItemBase;
+class AItemManager;
 class AInventoryHUD;
 struct FBum;
 class UTextBlock;
@@ -48,5 +50,13 @@ public:
 	UPROPERTY()
 	APlayerCharacter* CurrentCharacter;
 
+	UPROPERTY()
+	AItemManager* ItemManagerInstance;
+
+	UPROPERTY()
+	UItemBase* QuestItem;
+
+	UPROPERTY()
+	UItemBase* InventoryItem = nullptr;
 	
 };
