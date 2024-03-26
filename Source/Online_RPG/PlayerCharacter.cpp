@@ -50,14 +50,14 @@ void APlayerCharacter::CheckInteraction()
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 
-	DrawDebugSphere(
-		GetWorld(),
-		TraceEnd,
-		Sphere.GetSphereRadius(),
-		6,  // 스피어의 세그먼트 수
-		FColor::Red,
-		false  // true로 설정하면 지속적으로 그려집니다.
-	);
+	//DrawDebugSphere(
+	//	GetWorld(),
+	//	TraceEnd,
+	//	Sphere.GetSphereRadius(),
+	//	6,  // 스피어의 세그먼트 수
+	//	FColor::Red,
+	//	false  // true로 설정하면 지속적으로 그려집니다.
+	//);
 
 
 	if (!GetWorld()->SweepSingleByChannel(HitResult, TraceStart, TraceEnd,
@@ -473,9 +473,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 		Cast<ALoginController>(GetController())->Current_Rotatation = Rotation;
 	}
 
-	DrawDebugLine(GetWorld(), Location, End, FColor::Cyan, false);
+	/*DrawDebugLine(GetWorld(), Location, End, FColor::Cyan, false);
 	DrawDebugBox(GetWorld(), End, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Cyan, false);
-	DrawDebugBox(GetWorld(), Location, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Cyan, false);
+	DrawDebugBox(GetWorld(), Location, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Cyan, false);*/
 
 
 	//서버 전용 함수 기능
@@ -1105,7 +1105,7 @@ void APlayerCharacter::CMAttack()
 		AActor* HitActor = Hit.GetActor();
 		if (HitActor != nullptr)
 		{
-			SpawnDebugSphere(Hit.ImpactPoint, 30);
+			//SpawnDebugSphere(Hit.ImpactPoint, 30);
 
 			FPointDamageEvent DamageEvent(ShootAttackDamage, Hit, ShotDirection, nullptr);
 			HitActor->TakeDamage(ShootAttackDamage, DamageEvent, OwnerController, this);
@@ -1180,7 +1180,7 @@ void APlayerCharacter::ShootAttack()
 		AActor* HitActor = Hit.GetActor();
 		if (HitActor != nullptr && GetController()->LineOfSightTo(HitActor))
 		{
-			SpawnDebugSphere(Hit.ImpactPoint, 30);
+			//SpawnDebugSphere(Hit.ImpactPoint, 30);
 
 			//피격 이펙트 생성
 			//UGameplayStatics::SpawnEmitterAtLocation(this, ShootHitPaticles, Hit.ImpactPoint, FRotator::ZeroRotator, FVector(ShootHitEffectScale));
@@ -1199,8 +1199,8 @@ void APlayerCharacter::ShootAttack()
 			////UE_LOG(LogTemp, Warning, TEXT("HitActor : %s"), *HitActor->GetActorNameOrLabel());
 		}
 
-		DrawDebugLine(GetWorld(), Location, End, FColor::Red, false, 3, 0, 5);
-		DrawDebugBox(GetWorld(), End, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Red, false, 3, 0, 5);
+		/*DrawDebugLine(GetWorld(), Location, End, FColor::Red, false, 3, 0, 5);
+		DrawDebugBox(GetWorld(), End, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Red, false, 3, 0, 5);*/
 
 	}
 
@@ -1278,7 +1278,7 @@ void APlayerCharacter::UpperSlashAttack()
 		//DrawDebugBox(GetWorld(), End, FVector(10, ShootAttackWidth, ShootAttackHeight), Rotation.Quaternion(), FColor::Red, false, 3, 0, 5);
 	}
 
-	SpawnDebugCapsule(AttackLocation, CapsuleSize);
+	//SpawnDebugCapsule(AttackLocation, CapsuleSize);
 
 }
 
