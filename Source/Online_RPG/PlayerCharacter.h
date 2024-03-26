@@ -74,6 +74,7 @@ public:
 
 	FInteractingData InteractionData;
 
+	UPROPERTY()
 	AItemManager* ItemManagerInstance;
 	void FoundNoInteract();
 	void FoundInteract(AActor* NewInteract);

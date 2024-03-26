@@ -116,10 +116,6 @@ void APlayerCharacter::FoundInteract(AActor* NewInteract)
 
 	InteractionData.CurrentInteracting = NewInteract;
 	InteractionTarget = NewInteract;
-
-	APickUpItem* Item = Cast<APickUpItem>(NewInteract);
-
-	//UE_LOG(LogTemp,Warning,TEXT("개수 %d"),Item->InstanceItemData->BaseItemQuantity)
 	
 	HUD->UpdateInteractionWidget(&InteractionTarget->InteractionData);
 	InteractionTarget->BeginFocus();
@@ -140,6 +136,11 @@ void APlayerCharacter::BeginInteract()
 
 void APlayerCharacter::Interact()
 {
+	if (InteractionTarget->InteractionData.InteractionType == EInteractionType::NPC)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("엔티씨 상호작용"))\
+		return;
+	}
 	//UE_LOG(LogTemp, Log, TEXT("interact 1"));
 	if (!IsValid(InteractionTarget.GetObject())) return;
 	//UE_LOG(LogTemp, Log, TEXT("interact 2"));

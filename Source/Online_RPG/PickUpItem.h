@@ -17,7 +17,6 @@ class ONLINE_RPG_API APickUpItem : public AActor, public IItemInteractionInterfa
 
 public:
 	// Sets default values for this actor's properties
-	APickUpItem(int32 InitialQuantity);
 	APickUpItem();
 
 	void InitializeItem(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity);
