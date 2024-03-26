@@ -22,9 +22,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY()
-	AItemManager* ItemManagerInstance;
+public:
+	virtual void BeginInteract() override;
+	virtual void Interact(APlayerCharacter* PlayerCharacter) override;
+	FBum GetFBum() const {return ConversationData;}
 
-
-	
+	UPROPERTY(EditAnywhere, Category = "Initial Value")
+	FBum InitialBum;
 };

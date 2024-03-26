@@ -5,6 +5,8 @@
 
 #include "InventoryMainMenu.h"
 #include "ItemInteractWidget.h"
+#include "NPCConversation.h"
+#include "PlayerCharacter.h"
 
 void AInventoryHUD::OpenInventoryWidget()
 {
@@ -61,6 +63,24 @@ void AInventoryHUD::UpdateInteractionWidget(const FInteractionData* InteractionD
 	
 }
 
+void AInventoryHUD::OpenConversationWidget(const FBum& Initial) const
+{
+	NPCConversation->SetVisibility(ESlateVisibility::Visible);
+	NPCConversation->InitializeWidget(Initial);
+	const FInputModeGameAndUI InputMode;
+	GetOwningPlayerController()->SetInputMode(InputMode);
+	GetOwningPlayerController()->SetShowMouseCursor(true);
+}
+
+void AInventoryHUD::CloseConversationWidget() const
+{
+	NPCConversation->SetVisibility(ESlateVisibility::Collapsed);
+	const FInputModeGameOnly InputMode;
+	GetOwningPlayerController()->SetInputMode(InputMode);
+	GetOwningPlayerController()->SetShowMouseCursor(false);
+	
+}
+
 void AInventoryHUD::BeginPlay()
 {
 	Super::BeginPlay();
@@ -81,4 +101,11 @@ void AInventoryHUD::BeginPlay()
 		InventoryPanel = InventoryMainMenuWidget->GetInventoryPanel();
 	}
 
+	if (NPCConversationClass)
+	{
+		NPCConversation = CreateWidget<UNPCConversation>(GetWorld(),NPCConversationClass);
+		NPCConversation->AddToViewport(10);
+		NPCConversation->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	
 }
