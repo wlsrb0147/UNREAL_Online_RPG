@@ -139,10 +139,18 @@ void AEnemyDog::SpawnProjectile()
 
 	FVector ProjectileSpawnLocation = this->GetActorLocation();
 	FRotator ProjectileSpawnRotation = this->GetActorRotation();
+
+	FVector SpawnScale = this->GetActorScale();
+
+	// FActorSpawnParameters를 초기화합니다.
+	FActorSpawnParameters SpawnParams;
+
+	// 위치, 회전, 스케일을 포함한 FTransform 객체를 생성합니다.
+	FTransform SpawnTransform(ProjectileSpawnRotation, ProjectileSpawnLocation, SpawnScale);
 	
-
-	AActor* Projectile = GetWorld()->SpawnActor<AEnemyProjectile>(AttackProjectile, ProjectileSpawnLocation, ProjectileSpawnRotation);
-
+	
+	AActor* Projectile = GetWorld()->SpawnActor<AEnemyProjectile>(ActorClassToSpawn, SpawnTransform, SpawnParams);
+	//AActor* Projectile = GetWorld()->SpawnActor<AEnemyProjectile>(AttackProjectile, ProjectileSpawnLocation, ProjectileSpawnRotation);
 }
 
 bool AEnemyDog::RangeCheck(int _AttackNum)
