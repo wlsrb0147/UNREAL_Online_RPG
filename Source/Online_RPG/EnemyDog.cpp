@@ -267,6 +267,13 @@ void AEnemyDog::Dead()
 		ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, 1);
 	}
 
+	
+	if (bIsBoss)
+	{
+		UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 8, 7);
+		ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, 1);
+	}
+
 	this->SetLifeSpan(5.0f);
 }
 
