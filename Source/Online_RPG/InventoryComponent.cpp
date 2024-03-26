@@ -170,7 +170,7 @@ int32 UInventoryComponent::CalculateNumberForFullStack(const UItemBase* Stackabl
 {
 	const int32 AddAmountToMakeFullStack = StackableItem->BaseItemNumericData.MaxStackSize - StackableItem->BaseItemQuantity;
 
-	UE_LOG(LogTemp,Warning,TEXT("item: %d, addamount = %d, FullStack = %d" ),StackableItem->BaseItemQuantity,AddAmount,AddAmountToMakeFullStack)
+	//UE_LOG(LogTemp,Warning,TEXT("item: %d, addamount = %d, FullStack = %d" ),StackableItem->BaseItemQuantity,AddAmount,AddAmountToMakeFullStack)
 	
 	return FMath::Min(AddAmount,AddAmountToMakeFullStack);
 }

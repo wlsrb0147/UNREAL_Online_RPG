@@ -7,6 +7,6 @@
 
 FPrimaryAssetId UPostLoadAsset::GetPrimaryAssetId() const
 {
-	//UE_LOG(LogTemp, Log, TEXT(" 77777777777777   init 7777777778777777777 "));
+	////UE_LOG(LogTemp, Log, TEXT(" 77777777777777   init 7777777778777777777 "));
 	return FPrimaryAssetId("PostLoadAsset", GetFName());
 }

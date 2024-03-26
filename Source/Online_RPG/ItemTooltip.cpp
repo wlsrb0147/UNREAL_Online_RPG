@@ -83,7 +83,7 @@ void UItemTooltip::NativeConstruct()
 											 FText::AsNumber(HoveredItem->BaseItemStatistics.SellValue));
 	TooltipSell->SetText(SellText);
 
-	//UE_LOG(LogTemp,Display,TEXT("%f"),HoveredItem->BaseItemStatistics.AttackPoint)
+	////UE_LOG(LogTemp,Display,TEXT("%f"),HoveredItem->BaseItemStatistics.AttackPoint)
 	if ( FMath::IsNearlyZero(HoveredItem->BaseItemStatistics.AttackPoint))
 	{
 		TooltipAtk->SetVisibility(ESlateVisibility::Collapsed);

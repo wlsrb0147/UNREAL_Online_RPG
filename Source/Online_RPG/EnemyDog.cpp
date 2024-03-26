@@ -73,7 +73,7 @@ void AEnemyDog::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AEnemyDog::Attack_Implementation()
 {
 	float TimeSinceBegin = GetWorld()->GetTimeSeconds();
-	UE_LOG(LogTemp, Warning, TEXT("%f/ %f /%f"), AttackDelay, AttackTime, TimeSinceBegin);
+	//UE_LOG(LogTemp, Warning, TEXT("%f/ %f /%f"), AttackDelay, AttackTime, TimeSinceBegin);
 
 	if (AttackDelay + AttackTime < TimeSinceBegin)
 	{
@@ -106,7 +106,7 @@ float AEnemyDog::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	}
 
 	Health -= ActualDamage;
-	//UE_LOG(LogTemp, Display, TEXT("Actor took damage: %f Heath = %f"), ActualDamage, Health);
+	////UE_LOG(LogTemp, Display, TEXT("Actor took damage: %f Heath = %f"), ActualDamage, Health);
 	return ActualDamage;
 }
 void AEnemyDog::SetFreeze(bool _tf)
@@ -181,7 +181,7 @@ void AEnemyDog::Dead()
 {
 	if (IsDead) return;
 	UWorld* World = GetWorld();
-	UE_LOG(LogTemp, Warning, TEXT("죽음"));
+	//UE_LOG(LogTemp, Warning, TEXT("죽음"));
 	if (!World)
 	{
 		return;
@@ -191,7 +191,7 @@ void AEnemyDog::Dead()
 		SpawnManager = Cast<ACMSpawnManager>(UGameplayStatics::GetActorOfClass(World, ACMSpawnManager::StaticClass()));
 		if (SpawnManager == nullptr)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("스폰못찾음"));
+			//UE_LOG(LogTemp, Warning, TEXT("스폰못찾음"));
 			return;
 		}
 
@@ -201,7 +201,7 @@ void AEnemyDog::Dead()
 	if (SpawnManager)
 	{
 		SpawnManager->SetSpawnEnemyDog(SpawnLocation, 5.0f);
-		UE_LOG(LogTemp, Warning, TEXT("스폰함수 시작"));
+		//UE_LOG(LogTemp, Warning, TEXT("스폰함수 시작"));
 	}
 	Health = 0;
 	IsDead = true;
@@ -216,7 +216,7 @@ void AEnemyDog::Dead()
 	}
 	else
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
+		////UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
 	}
 	//	ItemManager& ItemManager = ItemManager::Get();
 

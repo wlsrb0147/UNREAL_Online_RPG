@@ -33,7 +33,7 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 
 	if(!OwningInventory)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("실행"))
+		//UE_LOG(LogTemp,Warning,TEXT("실행"))
 		BaseItemQuantity = NewQuantity;
 	}
 	else
@@ -66,6 +66,6 @@ void UItemBase::Use(APlayerCharacter* UsingCharacter)
 	}
 	else
 	{
-		UE_LOG(LogTemp,Display,TEXT("Use 실행"))
+		//UE_LOG(LogTemp,Display,TEXT("Use 실행"))
 	}
 }
