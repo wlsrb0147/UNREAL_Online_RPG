@@ -94,7 +94,8 @@ void ALoginController::ChangePawn_Implementation(int PlayerIdx, FVector _SpawnLo
 			{
 				////UE_LOG(LogTemp, Error, TEXT("CallSpawn init %s "),*PC->GetName());
 				// 새 Pawn 클래스의 인스턴스를 생성합니다.
-				if(_SpawnLocation.IsNearlyZero()) _SpawnLocation = FVector(-2712.000000,-1030.000000,1187.000000);
+				if(_SpawnLocation.IsNearlyZero()) _SpawnLocation = FVector(-4236.f, -11883.f, 200.f);
+
 				//SpawnLocation = FVector(-2712.000000,-1030.000000,1187.000000);
 				APawn* NewPawn = GetWorld()->SpawnActor<APawn>(SpawnPawn, _SpawnLocation, _SpawnRotation);
 				
