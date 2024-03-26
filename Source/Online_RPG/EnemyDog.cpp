@@ -200,7 +200,7 @@ void AEnemyDog::Dead()
 
 	if (SpawnManager)
 	{
-		SpawnManager->SetSpawnEnemyDog(SpawnLocation, 5.0f);
+		SpawnManager->SetSpawnEnemyDog(SpawnLocation, 10.0f);
 		//UE_LOG(LogTemp, Warning, TEXT("스폰함수 시작"));
 	}
 	Health = 0;
