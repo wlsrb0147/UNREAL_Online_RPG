@@ -57,7 +57,7 @@ APickUpItem::APickUpItem()
 	else {
 		//UE_LOG(LogTemp, Log, TEXT(" item init by XXXX repli"));
 	}
-	
+
 }
 
 // Called when the game starts or when spawned
@@ -80,8 +80,15 @@ void APickUpItem::BeginPlay()
 
 	// X와 Y 회전값을 0으로, Z 회전값은 현재 값으로 설정
 	InstanceMesh->SetSimulatePhysics(true);
-	FRotator DesiredRotation = FRotator(0.0f, CurrentZRotation,0.0f );
+	FRotator DesiredRotation = FRotator(0.0f, CurrentZRotation, 0.0f);
 	InstanceMesh->SetWorldRotation(DesiredRotation);
+
+	InstanceMesh->SetConstraintMode(EDOFMode::SixDOF);
+
+	// Apply constraints to the InstanceMesh
+	InstanceMesh->BodyInstance.bLockXRotation = true;
+	InstanceMesh->BodyInstance.bLockYRotation = true;
+	InstanceMesh->BodyInstance.bLockZRotation = false;
 
 }
 
@@ -104,21 +111,21 @@ void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const i
 
 	if (InstanceItemDataTable && !InstanceItemID.IsNone())
 	{
-		const FItemData* ItemData = InstanceItemDataTable->FindRow<FItemData>(InstanceItemID,TEXT("Error"));
-		
-		InstanceItemData = NewObject<UItemBase>(this,BaseClass);
-		
+		const FItemData* ItemData = InstanceItemDataTable->FindRow<FItemData>(InstanceItemID, TEXT("Error"));
+
+		InstanceItemData = NewObject<UItemBase>(this, BaseClass);
+
 		InstanceItemData->BaseItemID = ItemData->ItemID;
 		InstanceItemData->BaseItemType = ItemData->ItemType;
 		InstanceItemData->BaseItemNumericData = ItemData->ItemNumericData;
 		InstanceItemData->BaseItemTextData = ItemData->ItemTextData;
 		InstanceItemData->BaseItemAssetData = ItemData->ItemAssetData;
 		InstanceItemData->BaseItemStatistics = ItemData->ItemStatistics;
-		
-		if (InQuantity <=0) InstanceItemData->SetQuantity(1);
+
+		if (InQuantity <= 0) InstanceItemData->SetQuantity(1);
 		else InstanceItemData->BaseItemQuantity = InQuantity;
 
-		if (InstanceItemData->BaseItemNumericData.bIsStackable && InstanceItemData->BaseItemNumericData.MaxStackSize < 2 )
+		if (InstanceItemData->BaseItemNumericData.bIsStackable && InstanceItemData->BaseItemNumericData.MaxStackSize < 2)
 		{
 			InstanceItemData->BaseItemNumericData.MaxStackSize = 2;
 		}
@@ -127,7 +134,7 @@ void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const i
 		UpdateItemInteractionData();
 
 		//UE_LOG(LogTemp, Log, TEXT(" mesh .. %s"), *ItemData->ItemAssetData.Mesh->GetName());
-		
+
 	}
 
 }
@@ -202,7 +209,7 @@ void APickUpItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(APickUpItem, a);
 	DOREPLIFETIME(APickUpItem, ReplicatedOwner);
 	DOREPLIFETIME(APickUpItem, InstanceItemQuantity);
-	
+
 }
 
 void APickUpItem::BeginFocus()
@@ -222,8 +229,8 @@ void APickUpItem::Interact(APlayerCharacter* PlayerCharacter)
 
 void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 {
-	
-	
+
+
 	if (IsPendingKillPending()) return;
 
 	if (!InstanceItemData) return;
@@ -268,7 +275,7 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 		SetOwner(Taker->GetController());
 	}
 	//UE_LOG(LogTemp, Display, TEXT(" flag777 "));
-	
+
 	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
 	//UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
 
@@ -288,13 +295,13 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 		case EItemAddOperationResult::IAR_AllItemAdded:
 			//Destroy();
 			//UE_LOG(LogTemp, Display, TEXT(" flag999 "));
-			
+
 			ServerDestroyActor();
 			break;
 		default:
 			;
 			//UE_LOG(LogTemp, Warning, TEXT("Default실행"));
-			
+
 		}
 	}
 	//UE_LOG(LogTemp, Display, TEXT(" flag888 "));
@@ -303,8 +310,8 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 void APickUpItem::InitializeDropItem_Implementation(int32 ItemToDrop, const int32 Quantity)
 {
 	const AItemManager* ItemManager = Cast<UNetwork_Manager_R>(GetGameInstance())->GetItemManager();
-	
-	UItemBase* Base = ItemManager->MakeItemBaseByKey(this,ItemToDrop,Quantity);
+
+	UItemBase* Base = ItemManager->MakeItemBaseByKey(this, ItemToDrop, Quantity);
 	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
 	//UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
 	//UE_LOG(LogTemp, Log, TEXT("InitializeDropItem... %d $d"), ItemToDrop, Quantity);
@@ -313,26 +320,33 @@ void APickUpItem::InitializeDropItem_Implementation(int32 ItemToDrop, const int3
 	InstanceItemData->OwningInventory = nullptr;
 	InstanceMesh->SetStaticMesh(Base->BaseItemAssetData.Mesh);
 
-	FString S = "8"; 
+	FVector NewScale(5.0f, 5.0f, 5.0f);
+	// Mesh Component의 스케일을 설정합니다.
+	InstanceMesh->SetWorldScale3D(NewScale);
+
+	FString S = "1";
+
 	if (Base->BaseItemID == FName(S))
 	{
 		// 새 스케일 벡터를 생성합니다. 여기서는 모든 축을 따라 2배로 확대하는 예시입니다.
-		const FVector NewScale(4.0f, 4.0f, 4.0f);
+		NewScale = FVector(2.0f, 2.0f, 2.0f);
 		// Mesh Component의 스케일을 설정합니다.
 		InstanceMesh->SetWorldScale3D(NewScale);
 	}
-	S = "1";
+
+	S = "4";
+
 	if (Base->BaseItemID == FName(S))
 	{
 		// 새 스케일 벡터를 생성합니다. 여기서는 모든 축을 따라 2배로 확대하는 예시입니다.
-		const FVector NewScale(4.0f, 4.0f, 4.0f);
+		NewScale = FVector(3.0f, 3.0f, 3.0f);
 		// Mesh Component의 스케일을 설정합니다.
 		InstanceMesh->SetWorldScale3D(NewScale);
 	}
-	
+
 	//UE_LOG(LogTemp, Log, TEXT(" mesh .. %s"), *Base->BaseItemAssetData.Mesh->GetName());
-	
-	
+
+
 	UpdateItemInteractionData();
 }
 //
