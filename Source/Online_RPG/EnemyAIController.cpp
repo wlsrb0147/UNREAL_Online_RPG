@@ -55,7 +55,7 @@ void AEnemyAIController::Dead()
 	{
 		IsDead = true;
 		MyBlackboard->SetValueAsBool(TEXT("IsDead"), IsDead);
-		//UE_LOG(LogTemp,Display,TEXT("AIController IsDead True"))
+		////UE_LOG(LogTemp,Display,TEXT("AIController IsDead True"))
 		StopBehaviorTree();
 	}
 }

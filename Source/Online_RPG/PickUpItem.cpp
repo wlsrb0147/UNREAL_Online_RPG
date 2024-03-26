@@ -31,10 +31,10 @@
 //	InteractionData.InteractionType = EInteractionType::PickUp;
 //	
 //	if (bReplicates) {
-//		UE_LOG(LogTemp, Log, TEXT(" item init by repli"));
+//		//UE_LOG(LogTemp, Log, TEXT(" item init by repli"));
 //	}
 //	else {
-//		UE_LOG(LogTemp, Log, TEXT(" item init by XXXX repli"));
+//		//UE_LOG(LogTemp, Log, TEXT(" item init by XXXX repli"));
 //	}
 //	
 //}
@@ -52,10 +52,10 @@ APickUpItem::APickUpItem()
 	InstanceMesh->SetSimulatePhysics(true);
 	SetRootComponent(InstanceMesh);
 	if (bReplicates) {
-		UE_LOG(LogTemp, Log, TEXT(" item init by repli"));
+		//UE_LOG(LogTemp, Log, TEXT(" item init by repli"));
 	}
 	else {
-		UE_LOG(LogTemp, Log, TEXT(" item init by XXXX repli"));
+		//UE_LOG(LogTemp, Log, TEXT(" item init by XXXX repli"));
 	}
 	
 }
@@ -66,14 +66,14 @@ void APickUpItem::BeginPlay()
 	Super::BeginPlay();
 	//InitializeItem(UItemBase::StaticClass(),InstanceItemQuantity);
 	if (bReplicates) {
-		UE_LOG(LogTemp, Log, TEXT(" item begin by repli"));
+		//UE_LOG(LogTemp, Log, TEXT(" item begin by repli"));
 		FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
-		UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+		//UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
 	}
 	else {
-		UE_LOG(LogTemp, Log, TEXT(" item begin by XXXX repli"));
+		//UE_LOG(LogTemp, Log, TEXT(" item begin by XXXX repli"));
 		FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
-		UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+		//UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
 	}
 
 	float CurrentZRotation = InstanceMesh->GetComponentRotation().Yaw;
@@ -87,19 +87,19 @@ void APickUpItem::BeginPlay()
 
 void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
 {
-	UE_LOG(LogTemp, Warning, TEXT("비긴 이니셜1"));
+	//UE_LOG(LogTemp, Warning, TEXT("비긴 이니셜1"));
 	if (InstanceItemDataTable) {
-		UE_LOG(LogTemp, Warning, TEXT("flag1"));
+		//UE_LOG(LogTemp, Warning, TEXT("flag1"));
 	}
 	else {
-		UE_LOG(LogTemp, Warning, TEXT("flag3"));
+		//UE_LOG(LogTemp, Warning, TEXT("flag3"));
 	}
 	if (InstanceItemID.IsNone()) {
 
-		UE_LOG(LogTemp, Warning, TEXT("flag2"));
+		//UE_LOG(LogTemp, Warning, TEXT("flag2"));
 	}
 	else {
-		UE_LOG(LogTemp, Warning, TEXT("flag4"));
+		//UE_LOG(LogTemp, Warning, TEXT("flag4"));
 	}
 
 	if (InstanceItemDataTable && !InstanceItemID.IsNone())
@@ -126,7 +126,7 @@ void APickUpItem::InitializeItem(const TSubclassOf<UItemBase> BaseClass, const i
 		InstanceMesh->SetStaticMesh(ItemData->ItemAssetData.Mesh);
 		UpdateItemInteractionData();
 
-		UE_LOG(LogTemp, Log, TEXT(" mesh .. %s"), *ItemData->ItemAssetData.Mesh->GetName());
+		//UE_LOG(LogTemp, Log, TEXT(" mesh .. %s"), *ItemData->ItemAssetData.Mesh->GetName());
 		
 	}
 
@@ -145,14 +145,14 @@ void APickUpItem::UpdateItemInteractionData()
 
 void APickUpItem::RPC_Set_Quantity_Implementation(int32 _Quantity)
 {
-	UE_LOG(LogTemp, Display, TEXT("RPC_Set_Quantity_Implementation %d"), _Quantity);
+	//UE_LOG(LogTemp, Display, TEXT("RPC_Set_Quantity_Implementation %d"), _Quantity);
 	SetAllQuantity(_Quantity);
 }
 
 void APickUpItem::SetAllQuantity(int32 ChangeValue)
 {
 
-	UE_LOG(LogTemp, Display, TEXT("SetAllQuantity ... %d"), ChangeValue);
+	//UE_LOG(LogTemp, Display, TEXT("SetAllQuantity ... %d"), ChangeValue);
 	InstanceItemInteractData.Quantity = ChangeValue;
 	InteractionData = InstanceItemInteractData;
 	InstanceItemQuantity = ChangeValue;
@@ -166,16 +166,16 @@ void APickUpItem::SetAllQuantity(int32 ChangeValue)
 
 void APickUpItem::ServerDestroyActor_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("실행됨!!!!!!777"));
+	//UE_LOG(LogTemp, Log, TEXT("실행됨!!!!!!777"));
 	Destroy();
 }
 
 void APickUpItem::ServerRequestSetOwner_Implementation(APlayerController* NewOwner)
 {
-	UE_LOG(LogTemp, Log, TEXT("서버에서 setowner_0"));
+	//UE_LOG(LogTemp, Log, TEXT("서버에서 setowner_0"));
 	if (NewOwner)
 	{
-		UE_LOG(LogTemp, Log, TEXT("서버에서 setowner"));
+		//UE_LOG(LogTemp, Log, TEXT("서버에서 setowner"));
 		SetOwner(NewOwner);
 	}
 }
@@ -187,10 +187,10 @@ bool APickUpItem::ServerRequestSetOwner_Validate(APlayerController* NewOwner)
 
 void APickUpItem::OnRep_ReplicatedOwner()
 {
-	UE_LOG(LogTemp, Log, TEXT("Owner 바뀐거 감지!!!"));
+	//UE_LOG(LogTemp, Log, TEXT("Owner 바뀐거 감지!!!"));
 	SetOwner(ReplicatedOwner);
 	if (ReplicatedOwner) {
-		UE_LOG(LogTemp, Log, TEXT("Owner 바뀐거 감지2!!! %s"), *ReplicatedOwner->GetName());
+		//UE_LOG(LogTemp, Log, TEXT("Owner 바뀐거 감지2!!! %s"), *ReplicatedOwner->GetName());
 	}
 	//SetOwner(GetWorld()->GetFirstPlayerController());
 }
@@ -234,31 +234,31 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 	if (GetOwner())
 	{
 		// 객체에 Owner가 설정되어 있는 경우, Owner의 이름을 로그에 출력
-		UE_LOG(LogTemp, Log, TEXT("The owner of this object is: %s"), *GetOwner()->GetName());
+		//UE_LOG(LogTemp, Log, TEXT("The owner of this object is: %s"), *GetOwner()->GetName());
 
 		// Owner의 타입이 PlayerController인지 확인
 		APlayerController* PC = Cast<APlayerController>(GetOwner());
 		if (PC)
 		{
 			// Owner가 PlayerController인 경우, 추가 정보 로그에 출력
-			UE_LOG(LogTemp, Log, TEXT("The owner is a PlayerController. Player Name: %s"), *PC->GetPawn()->GetName());
+			//UE_LOG(LogTemp, Log, TEXT("The owner is a PlayerController. Player Name: %s"), *PC->GetPawn()->GetName());
 		}
 	}
 	else
 	{
 		// Owner가 설정되지 않은 경우
-		UE_LOG(LogTemp, Warning, TEXT("This object does not have an owner."));
+		//UE_LOG(LogTemp, Warning, TEXT("This object does not have an owner."));
 	}
 	if (HasAuthority())
 	{
-		UE_LOG(LogTemp, Display, TEXT(" ppp "));
+		//UE_LOG(LogTemp, Display, TEXT(" ppp "));
 		// 서버에서 실행 중인 경우, 직접 소유자를 설정할 수 있습니다.
 		SetOwner(Taker->GetController());
 		//SetOwner(GetWorld()->GetFirstPlayerController());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Display, TEXT(" kkk "));
+		//UE_LOG(LogTemp, Display, TEXT(" kkk "));
 		// 클라이언트에서 실행 중인 경우, 서버에 소유자 변경을 요청합니다.
 		ServerRequestSetOwner(Cast<APlayerController>(Taker->GetController()));
 		//ServerRequestSetOwner(GetWorld()->GetFirstPlayerController());
@@ -267,10 +267,10 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 		// 서버에서 실행 중인 경우, 플레이어 컨트롤러를 소유자로 설정
 		SetOwner(Taker->GetController());
 	}
-	UE_LOG(LogTemp, Display, TEXT(" flag777 "));
+	//UE_LOG(LogTemp, Display, TEXT(" flag777 "));
 	
 	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
-	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	//UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
 
 	if (UInventoryComponent* PlayerInventory = Taker->GetInventory())
 	{
@@ -287,16 +287,17 @@ void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 			break;
 		case EItemAddOperationResult::IAR_AllItemAdded:
 			//Destroy();
-			UE_LOG(LogTemp, Display, TEXT(" flag999 "));
+			//UE_LOG(LogTemp, Display, TEXT(" flag999 "));
 			
 			ServerDestroyActor();
 			break;
 		default:
-			UE_LOG(LogTemp, Warning, TEXT("Default실행"));
+			;
+			//UE_LOG(LogTemp, Warning, TEXT("Default실행"));
 			
 		}
 	}
-	UE_LOG(LogTemp, Display, TEXT(" flag888 "));
+	//UE_LOG(LogTemp, Display, TEXT(" flag888 "));
 }
 
 void APickUpItem::InitializeDropItem_Implementation(int32 ItemToDrop, const int32 Quantity)
@@ -305,8 +306,8 @@ void APickUpItem::InitializeDropItem_Implementation(int32 ItemToDrop, const int3
 	
 	UItemBase* Base = ItemManager->MakeItemBaseByKey(this,ItemToDrop,Quantity);
 	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
-	UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
-	UE_LOG(LogTemp, Log, TEXT("InitializeDropItem... %d $d"), ItemToDrop, Quantity);
+	//UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
+	//UE_LOG(LogTemp, Log, TEXT("InitializeDropItem... %d $d"), ItemToDrop, Quantity);
 	InstanceItemData = Base;
 	InstanceItemData->SetQuantity(Quantity);
 	InstanceItemData->OwningInventory = nullptr;
@@ -321,7 +322,7 @@ void APickUpItem::InitializeDropItem_Implementation(int32 ItemToDrop, const int3
 		InstanceMesh->SetWorldScale3D(NewScale);
 	}
 	
-	UE_LOG(LogTemp, Log, TEXT(" mesh .. %s"), *Base->BaseItemAssetData.Mesh->GetName());
+	//UE_LOG(LogTemp, Log, TEXT(" mesh .. %s"), *Base->BaseItemAssetData.Mesh->GetName());
 	
 	
 	UpdateItemInteractionData();

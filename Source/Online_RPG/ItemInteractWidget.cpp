@@ -50,7 +50,7 @@ void UItemInteractWidget::UpdateWidget(const FInteractionData* InteractionData) 
 
 		break;
 	default:;
-		////UE_LOG(LogTemp,Error,TEXT("default"));
+		//////UE_LOG(LogTemp,Error,TEXT("default"));
 	}
 	ItemName->SetText(InteractionData->Name);
 	ItemButton->SetText(FText::FromString("F"));

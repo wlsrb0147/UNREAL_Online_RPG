@@ -13,21 +13,21 @@ void AGreekIsland_GameMode::PostLogin(APlayerController* NewPlayer)
 	ALoginController* NewController = Cast<ALoginController>(NewPlayer);
 
 	NewController->INDEX_OF_PLAYER_CONTROLLER = ++Unique_Player_Idx;
-	//UE_LOG(LogTemp, Warning, TEXT("Post Login complete .... INDEX : %d, NewPlayer : %s"), NewController->INDEX_OF_PLAYER_CONTROLLER, *NewPlayer->GetName());
+	////UE_LOG(LogTemp, Warning, TEXT("Post Login complete .... INDEX : %d, NewPlayer : %s"), NewController->INDEX_OF_PLAYER_CONTROLLER, *NewPlayer->GetName());
 }
 
 void AGreekIsland_GameMode::Logout(AController* Exiting)
 {
 	Super::Logout(Exiting);
-	//UE_LOG(LogTemp, Warning, TEXT("Someone Log out "));
+	////UE_LOG(LogTemp, Warning, TEXT("Someone Log out "));
 
 
 	// ALoginController* Controller =  Cast<ALoginController>(Exiting);
 	// if(Controller)
 	// {
-	// 	//UE_LOG(LogTemp, Log, TEXT("ID %s 가 로그아웃"), *Controller->Login_ID);
-	// 	//UE_LOG(LogTemp, Log, TEXT("Player %s is disconnecting from location: %s"), *GetName(), *Controller->Current_Location.ToString());
-	// 	//UE_LOG(LogTemp, Log, TEXT("Player %s is disconnecting from rotation: %s"), *GetName(), *Controller->Current_Rotatation.ToString());
+	// 	////UE_LOG(LogTemp, Log, TEXT("ID %s 가 로그아웃"), *Controller->Login_ID);
+	// 	////UE_LOG(LogTemp, Log, TEXT("Player %s is disconnecting from location: %s"), *GetName(), *Controller->Current_Location.ToString());
+	// 	////UE_LOG(LogTemp, Log, TEXT("Player %s is disconnecting from rotation: %s"), *GetName(), *Controller->Current_Rotatation.ToString());
 	//
 	//
 	// 	if(Controller->Current_Location.IsNearlyZero()) return;
@@ -40,10 +40,10 @@ void AGreekIsland_GameMode::Logout(AController* Exiting)
 	// {
 	// 	// 플레이어 캐릭터의 위치를 얻습니다.
 	// 	FVector PlayerLocation = PlayerPawn->GetActorLocation();
-	// 	//UE_LOG(LogTemp, Log, TEXT("Player %s is disconnecting from location: %s"), *GetName(), *PlayerLocation.ToString());
+	// 	////UE_LOG(LogTemp, Log, TEXT("Player %s is disconnecting from location: %s"), *GetName(), *PlayerLocation.ToString());
 	// }else
 	// {
-	// 	//UE_LOG(LogTemp, Warning, TEXT("Pawn null "));
+	// 	////UE_LOG(LogTemp, Warning, TEXT("Pawn null "));
 	// 	
 	// }
 	

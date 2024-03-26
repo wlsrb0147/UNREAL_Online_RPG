@@ -57,7 +57,7 @@ void AEnemyProjectile::OnOverlapBegin(class AActor* OverlappedActor, class AActo
     {
         FDamageEvent DamageEvent; 
         OtherActor->TakeDamage(ProjectileDamage, DamageEvent, GetInstigatorController(), this);
-        //UE_LOG(LogTemp, Warning, TEXT("Actor DamageAble "));
+        ////UE_LOG(LogTemp, Warning, TEXT("Actor DamageAble "));
     }
 }
 
