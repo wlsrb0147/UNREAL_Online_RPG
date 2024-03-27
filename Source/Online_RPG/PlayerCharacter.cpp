@@ -341,6 +341,8 @@ void APlayerCharacter::BeginPlay()
 
 	ItemManagerInstance = Network_Manager->GetItemManager();
 	
+
+	
 	if (!ItemManagerInstance->ItemDataTable)
 	{
 		//UE_LOG(LogTemp,Warning,TEXT("DB 널"))
@@ -427,13 +429,10 @@ void APlayerCharacter::BeginPlay()
 		MyGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket_l"));
 		MyGun->SetOwner(this);
 	}
-
-
-
+	
 	//Dead 애니메이션 테스트 코드
 	/*FTimerHandle TestTimerHandle;
 	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &APlayerCharacter::SetIsDead, 0.1f);*/
-
 }
 
 
@@ -447,7 +446,11 @@ void APlayerCharacter::Tick(float DeltaTime)
 	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+	if (!HUD->SkillWidget)
+	{
+		const UNetwork_Manager_R* Network_Manager = Cast<UNetwork_Manager_R>(GetGameInstance());
+		HUD->SetSkillWidget(Network_Manager->Player_Widget);
+	}
 
 	CheckInteraction();
 
