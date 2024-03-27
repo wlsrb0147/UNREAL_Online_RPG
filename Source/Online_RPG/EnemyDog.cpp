@@ -362,7 +362,7 @@ void AEnemyDog::EnemyAttack()
 	params.AddIgnoredActor(GetOwner());
 
 	//UParticleSystemComponent* ParticleSystemComponent = nullptr;
-	SpawnEmitterAtLocation_Multi(this, EnemyAttackPaticles, AttackLocation, GetActorRotation() + FRotator(-90, 0, 0), FVector(EnemyAttackEffectScale * 0.7f, EnemyAttackEffectScale, EnemyAttackEffectScale));
+	SpawnEmitterAtLocation_Multi(this, EnemyAttackPaticles, AttackLocation, GetActorRotation() + FRotator(-90, 0, 0), FVector(EnemyAttackEffectScale * 0.7f, EnemyAttackEffectScale, EnemyAttackEffectScale) * GetActorScale().X);
 	//SpawnEmitterAtLocation_SetTimer_Multi(this, UpperSlashFinishPaticles, UpperSlashEffectDurationSec, AttackLocation, GetActorRotation(), FVector(UpperSlashEffectFinishScale));
 
 	bool bSuccess = GetWorld()->SweepMultiByChannel(
