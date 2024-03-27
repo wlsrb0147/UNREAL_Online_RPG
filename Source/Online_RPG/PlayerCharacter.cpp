@@ -345,8 +345,10 @@ void APlayerCharacter::BeginPlay()
 	//const ItemManager& ItemManagerInstance = ItemManager::Get();
 
 	ItemManagerInstance = Network_Manager->GetItemManager();
+	if (IsLocallyControlled()) {
+		IsQuestAccept = Network_Manager->IsQuestAccept;
+	}
 	
-
 	
 	if (!ItemManagerInstance->ItemDataTable)
 	{

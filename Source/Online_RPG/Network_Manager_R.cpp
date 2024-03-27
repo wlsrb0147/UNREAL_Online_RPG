@@ -1311,7 +1311,7 @@ void UNetwork_Manager_R::OnSequenceFinished()
 		Respawn_Widget = CreateWidget(this, Respawn_Widget_Class);
 		Respawn_Widget->AddToViewport();
 		Respawn_Widget->SetVisibility(ESlateVisibility::Collapsed);
-		Cast<APlayerCharacter>(MyController->GetPawn())->IsQuestAccept = IsQuestAccept;
+		
 
 		
 		////서버 전용 함수 기능
