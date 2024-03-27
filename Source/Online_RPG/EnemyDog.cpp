@@ -53,8 +53,8 @@ void AEnemyDog::BeginPlay()
 
 	SpawnLocation = GetActorLocation() + FVector(100.0f, 100.0f, 0.0f);
 
-	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemyDog::HandleAttack, 2.f, true);
+	/*FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemyDog::HandleAttack, 2.f, true);*/
 }
 
 // Called every frame
@@ -370,7 +370,7 @@ void AEnemyDog::EnemyAttack()
 		AttackLocation,
 		AttackLocation,
 		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2,
+		ECollisionChannel::ECC_GameTraceChannel1,
 		AttackShape,
 		params
 	);
