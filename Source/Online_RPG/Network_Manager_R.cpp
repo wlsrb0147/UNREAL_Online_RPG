@@ -991,7 +991,11 @@ void UNetwork_Manager_R::SetSpawnData(FVector _Location, FRotator _Rotation, FSt
 
 		////UE_LOG(LogTemp, Log, TEXT("Flag44"));
 		// Set any other necessary headers here, like Authorization if needed
-		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::SetSpawnData_Callback);
+		if(bIsLogout)
+			Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::SetSpawnData_Callback);
+		else {
+			Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::SetSpawnData_NO_Callback);
+		}
 		////UE_LOG(LogTemp, Log, TEXT("Flag55"));
 		if (!Request->ProcessRequest())
 		{
@@ -1101,6 +1105,10 @@ void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpRes
 	}
 
 
+}
+
+void UNetwork_Manager_R::SetSpawnData_NO_Callback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
 }
 
 void UNetwork_Manager_R::UpdateSpawnData()
