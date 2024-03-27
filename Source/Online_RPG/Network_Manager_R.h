@@ -129,6 +129,8 @@ public:
 	FString GunName;
 	//Sword
 	FString SwordName;
+	//Quest
+	int8 IsQuestAccept;
 
 	//======================================로그인 후 관련 함수======================================
 	void GetSpawnData();
