@@ -75,9 +75,11 @@ public:
 	FORCEINLINE TArray<UItemBase*> GetInventory() const {return InventoryContents;}
 	FORCEINLINE int32 GetInventoryCapacity() const {return InventorySlotCapacity;}
 	FORCEINLINE void SetInventoryCapacity(const int32 Capacity) {InventorySlotCapacity = Capacity;}
-	void AddMoney(const uint64 AmountToAddMoney);
 	uint64 GetMoney() const {return CurrentMoney;}
 	UItemBase* FindMatchingItem(UItemBase* ItemIn) const;
+	UItemBase* FindNextPartial(UItemBase* ItemIn) const;
+	int32 CalculateNumberForFullStack(const UItemBase* StackableItem,int32 AddAmount);
+	FItemAddResultData HandleAddItem(UItemBase* InputItem);
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -95,16 +97,11 @@ protected:
 	UNetwork_Manager_R* NetWorkManager;*/
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	FItemAddResultData HandleAddItem(UItemBase* InputItem);
 	int32 AddStackableItem(UItemBase* InputItem, int32 AddAmount);
 	FItemAddResultData AddNonStackableItem(UItemBase* InputItem);
 	void AddNewItem(UItemBase* Item,const int32 AmountToAdd);
 	void RemoveItemFromList(UItemBase* ItemToRemove);
 	int32 RemoveAmountOfItem(UItemBase* RemoveItem,int32 AmountToRemove) const;
-	UItemBase* FindNextPartial(UItemBase* ItemIn) const;
-	int32 CalculateNumberForFullStack(const UItemBase* StackableItem,int32 AddAmount);
+	void AddMoney(const uint64 AmountToAddMoney);
 
 };
