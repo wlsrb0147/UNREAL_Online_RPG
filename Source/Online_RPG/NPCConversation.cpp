@@ -95,6 +95,15 @@ void UNPCConversation::UpdateWidget()
 				CurrentCharacter->FoundNoInteract();
 				return;
 			}
+
+			if (ContextNum == 7)
+			{
+				if (InventoryItem->OwningInventory)
+				{
+					InventoryItem->OwningInventory->RemoveItemFromList(InventoryItem);
+				}
+				CurrentCharacter->GetInventory()->HandleAddItem(ItemManagerInstance->MakeItemBaseByKey(this,9,1));
+			}
 			ConText->SetText(CurrentTalking.ConversationText[ContextNum]);
 			return;
 		}

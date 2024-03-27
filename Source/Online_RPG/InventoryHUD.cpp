@@ -16,7 +16,8 @@ void AInventoryHUD::OpenInventoryWidget()
 
 void AInventoryHUD::CloseInventoryWidget()
 {
-	bIsInventoryOpen = !bIsInventoryOpen;
+	bIsInventoryOpen = !bIsInventoryOpen
+	;
 	InventoryMainMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
@@ -75,10 +76,12 @@ void AInventoryHUD::OpenConversationWidget(const FBum& Initial) const
 void AInventoryHUD::CloseConversationWidget() const
 {
 	NPCConversation->SetVisibility(ESlateVisibility::Collapsed);
-	const FInputModeGameOnly InputMode;
-	GetOwningPlayerController()->SetInputMode(InputMode);
-	GetOwningPlayerController()->SetShowMouseCursor(false);
-	
+	if (!bIsInventoryOpen)
+	{
+		const FInputModeGameOnly InputMode;
+		GetOwningPlayerController()->SetInputMode(InputMode);
+		GetOwningPlayerController()->SetShowMouseCursor(false);
+	}
 }
 
 void AInventoryHUD::BeginPlay()
