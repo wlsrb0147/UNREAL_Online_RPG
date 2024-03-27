@@ -965,7 +965,7 @@ void UNetwork_Manager_R::Spawn_Init()
 	}
 }
 
-void UNetwork_Manager_R::SetSpawnData(FVector _Location, FRotator _Rotation, FString _Login_ID)
+void UNetwork_Manager_R::SetSpawnData(FVector _Location, FRotator _Rotation, FString _Login_ID, bool bIsLogout)
 {
 	SpawnLocation = _Location;
 	SpawnRotator = _Rotation;
@@ -1003,6 +1003,21 @@ void UNetwork_Manager_R::SetSpawnData(FVector _Location, FRotator _Rotation, FSt
 		////UE_LOG(LogTemp, Log, TEXT("Flag9"));
 	}
 	
+}
+
+void UNetwork_Manager_R::Game_Save()
+{
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	ALoginController* Controller = Cast<ALoginController>(PlayerController);
+	if (Controller)
+	{
+		if (!Controller->Current_Location.IsNearlyZero())
+		{
+			SetSpawnData(Controller->Current_Location, Controller->Current_Rotatation, Controller->Login_ID, false);
+		}
+
+
+	}
 }
 
 void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
