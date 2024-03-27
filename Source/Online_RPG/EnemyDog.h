@@ -43,12 +43,18 @@ public:
 	UFUNCTION(BlueprintPure, Category = "State")
 	FORCEINLINE bool GetIsHit() const { return IsHit; }
 
+	UFUNCTION(BlueprintPure, Category = "State")
+	FORCEINLINE bool GetIsAttack() const { return IsAttack; }
+
 	UFUNCTION(BlueprintCallable, Category = "State")
 	FORCEINLINE void SetIsDead(bool _tf)  { IsDead = _tf; }
 
 	UFUNCTION(BlueprintCallable, Category = "State")
 	FORCEINLINE void SetIsHit(bool _tf)  { IsHit = _tf; }
 	
+	UFUNCTION(BlueprintCallable, Category = "State")
+	FORCEINLINE void SetIsAttack(bool _tf) { IsAttack = _tf; }
+
 	void SetFreeze(bool _tf);
 	void HitOff();
 	float GetAttackRange(int _AttackNum);
@@ -57,6 +63,11 @@ public:
 	bool IsDead = false;
 	UPROPERTY(Replicated, VisibleAnywhere)
 	bool IsHit = false;
+	UPROPERTY(ReplicatedUsing = OnRep_IsAttack, VisibleAnywhere)
+	bool IsAttack = false;
+
+	UFUNCTION()
+	void OnRep_IsAttack();
 private:
 	UPROPERTY(EditAnywhere)
 	FVector SpawnLocation;
@@ -113,7 +124,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Particle")
 	UParticleSystem* EnemyAttackPaticles;
 
-protected:
 	UFUNCTION(BlueprintCallable)
 	void HandleAttack();
 

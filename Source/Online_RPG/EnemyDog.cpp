@@ -39,6 +39,7 @@ void AEnemyDog::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(AEnemyDog, bIsCollision);
 	DOREPLIFETIME(AEnemyDog, IsDead);
 	DOREPLIFETIME(AEnemyDog, IsHit);
+	DOREPLIFETIME(AEnemyDog, IsAttack);
 
 
 }
@@ -75,13 +76,20 @@ void AEnemyDog::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemyDog::Attack_Implementation()
 {
-	float TimeSinceBegin = GetWorld()->GetTimeSeconds();
-	//UE_LOG(LogTemp, Warning, TEXT("%f/ %f /%f"), AttackDelay, AttackTime, TimeSinceBegin);
+	//float TimeSinceBegin = GetWorld()->GetTimeSeconds();
+	////UE_LOG(LogTemp, Warning, TEXT("%f/ %f /%f"), AttackDelay, AttackTime, TimeSinceBegin);
 
-	if (AttackDelay + AttackTime < TimeSinceBegin)
+	//if (AttackDelay + AttackTime < TimeSinceBegin)
+	//{
+	//	SpawnProjectile();
+	//	AttackTime = TimeSinceBegin;
+	//}
+	//서버 전용 함수 기능
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		SpawnProjectile();
-		AttackTime = TimeSinceBegin;
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemyDog::EnemyAttack, 1.4f, true);
+		//EnemyAttack();
 	}
 }
 
@@ -187,6 +195,18 @@ float AEnemyDog::GetAttackRange(int _AttackNum)
 	else if (_AttackNum == 2)
 		return AttackRange2;
 	return 0;
+}
+void AEnemyDog::OnRep_IsAttack()
+{
+	if (IsAttack) {
+
+		UE_LOG(LogTemp, Display, TEXT("OnRep_IsAttack... true..."));
+
+	}
+	else {
+		UE_LOG(LogTemp, Display, TEXT("OnRep_IsAttack... false..."));
+
+	}
 }
 void AEnemyDog::Dead()
 {
@@ -337,9 +357,17 @@ ACMSpawnManager* FindSpawnManager(UWorld* World)
 void AEnemyDog::HandleAttack()
 {
 	//서버 전용 함수 기능
-	if (GetLocalRole() == ROLE_Authority) {
-		EnemyAttack();
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		UE_LOG(LogTemp, Warning, TEXT(" Attking2"));
+
+		IsAttack = true;
+
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemyDog::EnemyAttack, 1.4f, false);
+		//EnemyAttack();
 	}
+
 }
 
 void AEnemyDog::EnemyAttack()
