@@ -48,7 +48,9 @@ public:
 
 	UPROPERTY()
 	UNPCConversation* NPCConversation;
+
 	
+	bool bIsConversationOpen = false;
 	bool bIsInventoryOpen = false;
 
 	void ToggleInventoryWidget();
@@ -59,8 +61,8 @@ public:
 	void CloseInteractionWidget() const;
 	void UpdateInteractionWidget(const FInteractionData* InteractionData) const;
 
-	void OpenConversationWidget(const FBum& Initial) const;
-	void CloseConversationWidget() const;
+	void OpenConversationWidget(const FBum& Initial);
+	void CloseConversationWidget();
 	
 protected:
 	virtual void BeginPlay() override;

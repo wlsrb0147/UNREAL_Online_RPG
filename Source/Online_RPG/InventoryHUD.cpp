@@ -24,12 +24,17 @@ void AInventoryHUD::CloseInventoryWidget()
 
 void AInventoryHUD::ToggleInventoryWidget()
 {
-	if (bIsInventoryOpen)
+	if (bIsInventoryOpen) 
 	{
 		CloseInventoryWidget();
-		const FInputModeGameOnly InputMode;
-		GetOwningPlayerController()->SetInputMode(InputMode);
-		GetOwningPlayerController()->SetShowMouseCursor(false);
+
+		if (!bIsConversationOpen)
+		{
+			const FInputModeGameOnly InputMode;
+			GetOwningPlayerController()->SetInputMode(InputMode);
+			GetOwningPlayerController()->SetShowMouseCursor(false);
+		}
+		
 	}
 	else
 	{
@@ -64,16 +69,17 @@ void AInventoryHUD::UpdateInteractionWidget(const FInteractionData* InteractionD
 	
 }
 
-void AInventoryHUD::OpenConversationWidget(const FBum& Initial) const
+void AInventoryHUD::OpenConversationWidget(const FBum& Initial)
 {
 	NPCConversation->SetVisibility(ESlateVisibility::Visible);
 	NPCConversation->InitializeWidget(Initial);
 	const FInputModeGameAndUI InputMode;
 	GetOwningPlayerController()->SetInputMode(InputMode);
 	GetOwningPlayerController()->SetShowMouseCursor(true);
+	bIsConversationOpen = true;
 }
 
-void AInventoryHUD::CloseConversationWidget() const
+void AInventoryHUD::CloseConversationWidget()
 {
 	NPCConversation->SetVisibility(ESlateVisibility::Collapsed);
 	if (!bIsInventoryOpen)
@@ -82,6 +88,8 @@ void AInventoryHUD::CloseConversationWidget() const
 		GetOwningPlayerController()->SetInputMode(InputMode);
 		GetOwningPlayerController()->SetShowMouseCursor(false);
 	}
+
+	bIsConversationOpen = false;
 }
 
 void AInventoryHUD::BeginPlay()
