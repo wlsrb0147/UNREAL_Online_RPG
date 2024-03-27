@@ -6,6 +6,7 @@
 #include "ItemStruct.h"
 #include "ItemBase.generated.h"
 
+class UNetwork_Manager_R;
 class APlayerCharacter;
 class UInventoryComponent;
 class APlayerCharacter;
@@ -51,7 +52,9 @@ public:
 	void SetQuantity(const int32 NewQuantity);
 	bool IsFullItemStack() const {return BaseItemQuantity == BaseItemNumericData.MaxStackSize;}
 	void Use(APlayerCharacter* UsingCharacter);
-	
+
+	UPROPERTY()
+	UNetwork_Manager_R* NetworkManager;
 	
 protected:
 
