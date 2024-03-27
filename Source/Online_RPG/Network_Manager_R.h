@@ -136,7 +136,8 @@ public:
 	void GetSpawnData();
 	void GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void Spawn_Init();
-	void SetSpawnData(FVector _Location, FRotator _Rotation, FString _Login_ID);
+	void SetSpawnData(FVector _Location, FRotator _Rotation, FString _Login_ID, bool bIsLogout = true);
+	void Game_Save();
 	void SetSpawnData_Callback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void UpdateSpawnData();
 	void InsertSpawnData();
