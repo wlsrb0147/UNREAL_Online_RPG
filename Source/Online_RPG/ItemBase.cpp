@@ -8,6 +8,7 @@
 
 UItemBase::UItemBase(): BaseItemQuantity(0), BaseItemType(), BaseItemAssetData(), OwningInventory(nullptr)
 {
+	
 }
 
 UItemBase* UItemBase::CreateCopy() const
@@ -54,7 +55,6 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 			BaseItemQuantity = 1;
 		}
 	}
-	
 }
 
 void UItemBase::Use(APlayerCharacter* UsingCharacter)

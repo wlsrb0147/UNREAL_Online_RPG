@@ -52,7 +52,6 @@ public:
 	bool IsFullItemStack() const {return BaseItemQuantity == BaseItemNumericData.MaxStackSize;}
 	void Use(APlayerCharacter* UsingCharacter);
 	
-	
 protected:
 
 	bool operator==(const FName& OtherID) const

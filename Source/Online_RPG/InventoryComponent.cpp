@@ -4,6 +4,7 @@
 #include "InventoryComponent.h"
 
 #include "ItemBase.h"
+#include "Network_Manager_R.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent(): InventorySlotCapacity(0)
@@ -39,7 +40,7 @@ void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	/*NetWorkManager = Cast<UNetwork_Manager_R>(GetWorld()->GetGameInstance());*/
 	
 }
 
@@ -180,7 +181,7 @@ int32 UInventoryComponent::CalculateNumberForFullStack(const UItemBase* Stackabl
 FItemAddResultData UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 {
 	if (!GetOwner()) return FItemAddResultData::AddNone(FText::FromString("오류발생"));
-
+	
 	const int32 InitialRequestedAddAmount = InputItem->BaseItemQuantity;
 
 	if (!InputItem->BaseItemNumericData.bIsStackable)
@@ -191,8 +192,7 @@ FItemAddResultData UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 	if (InputItem->BaseItemType == EItemType::Money)
 	{
 		AddMoney(InitialRequestedAddAmount);
-		
-		
+
 		return FItemAddResultData::AddAll(InitialRequestedAddAmount,
 			FText::Format(FText::FromString("{0}원을 획득하였습니다"),InitialRequestedAddAmount));
 	}
