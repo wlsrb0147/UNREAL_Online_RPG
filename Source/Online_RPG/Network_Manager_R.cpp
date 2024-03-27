@@ -4,6 +4,7 @@
 
 #include "InventoryComponent.h"
 #include "AItemManager.h"
+#include "InventoryHUD.h"
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
@@ -1308,6 +1309,8 @@ void UNetwork_Manager_R::OnSequenceFinished()
 
 		Player_Widget = CreateWidget(this, Player_Widget_Class);
 		Player_Widget->AddToViewport();
+		AInventoryHUD* HUD = Cast<AInventoryHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+		HUD->SetSkillWidget(Player_Widget);
 		Respawn_Widget = CreateWidget(this, Respawn_Widget_Class);
 		Respawn_Widget->AddToViewport();
 		Respawn_Widget->SetVisibility(ESlateVisibility::Collapsed);

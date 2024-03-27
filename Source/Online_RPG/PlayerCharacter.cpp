@@ -143,11 +143,6 @@ void APlayerCharacter::Interact()
 	
 	if (InteractionTarget->InteractionData.InteractionType == EInteractionType::NPC)
 	{
-		if (!HUD->SkillWidget)
-		{
-			const UNetwork_Manager_R* Network_Manager = Cast<UNetwork_Manager_R>(GetGameInstance());
-			HUD->SetSkillWidget(Network_Manager->Player_Widget);
-		}
 		HUD->CloseInteractionWidget();
 		HUD->OpenConversationWidget(InteractionTarget->GetFBum());
 		return;
