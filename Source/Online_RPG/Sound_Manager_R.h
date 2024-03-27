@@ -71,6 +71,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "AsyncLoadSound")
 	USoundBase* Explosion_Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AsyncLoadSound")
+	USoundBase* KrakenAttack_Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AsyncLoadSound")
+	USoundBase* Kraken_Sound;
 	
 	
 	//=====================================================

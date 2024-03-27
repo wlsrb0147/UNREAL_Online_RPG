@@ -109,4 +109,37 @@ private:
 
 	void OnIsCollisionUpdate();
 
+public:
+	UPROPERTY(EditAnywhere, Category = "Particle")
+	UParticleSystem* EnemyAttackPaticles;
+
+protected:
+	UFUNCTION(BlueprintCallable)
+	void HandleAttack();
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float EnemyAttackDamage = 20.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float EnemyAttackRadius = 10.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float EnemyAttackHeight = 10.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float EnemyAttackDistance = 10.f;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float EnemyAttackEffectScale = 1.f;
+	/*UPROPERTY(EditAnywhere, Category = "Attack")
+	float EnemyEffectFinishScale = 1.f;*/
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float EnemyAttackEffectOffsetZ = 0.f;
+	/*UPROPERTY(EditAnywhere, Category = "Attack")
+	float EnemyEffectDurationSec = 1.f;*/
+
+	void EnemyAttack();
+
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void SpawnEmitterAtLocation_Multi(const UObject* WorldContextObject, UParticleSystem* Particle, FVector Location, FRotator Rotation = FRotator::ZeroRotator, FVector Scale = FVector(1.f));
+
+	void SpawnDebugCapsule(FVector Location, FVector CapsuleSize, FColor Color = FColor::Green);
+
 };

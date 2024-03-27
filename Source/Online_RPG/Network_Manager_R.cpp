@@ -146,6 +146,8 @@ void UNetwork_Manager_R::LoadStartAsset()
 					Sound_Instance->Shoot_Sound_queue = PostLoadAsset->Shoot_Sound_queue;
 					Sound_Instance->Fire_Sound = PostLoadAsset->Fire_Sound;
 					Sound_Instance->Explosion_Sound = PostLoadAsset->Explosion_Sound;
+					Sound_Instance->Kraken_Sound = PostLoadAsset->Kraken_Sound;
+					Sound_Instance->KrakenAttack_Sound = PostLoadAsset->KrakenAttack_Sound;
 					Sound_Instance->Manager_Init();
 
 					//TODO : 색깔이 번쩍번쩍 하게 변합니다. 찾아보면 알림도 있음
