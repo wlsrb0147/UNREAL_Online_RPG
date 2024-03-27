@@ -53,13 +53,16 @@ void AEnemyDog::BeginPlay()
 
 	SpawnLocation = GetActorLocation() + FVector(100.0f, 100.0f, 0.0f);
 
-
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemyDog::HandleAttack, 2.f, true);
 }
 
 // Called every frame
 void AEnemyDog::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
 
 }
 
@@ -140,15 +143,15 @@ void AEnemyDog::SpawnProjectile()
 	FVector ProjectileSpawnLocation = this->GetActorLocation();
 	FRotator ProjectileSpawnRotation = this->GetActorRotation();
 
-	FVector SpawnScale = this->GetActorScale()*2;
+	FVector SpawnScale = this->GetActorScale() * 2;
 
 	// FActorSpawnParameters를 초기화합니다.
 	FActorSpawnParameters SpawnParams;
 
 	// 위치, 회전, 스케일을 포함한 FTransform 객체를 생성합니다.
 	FTransform SpawnTransform(ProjectileSpawnRotation, ProjectileSpawnLocation, SpawnScale);
-	
-	
+
+
 	AActor* Projectile = GetWorld()->SpawnActor<AEnemyProjectile>(AttackProjectile, SpawnTransform, SpawnParams);
 	//AActor* Projectile = GetWorld()->SpawnActor<AEnemyProjectile>(AttackProjectile, ProjectileSpawnLocation, ProjectileSpawnRotation);
 }
@@ -229,7 +232,7 @@ void AEnemyDog::Dead()
 	//	ItemManager& ItemManager = ItemManager::Get();
 
 	ItemManagerInstance = Cast<UNetwork_Manager_R>(GetGameInstance())->GetItemManager();
-	const FVector UpvVector{0,0,1};
+	const FVector UpvVector{ 0,0,1 };
 	const FVector SpawnLoc{ GetActorLocation() + UpvVector * 10.0f };
 	const FTransform SpawnTransform(GetActorRotation(), SpawnLoc);
 
@@ -237,7 +240,7 @@ void AEnemyDog::Dead()
 
 	if (RandomValue > 0.3f)
 	{
-		int RandomMoney = FMath :: RandRange(80,1000);
+		int RandomMoney = FMath::RandRange(80, 1000);
 		while (RandomMoney > 100)
 		{
 			UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 8, 7);
@@ -247,13 +250,13 @@ void AEnemyDog::Dead()
 		UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 8, 7);
 		ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, RandomMoney);
 	}
-	
+
 	RandomValue = FMath::FRandRange(0.0f, 1.0f);
 
 	if (RandomValue > 0.6f)
 	{
-		int RandomPotion = FMath :: RandRange(1,5);
-		
+		int RandomPotion = FMath::RandRange(1, 5);
+
 		UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 4, 7);
 		ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, RandomPotion);
 	}
@@ -267,7 +270,7 @@ void AEnemyDog::Dead()
 		ItemManagerInstance->SpawnItem(this, Base, SpawnTransform, 1);
 	}
 
-	
+
 	if (bIsBoss)
 	{
 		UItemBase* Base = ItemManagerInstance->MakeItemBaseByKey(this, 7, 7);
@@ -311,7 +314,7 @@ void AEnemyDog::OnIsCollisionUpdate()
 		// 죽음 상태에서는 무브먼트 끔
 		GetCharacterMovement()->DisableMovement();
 	}
-	
+
 }
 
 void AEnemyDog::SpawnSelf()
@@ -329,4 +332,94 @@ ACMSpawnManager* FindSpawnManager(UWorld* World)
 	ACMSpawnManager* SpawnManager = Cast<ACMSpawnManager>(UGameplayStatics::GetActorOfClass(World, ACMSpawnManager::StaticClass()));
 
 	return SpawnManager;
+}
+
+void AEnemyDog::HandleAttack()
+{
+	//서버 전용 함수 기능
+	if (GetLocalRole() == ROLE_Authority) {
+		EnemyAttack();
+	}
+}
+
+void AEnemyDog::EnemyAttack()
+{
+	FVector Location = GetActorLocation();
+	FRotator Rotation = GetActorRotation();
+
+	//콜리전 크기
+	FVector CollisionExtent = GetSimpleCollisionCylinderExtent();
+
+	FVector CapsuleSize = FVector(EnemyAttackRadius, EnemyAttackRadius, EnemyAttackHeight);
+
+	FCollisionShape AttackShape = FCollisionShape::MakeCapsule(CapsuleSize);
+
+	FVector AttackLocation = (Location + FVector(0, 0, -CollisionExtent.Z + EnemyAttackEffectOffsetZ)) + Rotation.Vector() * EnemyAttackDistance;
+	TArray<FHitResult> Hits;
+	FCollisionQueryParams params;
+
+	params.AddIgnoredActor(this);
+	params.AddIgnoredActor(GetOwner());
+
+	//UParticleSystemComponent* ParticleSystemComponent = nullptr;
+	SpawnEmitterAtLocation_Multi(this, EnemyAttackPaticles, AttackLocation, GetActorRotation() + FRotator(-90, 0, 0), FVector(EnemyAttackEffectScale * 0.7f, EnemyAttackEffectScale, EnemyAttackEffectScale));
+	//SpawnEmitterAtLocation_SetTimer_Multi(this, UpperSlashFinishPaticles, UpperSlashEffectDurationSec, AttackLocation, GetActorRotation(), FVector(UpperSlashEffectFinishScale));
+
+	bool bSuccess = GetWorld()->SweepMultiByChannel(
+		Hits,
+		AttackLocation,
+		AttackLocation,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel2,
+		AttackShape,
+		params
+	);
+
+	if (bSuccess)
+	{
+		FVector ShotDirection = -Rotation.Vector();
+
+		for (int i = 0; i < Hits.Num(); i++) {
+			AActor* HitActor = Hits[i].GetActor();
+			if (HitActor != nullptr && GetController()->LineOfSightTo(HitActor))
+			{
+				//SpawnDebugSphere(Hit.ImpactPoint, 30);
+
+
+				//피격 이펙트 생성
+				//UGameplayStatics::SpawnEmitterAtLocation(this, ShootHitPaticles, Hit.ImpactPoint, FRotator::ZeroRotator, FVector(ShootHitEffectScale));
+
+				FPointDamageEvent DamageEvent(EnemyAttackDamage, Hits[i], ShotDirection, nullptr);
+				HitActor->TakeDamage(EnemyAttackDamage, DamageEvent, GetController(), this);
+
+			}
+		}
+	}
+
+	SpawnDebugCapsule(AttackLocation, CapsuleSize);
+}
+
+void AEnemyDog::SpawnEmitterAtLocation_Multi_Implementation(const UObject* WorldContextObject, UParticleSystem* Particle, FVector Location, FRotator Rotation, FVector Scale)
+{
+	////UE_LOG(LogTemp, Warning, TEXT("SpawnEmitterAtLocation"));
+	//피격 이펙트 생성
+	UParticleSystemComponent* ParticleSystemComponent;
+	ParticleSystemComponent = UGameplayStatics::SpawnEmitterAtLocation(WorldContextObject, Particle, Location, Rotation, Scale);
+
+}
+
+void AEnemyDog::SpawnDebugCapsule(FVector Location, FVector CapsuleSize, FColor Color) {
+	////UE_LOG(LogTemp, Warning, TEXT("DrawDebugCapsule"));
+	DrawDebugCapsule(
+		GetWorld(),
+		Location,
+		CapsuleSize.Z / 2,
+		CapsuleSize.X,
+		FQuat::Identity,
+		Color,
+		false,
+		2,
+		0,
+		1
+	);
 }
