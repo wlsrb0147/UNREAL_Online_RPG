@@ -445,12 +445,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	if (!HUD->SkillWidget)
-	{
-		const UNetwork_Manager_R* Network_Manager = Cast<UNetwork_Manager_R>(GetGameInstance());
-		HUD->SetSkillWidget(Network_Manager->Player_Widget);
-	}
+	
 
 	CheckInteraction();
 
@@ -565,7 +560,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::BeginInteract);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::Interact);
 	PlayerInputComponent->BindAction("Interact", IE_Released, this, &APlayerCharacter::EndInteract);
 
 	PlayerInputComponent->BindAction("OpenInventory", IE_Pressed, this, &APlayerCharacter::OpenInventory);

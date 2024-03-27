@@ -4,6 +4,7 @@
 
 #include "InventoryComponent.h"
 #include "AItemManager.h"
+#include "InventoryHUD.h"
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
@@ -407,7 +408,7 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 
 void UNetwork_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator, APawn* MyPawn)
 {
-	if (!Sound_Instance) Get_Sound_Instance();
+	if (!Sound_Instance) Get_Sound_Instance();	
 	Sound_Instance->Sound_Play(Sound_Type, Audio_idx, Location, Rotator, MyPawn);
 
 }
@@ -870,7 +871,10 @@ void UNetwork_Manager_R::GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpRes
 
 									TSharedPtr<FJsonObject> Max_Health_obj = FieldsObject->GetObjectField(TEXT("MaxHealth"));
 									MaxHealthFromServer = Max_Health_obj->GetNumberField(TEXT("doubleValue"));
-									//UE_LOG(LogTemp, Log, TEXT("FROM SERVER ::  %f %f"), CurrentHealthFromServer, MaxHealthFromServer);
+
+									TSharedPtr<FJsonObject> IsQuestAccept_obj = FieldsObject->GetObjectField(TEXT("IsQuestAccept"));
+									IsQuestAccept = IsQuestAccept_obj->GetNumberField(TEXT("integerValue"));
+									UE_LOG(LogTemp, Log, TEXT("FROM SERVER ::  %d"), IsQuestAccept);
 								}
 							}
 						}
@@ -1098,6 +1102,7 @@ void UNetwork_Manager_R::UpdateSpawnData()
 		uint64 MyMoney = PlayerInventory->GetMoney();
 		float MyHealth = CurrentCharacter->GetCurrentHealth();
 		float MyMaxHealth = CurrentCharacter->GetMaxHealth();
+		int8 _IsQuestAccept = CurrentCharacter->IsQuestAccept;
 		FString ItemJson = TEXT("[");
 		
 
@@ -1150,13 +1155,14 @@ void UNetwork_Manager_R::UpdateSpawnData()
 		"\"Items\": {\"arrayValue\": {\"values\": [%s]}},"
 		"\"Money\": {\"integerValue\": %d},"
 		"\"Health\": {\"doubleValue\": %f},"
-		"\"MaxHealth\": {\"doubleValue\": %f}"
+		"\"MaxHealth\": {\"doubleValue\": %f},"
+		"\"IsQuestAccept\": {\"integerValue\": %d}"
 
 		"}"
 		"}"), *Login_ID,
 		SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z,
 		SpawnRotator.Pitch, SpawnRotator.Roll, SpawnRotator.Yaw
-		,*ItemJson, MyMoney, MyHealth, MyMaxHealth
+		,*ItemJson, MyMoney, MyHealth, MyMaxHealth, _IsQuestAccept
 		);
 //
 		Request->SetContentAsString(FieldsJson);
@@ -1183,6 +1189,7 @@ void UNetwork_Manager_R::InsertSpawnData()
 		uint64 MyMoney = PlayerInventory->GetMoney();
 		float MyHealth = CurrentCharacter->GetCurrentHealth();
 		float MyMaxHealth = CurrentCharacter->GetMaxHealth();
+		int8 _IsQuestAccept = CurrentCharacter->IsQuestAccept;
 		FString ItemJson = TEXT("[");
 		
 
@@ -1235,12 +1242,13 @@ void UNetwork_Manager_R::InsertSpawnData()
 			"\"Items\": {\"arrayValue\": {\"values\": [%s]}},"
 			"\"Money\": {\"integerValue\": %d},"
 			"\"Health\": {\"doubleValue\": %f},"
-			"\"MaxHealth\": {\"doubleValue\": %f}"
+			"\"MaxHealth\": {\"doubleValue\": %f},"
+			"\"IsQuestAccept\": {\"integerValue\": %d}"
 			"}"
 			"}"), *Login_ID,
 			SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z,
 			SpawnRotator.Pitch, SpawnRotator.Roll, SpawnRotator.Yaw
-			,*ItemJson, MyMoney, MyHealth, MyMaxHealth
+			,*ItemJson, MyMoney, MyHealth, MyMaxHealth, _IsQuestAccept
 			);
 
 		Request->SetContentAsString(InsertJson);
@@ -1301,9 +1309,12 @@ void UNetwork_Manager_R::OnSequenceFinished()
 
 		Player_Widget = CreateWidget(this, Player_Widget_Class);
 		Player_Widget->AddToViewport();
+		AInventoryHUD* HUD = Cast<AInventoryHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+		HUD->SetSkillWidget(Player_Widget);
 		Respawn_Widget = CreateWidget(this, Respawn_Widget_Class);
 		Respawn_Widget->AddToViewport();
 		Respawn_Widget->SetVisibility(ESlateVisibility::Collapsed);
+		Cast<APlayerCharacter>(MyController->GetPawn())->IsQuestAccept = IsQuestAccept;
 
 		
 		////서버 전용 함수 기능
