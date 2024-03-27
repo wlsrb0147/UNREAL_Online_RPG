@@ -105,6 +105,8 @@ void ASound_Manager_R::Manager_Init()
 	Sound_Map.Add(SOUND_TYPE::Explosion_Sound,Explosion_Sound);
 	Sound_Map.Add(SOUND_TYPE::Walk_Water,Walk_Sound_Water_queue);
 	Sound_Map.Add(SOUND_TYPE::Walk_Grass,Walk_Sound_Grass_queue);
+	Sound_Map.Add(SOUND_TYPE::Kraken_Attack,KrakenAttack_Sound);
+	Sound_Map.Add(SOUND_TYPE::Kraken_Sound,Kraken_Sound);
 }
 
 void ASound_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator, APawn* MyPawn)
