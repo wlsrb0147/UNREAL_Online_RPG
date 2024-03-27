@@ -49,6 +49,10 @@ public:
 	UPROPERTY()
 	UNPCConversation* NPCConversation;
 
+	UPROPERTY()
+	UUserWidget* SkillWidget;
+
+	void SetSkillWidget(UUserWidget* GetWidget){SkillWidget = GetWidget;}
 	
 	bool bIsConversationOpen = false;
 	bool bIsInventoryOpen = false;

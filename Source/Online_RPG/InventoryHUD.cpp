@@ -5,6 +5,7 @@
 
 #include "InventoryMainMenu.h"
 #include "ItemInteractWidget.h"
+#include "Network_Manager_R.h"
 #include "NPCConversation.h"
 #include "PlayerCharacter.h"
 
@@ -77,6 +78,7 @@ void AInventoryHUD::OpenConversationWidget(const FBum& Initial)
 	GetOwningPlayerController()->SetInputMode(InputMode);
 	GetOwningPlayerController()->SetShowMouseCursor(true);
 	bIsConversationOpen = true;
+	SkillWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void AInventoryHUD::CloseConversationWidget()
@@ -90,6 +92,7 @@ void AInventoryHUD::CloseConversationWidget()
 	}
 
 	bIsConversationOpen = false;
+	SkillWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void AInventoryHUD::BeginPlay()
@@ -118,5 +121,4 @@ void AInventoryHUD::BeginPlay()
 		NPCConversation->AddToViewport(10);
 		NPCConversation->SetVisibility(ESlateVisibility::Collapsed);
 	}
-	
 }

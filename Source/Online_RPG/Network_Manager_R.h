@@ -35,8 +35,9 @@ enum class SOUND_TYPE:uint8
 	Fire_Sound,
 	Explosion_Sound,
 	Walk_Grass,
-	Walk_Water
-
+	Walk_Water,
+	Kraken_Attack,
+	Kraken_Sound
 	
 };
 
