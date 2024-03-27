@@ -28,11 +28,11 @@ void AEnemyAIController::Tick(float DeltaTime)
 			if (FVector::Dist(AttackPawn->GetActorLocation(), GetPawn()->GetActorLocation()) < 600) {
 				IsAttackable = true;
 			}
-			UE_LOG(LogTemp, Display, TEXT("LineOfSightTo... %s"),*AttackPawn->GetActorLocation().ToCompactString());
+			//UE_LOG(LogTemp, Display, TEXT("LineOfSightTo... %s"),*AttackPawn->GetActorLocation().ToCompactString());
 			SetFocus(AttackPawn);
 			GetBlackboardComponent()->SetValueAsVector(TEXT("TargetCurrentLocation"), AttackPawn->GetActorLocation());
 			GetBlackboardComponent()->SetValueAsVector(TEXT("TargetLastLocation"), AttackPawn->GetActorLocation());
-			UE_LOG(LogTemp, Display, TEXT("LineOfSightTo222... %s"), *AttackPawn->GetActorLocation().ToCompactString());
+			//UE_LOG(LogTemp, Display, TEXT("LineOfSightTo222... %s"), *AttackPawn->GetActorLocation().ToCompactString());
 			
 		}
 		else
