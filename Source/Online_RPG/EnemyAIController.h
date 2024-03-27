@@ -40,6 +40,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	bool IsDead = false;
 
+	UPROPERTY(VisibleAnywhere)
+	bool IsAttackable = false;
+
 	APawn* AttackPawn;
 
 };

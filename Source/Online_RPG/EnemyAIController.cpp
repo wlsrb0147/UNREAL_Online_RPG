@@ -15,6 +15,7 @@ AEnemyAIController::AEnemyAIController()
 void AEnemyAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	IsAttackable = false;
 	if (IsDead)
 	{
 		ClearFocus(EAIFocusPriority::Gameplay);
@@ -22,19 +23,27 @@ void AEnemyAIController::Tick(float DeltaTime)
 	}
 	if (AttackPawn)
 	{
-		if (LineOfSightTo(AttackPawn))
+		if (LineOfSightTo(AttackPawn) && FVector::Dist(AttackPawn->GetActorLocation(), GetPawn()->GetActorLocation())< 3000)
 		{
+			if (FVector::Dist(AttackPawn->GetActorLocation(), GetPawn()->GetActorLocation()) < 600) {
+				IsAttackable = true;
+			}
+			UE_LOG(LogTemp, Display, TEXT("LineOfSightTo... %s"),*AttackPawn->GetActorLocation().ToCompactString());
 			SetFocus(AttackPawn);
 			GetBlackboardComponent()->SetValueAsVector(TEXT("TargetCurrentLocation"), AttackPawn->GetActorLocation());
 			GetBlackboardComponent()->SetValueAsVector(TEXT("TargetLastLocation"), AttackPawn->GetActorLocation());
+			UE_LOG(LogTemp, Display, TEXT("LineOfSightTo222... %s"), *AttackPawn->GetActorLocation().ToCompactString());
+			
 		}
 		else
 		{
 			ClearFocus(EAIFocusPriority::Gameplay);
 			Blackboard->ClearValue(TEXT("TargetCurrentLocation"));
 			//StopMovement();
+			UE_LOG(LogTemp, Display, TEXT("clear...... "));
 		}
 	}
+	GetBlackboardComponent()->SetValueAsBool(TEXT("IsAttackable"), IsAttackable);
 }
 void AEnemyAIController::BeginPlay()
 {
@@ -45,6 +54,8 @@ void AEnemyAIController::BeginPlay()
 		RunBehaviorTree(AIBehavior);
 		if(GetPawn()&& GetBlackboardComponent())
 		GetBlackboardComponent()->SetValueAsVector(TEXT("SpawnLocation"), GetPawn()->GetActorLocation());
+		GetBlackboardComponent()->SetValueAsBool(TEXT("Val_True"), true);
+		GetBlackboardComponent()->SetValueAsBool(TEXT("Val_False"), false);
 	}
 }
 
