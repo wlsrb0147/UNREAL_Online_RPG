@@ -6,6 +6,9 @@
 #include "GameFramework/HUD.h"
 #include "InventoryHUD.generated.h"
 
+class APlayerCharacter;
+struct FBum;
+class UNPCConversation;
 class UInventoryPanel;
 class UInventoryMainMenu;
 struct FInteractionData;
@@ -30,6 +33,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly,Category = "Widgets")
 	TSubclassOf<UInventoryMainMenu> InventoryMainMenuClass;
+
+	UPROPERTY(EditDefaultsOnly,Category = "widgets")
+	TSubclassOf<UNPCConversation> NPCConversationClass;
 	
 	UPROPERTY()
 	UItemInteractWidget* ItemInteractionWidget;
@@ -39,7 +45,12 @@ public:
 
 	UPROPERTY()
 	UInventoryPanel* InventoryPanel;
+
+	UPROPERTY()
+	UNPCConversation* NPCConversation;
+
 	
+	bool bIsConversationOpen = false;
 	bool bIsInventoryOpen = false;
 
 	void ToggleInventoryWidget();
@@ -50,6 +61,9 @@ public:
 	void CloseInteractionWidget() const;
 	void UpdateInteractionWidget(const FInteractionData* InteractionData) const;
 
+	void OpenConversationWidget(const FBum& Initial);
+	void CloseConversationWidget();
+	
 protected:
 	virtual void BeginPlay() override;
 };

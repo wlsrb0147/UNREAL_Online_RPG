@@ -5,6 +5,8 @@
 
 #include "InventoryMainMenu.h"
 #include "ItemInteractWidget.h"
+#include "NPCConversation.h"
+#include "PlayerCharacter.h"
 
 void AInventoryHUD::OpenInventoryWidget()
 {
@@ -14,19 +16,25 @@ void AInventoryHUD::OpenInventoryWidget()
 
 void AInventoryHUD::CloseInventoryWidget()
 {
-	bIsInventoryOpen = !bIsInventoryOpen;
+	bIsInventoryOpen = !bIsInventoryOpen
+	;
 	InventoryMainMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 
 void AInventoryHUD::ToggleInventoryWidget()
 {
-	if (bIsInventoryOpen)
+	if (bIsInventoryOpen) 
 	{
 		CloseInventoryWidget();
-		const FInputModeGameOnly InputMode;
-		GetOwningPlayerController()->SetInputMode(InputMode);
-		GetOwningPlayerController()->SetShowMouseCursor(false);
+
+		if (!bIsConversationOpen)
+		{
+			const FInputModeGameOnly InputMode;
+			GetOwningPlayerController()->SetInputMode(InputMode);
+			GetOwningPlayerController()->SetShowMouseCursor(false);
+		}
+		
 	}
 	else
 	{
@@ -61,6 +69,29 @@ void AInventoryHUD::UpdateInteractionWidget(const FInteractionData* InteractionD
 	
 }
 
+void AInventoryHUD::OpenConversationWidget(const FBum& Initial)
+{
+	NPCConversation->SetVisibility(ESlateVisibility::Visible);
+	NPCConversation->InitializeWidget(Initial);
+	const FInputModeGameAndUI InputMode;
+	GetOwningPlayerController()->SetInputMode(InputMode);
+	GetOwningPlayerController()->SetShowMouseCursor(true);
+	bIsConversationOpen = true;
+}
+
+void AInventoryHUD::CloseConversationWidget()
+{
+	NPCConversation->SetVisibility(ESlateVisibility::Collapsed);
+	if (!bIsInventoryOpen)
+	{
+		const FInputModeGameOnly InputMode;
+		GetOwningPlayerController()->SetInputMode(InputMode);
+		GetOwningPlayerController()->SetShowMouseCursor(false);
+	}
+
+	bIsConversationOpen = false;
+}
+
 void AInventoryHUD::BeginPlay()
 {
 	Super::BeginPlay();
@@ -81,4 +112,11 @@ void AInventoryHUD::BeginPlay()
 		InventoryPanel = InventoryMainMenuWidget->GetInventoryPanel();
 	}
 
+	if (NPCConversationClass)
+	{
+		NPCConversation = CreateWidget<UNPCConversation>(GetWorld(),NPCConversationClass);
+		NPCConversation->AddToViewport(10);
+		NPCConversation->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	
 }

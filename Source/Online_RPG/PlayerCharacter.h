@@ -66,6 +66,8 @@ public:
 
 	float InteractionDistance = 300.0f;
 
+	int8 IsQuestAccept = 0;
+
 	UPROPERTY(VisibleAnywhere, Category = "Character | Inventory")
 	UInventoryComponent* PlayerInventory;
 
@@ -74,6 +76,7 @@ public:
 
 	FInteractingData InteractionData;
 
+	UPROPERTY()
 	AItemManager* ItemManagerInstance;
 	void FoundNoInteract();
 	void FoundInteract(AActor* NewInteract);

@@ -29,6 +29,8 @@
 #include "RED_Projectile.h"
 
 #include "AItemManager.h"
+#include "NPCConversation.h"
+#include "SpawnActor.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
@@ -99,7 +101,7 @@ void APlayerCharacter::FoundNoInteract()
 		}
 
 		HUD->CloseInteractionWidget();
-
+		HUD->CloseConversationWidget();
 		InteractionData.CurrentInteracting = nullptr;
 		InteractionTarget = nullptr;
 	}
@@ -116,10 +118,6 @@ void APlayerCharacter::FoundInteract(AActor* NewInteract)
 
 	InteractionData.CurrentInteracting = NewInteract;
 	InteractionTarget = NewInteract;
-
-	APickUpItem* Item = Cast<APickUpItem>(NewInteract);
-
-	//UE_LOG(LogTemp,Warning,TEXT("개수 %d"),Item->InstanceItemData->BaseItemQuantity)
 	
 	HUD->UpdateInteractionWidget(&InteractionTarget->InteractionData);
 	InteractionTarget->BeginFocus();
@@ -140,15 +138,21 @@ void APlayerCharacter::BeginInteract()
 
 void APlayerCharacter::Interact()
 {
-	//UE_LOG(LogTemp, Log, TEXT("interact 1"));
+
 	if (!IsValid(InteractionTarget.GetObject())) return;
-	//UE_LOG(LogTemp, Log, TEXT("interact 2"));
-	//InteractionTarget->Interact(this);
+	
+	if (InteractionTarget->InteractionData.InteractionType == EInteractionType::NPC)
+	{
+		HUD->CloseInteractionWidget();
+		HUD->OpenConversationWidget(InteractionTarget->GetFBum());
+		return;
+	}
+
 	APickUpItem* Tem = Cast<APickUpItem>(InteractionTarget.GetObject());
 	Tem->SetOwner(this);
 	
 	RPC_Item_Owner(Tem, this);
-	//UE_LOG(LogTemp, Log, TEXT("interact 3"));
+
 	FoundNoInteract();
 
 }
@@ -330,6 +334,7 @@ void APlayerCharacter::BeginPlay()
 	
 	HUD = Cast<AInventoryHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	HUD->InventoryPanel->InitializePanel(this);
+	HUD->NPCConversation->SetCharacter(this);
 	
 	UNetwork_Manager_R* Network_Manager =  Cast<UNetwork_Manager_R>(GetGameInstance());
 	//const ItemManager& ItemManagerInstance = ItemManager::Get();

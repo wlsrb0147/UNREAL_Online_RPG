@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "ItemInteractionInterface.generated.h"
 
+struct FBum;
 class APlayerCharacter;
 
 UENUM()
@@ -44,6 +45,22 @@ struct FInteractionData
 	
 };
 
+USTRUCT()
+struct FBum
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* Face;
+
+	UPROPERTY(EditAnywhere)
+	FText Name;
+	
+	UPROPERTY()
+	TArray<FText> ConversationText;
+	
+};
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UItemInteractionInterface : public UInterface
@@ -58,11 +75,12 @@ class UItemInteractionInterface : public UInterface
 class ONLINE_RPG_API IItemInteractionInterface
 {
 	GENERATED_BODY()
-
+	
 
 public:
 	FInteractionData InteractionData;
-
+	FBum ConversationData;
+	FBum GetFBum(){return ConversationData;}
 	virtual void BeginFocus();
 	virtual void EndFocus();
 	virtual void BeginInteract();
