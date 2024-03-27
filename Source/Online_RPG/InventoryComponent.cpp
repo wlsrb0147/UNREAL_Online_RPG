@@ -21,6 +21,8 @@ void UInventoryComponent::AddMoney(const uint64 AmountToAddMoney)
 {
 	CurrentMoney += AmountToAddMoney;
 	OnInventoryUpdated.Broadcast();
+
+	NetWorkManager->Game_Save();
 }
 
 UItemBase* UInventoryComponent::FindMatchingItem(UItemBase* ItemIn) const
@@ -40,7 +42,7 @@ void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	/*NetWorkManager = Cast<UNetwork_Manager_R>(GetWorld()->GetGameInstance());*/
+	NetWorkManager = Cast<UNetwork_Manager_R>(GetWorld()->GetGameInstance());
 	
 }
 
@@ -80,6 +82,8 @@ int32 UInventoryComponent::AddStackableItem(UItemBase* InputItem, int32 AddAmoun
 
 	InputItem->SetQuantity(AmountToDistribute);
 	OnInventoryUpdated.Broadcast();
+
+	NetWorkManager->Game_Save();
 	 return AddAmount - AmountToDistribute;
 }
 
@@ -91,6 +95,8 @@ FItemAddResultData UInventoryComponent::AddNonStackableItem(UItemBase* InputItem
 	}
 
 	AddNewItem(InputItem,1);
+
+	NetWorkManager->Game_Save();
 	
 	return FItemAddResultData::AddAll(1,FText::Format(
 	FText::FromString("Successfully added {1} to the inventory"),
@@ -127,12 +133,16 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd)
 
 	InventoryContents.Add(NewItem);
 	OnInventoryUpdated.Broadcast();
+
+	NetWorkManager->Game_Save();
 }
 
 void UInventoryComponent::RemoveItemFromList(UItemBase* ItemToRemove)
 {
 	InventoryContents.RemoveSingle(ItemToRemove);
 	OnInventoryUpdated.Broadcast();
+
+	NetWorkManager->Game_Save();
 }
 
 int32 UInventoryComponent::RemoveAmountOfItem(UItemBase* RemoveItem, const int32 AmountToRemove) const
@@ -141,6 +151,8 @@ int32 UInventoryComponent::RemoveAmountOfItem(UItemBase* RemoveItem, const int32
 	RemoveItem->SetQuantity(RemoveItem->BaseItemQuantity-ActualAmountToRemove);
 
 	OnInventoryUpdated.Broadcast();
+
+	NetWorkManager->Game_Save();
 	return ActualAmountToRemove;
 }
 

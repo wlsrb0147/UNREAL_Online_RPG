@@ -93,8 +93,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Inventory")
 	int32 CurrentMoney = 0;
 
-	/*UPROPERTY()
-	UNetwork_Manager_R* NetWorkManager;*/
+	UPROPERTY()
+	UNetwork_Manager_R* NetWorkManager;
 
 public:	
 	int32 AddStackableItem(UItemBase* InputItem, int32 AddAmount);
