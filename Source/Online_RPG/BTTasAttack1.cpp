@@ -16,8 +16,8 @@ EBTNodeResult::Type UBTTasAttack1::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 	{
 		AEnemyDog* QQ = Cast<AEnemyDog>(OwnerComp.GetAIOwner()->GetPawn());
 		
-		QQ->HandleAttack();
-		UE_LOG(LogTemp, Warning, TEXT(" Attking1"));
+		QQ->Attack();
+		//UE_LOG(LogTemp, Warning, TEXT(" Attking1"));
 	}
 
 	//OwnerComp.GetBlackboardComponent()->ClearValue(TEXT("TargetLastLocation"));

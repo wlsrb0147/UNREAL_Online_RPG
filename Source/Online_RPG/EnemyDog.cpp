@@ -85,11 +85,15 @@ void AEnemyDog::Attack_Implementation()
 	//	AttackTime = TimeSinceBegin;
 	//}
 	//서버 전용 함수 기능
-	if (GetLocalRole() == ROLE_Authority)
-	{
-		FTimerHandle TimerHandle;
-		GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemyDog::EnemyAttack, 1.4f, true);
-		//EnemyAttack();
+	//if (GetLocalRole() == ROLE_Authority)
+	//{
+	//	FTimerHandle TimerHandle;
+	//	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemyDog::EnemyAttack, 1.4f, true);
+	//	//EnemyAttack();
+	//}
+	if (GetLocalRole() == ROLE_Authority) {
+
+		IsAttack = true;
 	}
 }
 
@@ -101,7 +105,6 @@ void AEnemyDog::HitOff()
 
 float AEnemyDog::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	IsHit = true;
 	if (IsDead) return 0;
 	SetFreeze(true);
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -361,11 +364,11 @@ void AEnemyDog::HandleAttack()
 	{
 		UE_LOG(LogTemp, Warning, TEXT(" Attking2"));
 
-		IsAttack = true;
 
-		FTimerHandle TimerHandle;
-		GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemyDog::EnemyAttack, 1.4f, false);
-		//EnemyAttack();
+
+		//FTimerHandle TimerHandle;
+		//GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemyDog::EnemyAttack, 1.4f, false);
+		EnemyAttack();
 	}
 
 }

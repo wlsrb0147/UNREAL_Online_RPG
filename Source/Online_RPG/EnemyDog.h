@@ -56,7 +56,9 @@ public:
 	FORCEINLINE void SetIsAttack(bool _tf) { IsAttack = _tf; }
 
 	void SetFreeze(bool _tf);
+	UFUNCTION(BlueprintCallable)
 	void HitOff();
+
 	float GetAttackRange(int _AttackNum);
 	
 	UPROPERTY(Replicated, VisibleAnywhere)
