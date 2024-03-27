@@ -1396,13 +1396,13 @@ void UNetwork_Manager_R::Callback_ForceExit(FHttpRequestPtr Request, FHttpRespon
 
 void UNetwork_Manager_R::Callback_NO_ForceExit(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	UE_LOG(LogTemp, Error, TEXT("저장 완료"));
+	UE_LOG(LogTemp, Log, TEXT("저장 완료"));
 }
 
 
 void UNetwork_Manager_R::OnSequenceFinished()
 {
-	if (GetWorld()) {
+	if (GetWorld() && 1==2) {
 		FTimerHandle SaveTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(SaveTimerHandle, this, &UNetwork_Manager_R::Game_Save, 5.0f, true);
 	}
