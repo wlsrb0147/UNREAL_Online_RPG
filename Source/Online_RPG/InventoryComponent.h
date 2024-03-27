@@ -7,6 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
+class UNetwork_Manager_R;
 class UItemBase;
 DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
@@ -89,6 +90,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Inventory")
 	int32 CurrentMoney = 0;
+
+	/*UPROPERTY()
+	UNetwork_Manager_R* NetWorkManager;*/
 
 public:	
 	// Called every frame

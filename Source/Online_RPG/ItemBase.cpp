@@ -4,7 +4,6 @@
 #include "ItemBase.h"
 
 #include "InventoryComponent.h"
-#include "Network_Manager_R.h"
 #include "PlayerCharacter.h"
 
 UItemBase::UItemBase(): BaseItemQuantity(0), BaseItemType(), BaseItemAssetData(), OwningInventory(nullptr)
@@ -56,7 +55,6 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 			BaseItemQuantity = 1;
 		}
 	}
-	NetworkManager->
 }
 
 void UItemBase::Use(APlayerCharacter* UsingCharacter)
