@@ -58,6 +58,7 @@ public:
 	UFUNCTION()
 	void OnRep_InstanceItemQuantity() {
 		//UE_LOG(LogTemp, Log, TEXT("OnRep_InstanceItemQuantity ...%d "), InstanceItemQuantity);
+		UE_LOG(LogTemp,Warning,TEXT("범인"))
 		SetAllQuantity(InstanceItemQuantity);
 	}
 

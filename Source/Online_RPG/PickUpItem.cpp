@@ -152,7 +152,6 @@ void APickUpItem::UpdateItemInteractionData()
 
 void APickUpItem::RPC_Set_Quantity_Implementation(int32 _Quantity)
 {
-	UE_LOG(LogTemp,Warning,TEXT("임플래면츠"))
 	//UE_LOG(LogTemp, Display, TEXT("RPC_Set_Quantity_Implementation %d"), _Quantity);
 	SetAllQuantity(_Quantity);
 }
