@@ -1402,7 +1402,7 @@ void UNetwork_Manager_R::Callback_NO_ForceExit(FHttpRequestPtr Request, FHttpRes
 
 void UNetwork_Manager_R::OnSequenceFinished()
 {
-	if (GetWorld() && 1==2) {
+	if (GetWorld()) {
 		FTimerHandle SaveTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(SaveTimerHandle, this, &UNetwork_Manager_R::Game_Save, 5.0f, true);
 	}
