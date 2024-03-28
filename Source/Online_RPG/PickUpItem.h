@@ -49,6 +49,7 @@ public:
 	UPROPERTY(EditInstanceOnly, Category = "ItemData")
 	FInteractionData InstanceItemInteractData;
 
+	void SetItemBase(UItemBase* Base){InstanceItemData = Base;}
 	void UpdateItemInteractionData();
 
 	UFUNCTION(Server, Reliable)

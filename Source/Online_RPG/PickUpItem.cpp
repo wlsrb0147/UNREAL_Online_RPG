@@ -152,6 +152,7 @@ void APickUpItem::UpdateItemInteractionData()
 
 void APickUpItem::RPC_Set_Quantity_Implementation(int32 _Quantity)
 {
+	UE_LOG(LogTemp,Warning,TEXT("임플래면츠"))
 	//UE_LOG(LogTemp, Display, TEXT("RPC_Set_Quantity_Implementation %d"), _Quantity);
 	SetAllQuantity(_Quantity);
 }
@@ -170,7 +171,7 @@ void APickUpItem::SetAllQuantity(int32 ChangeValue)
 	}
 	else
 	{
-		Destroy();
+		UE_LOG(LogTemp,Warning,TEXT("실패"))
 		return;
 		/*UNetwork_Manager_R* Manager = Cast<UNetwork_Manager_R>(GetGameInstance());
 		AItemManager* ItemManager = Manager->GetItemManager();
@@ -327,9 +328,9 @@ void APickUpItem::InitializeDropItem_Implementation(int32 ItemToDrop, const int3
 	FString _Role = GetWorld()->GetNetMode() == NM_DedicatedServer || GetWorld()->GetNetMode() == NM_ListenServer ? TEXT("서버") : TEXT("클라이언트");
 	//UE_LOG(LogTemp, Log, TEXT("현재 실행 환경: %s"), *_Role);
 	//UE_LOG(LogTemp, Log, TEXT("InitializeDropItem... %d $d"), ItemToDrop, Quantity);
-	InstanceItemData = Base;
-	InstanceItemData->SetQuantity(Quantity);
+	SetItemBase(Base);
 	InstanceItemData->OwningInventory = nullptr;
+	InstanceItemData->SetQuantity(Quantity);
 	InstanceMesh->SetStaticMesh(Base->BaseItemAssetData.Mesh);
 
 	FVector NewScale(5.0f, 5.0f, 5.0f);
