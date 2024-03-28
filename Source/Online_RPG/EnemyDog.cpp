@@ -2,6 +2,7 @@
 
 
 #include "EnemyDog.h"
+#include "PlayerCharacter.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
 #include "EnemyProjectile.h"
@@ -422,12 +423,27 @@ void AEnemyDog::EnemyAttack()
 
 				FPointDamageEvent DamageEvent(EnemyAttackDamage, Hits[i], ShotDirection, nullptr);
 				HitActor->TakeDamage(EnemyAttackDamage, DamageEvent, GetController(), this);
-
+				if (Cast<APlayerCharacter>(HitActor)) {
+					APlayerCharacter* __Tmp = Cast<APlayerCharacter>(HitActor);
+					
+					if (__Tmp->GetCurrentHealth() <= 0.1f) {
+						AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
+						if (OwnerController)
+							OwnerController->SetPlayer(nullptr);
+					}
+				}
+				else if (Cast<AEnemyDog>(HitActor)) {
+					if (Cast<AEnemyDog>(HitActor)->Health <= 0.1f) {
+						AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
+						if (OwnerController)
+							OwnerController->SetPlayer(nullptr);
+					}
+				}
 			}
 		}
 	}
 
-	SpawnDebugCapsule(AttackLocation, CapsuleSize);
+	//SpawnDebugCapsule(AttackLocation, CapsuleSize);
 }
 
 void AEnemyDog::SpawnEmitterAtLocation_Multi_Implementation(const UObject* WorldContextObject, UParticleSystem* Particle, FVector Location, FRotator Rotation, FVector Scale)

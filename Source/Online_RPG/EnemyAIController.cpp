@@ -21,7 +21,7 @@ void AEnemyAIController::Tick(float DeltaTime)
 		ClearFocus(EAIFocusPriority::Gameplay);
 		return;
 	}
-	if (AttackPawn)
+	if (AttackPawn && GetPawn())
 	{
 		if (LineOfSightTo(AttackPawn) && FVector::Dist(AttackPawn->GetActorLocation(), GetPawn()->GetActorLocation())< 3000)
 		{
@@ -42,6 +42,10 @@ void AEnemyAIController::Tick(float DeltaTime)
 			//StopMovement();
 			UE_LOG(LogTemp, Display, TEXT("clear...... "));
 		}
+	}
+	else {
+		ClearFocus(EAIFocusPriority::Gameplay);
+		Blackboard->ClearValue(TEXT("TargetCurrentLocation"));
 	}
 	GetBlackboardComponent()->SetValueAsBool(TEXT("IsAttackable"), IsAttackable);
 }
