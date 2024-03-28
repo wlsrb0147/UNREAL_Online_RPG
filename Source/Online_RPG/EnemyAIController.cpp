@@ -25,7 +25,7 @@ void AEnemyAIController::Tick(float DeltaTime)
 	{
 		if (LineOfSightTo(AttackPawn) && FVector::Dist(AttackPawn->GetActorLocation(), GetPawn()->GetActorLocation())< 3000)
 		{
-			if (FVector::Dist(AttackPawn->GetActorLocation(), GetPawn()->GetActorLocation()) < 600) {
+			if (FVector::Dist(AttackPawn->GetActorLocation(), GetPawn()->GetActorLocation()) < 300+350* GetPawn()->GetActorScale().X) {
 				IsAttackable = true;
 			}
 			//UE_LOG(LogTemp, Display, TEXT("LineOfSightTo... %s"),*AttackPawn->GetActorLocation().ToCompactString());
