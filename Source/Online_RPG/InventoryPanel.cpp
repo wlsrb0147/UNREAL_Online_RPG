@@ -12,11 +12,13 @@
 
 void UInventoryPanel::InitializePanel(APlayerCharacter* Player)
 {
+	FString PawnName = UGameplayStatics::GetPlayerController(this, 0)->GetPawn()->GetName();
+
 	if (UGameplayStatics::GetPlayerController(this,0)->GetPawn() == Player)
 	{
 		PlayerCharacter = Player;
 	}
-	else if (UGameplayStatics::GetPlayerController(this,0)->GetPawn()->GetName() == "BP_Login_Pawn_C_0")
+	else if (PawnName.StartsWith(TEXT("BP_Login_Pawn")))
 	{
 		PlayerCharacter = Player;
 	}
