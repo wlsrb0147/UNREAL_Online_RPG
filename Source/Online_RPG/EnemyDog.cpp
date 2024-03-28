@@ -381,7 +381,7 @@ void AEnemyDog::EnemyAttack()
 	//콜리전 크기
 	FVector CollisionExtent = GetSimpleCollisionCylinderExtent();
 
-	FVector CapsuleSize = FVector(EnemyAttackRadius, EnemyAttackRadius, EnemyAttackHeight);
+	FVector CapsuleSize = FVector(EnemyAttackRadius, EnemyAttackRadius, EnemyAttackHeight) * GetActorScale().X;
 
 	FCollisionShape AttackShape = FCollisionShape::MakeCapsule(CapsuleSize);
 
