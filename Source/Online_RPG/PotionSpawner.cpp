@@ -6,6 +6,7 @@
 #include "AItemManager.h"
 #include "ItemC.h"
 #include "Network_Manager_R.h"
+#include "PickUpItem.h"
 
 // Sets default values
 APotionSpawner::APotionSpawner()
@@ -21,8 +22,9 @@ void APotionSpawner::BeginPlay()
 	Super::BeginPlay();
 
 	UNetwork_Manager_R* NetworkManager = Cast<UNetwork_Manager_R>(GetGameInstance());
-	AItemManager* ItemManager = NetworkManager->GetItemManager();
+	const AItemManager* ItemManager = NetworkManager->GetItemManager();
 
 	UItemBase* ItemBase = ItemManager->MakeItemBaseByKey(this,4,10);
-	ItemManager->SpawnItem(this,ItemBase,GetActorTransform(),300);
+	ItemManager->SpawnItem(this,ItemBase,GetActorTransform(),3000);
+
 }

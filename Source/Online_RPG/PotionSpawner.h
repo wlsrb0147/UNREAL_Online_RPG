@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "PotionSpawner.generated.h"
 
+class APickUpItem;
+
 UCLASS()
 class ONLINE_RPG_API APotionSpawner : public AActor
 {
@@ -14,6 +16,9 @@ class ONLINE_RPG_API APotionSpawner : public AActor
 public:	
 	// Sets default values for this actor's properties
 	APotionSpawner();
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<APickUpItem> Pickup_Class;
 
 protected:
 	// Called when the game starts or when spawned

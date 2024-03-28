@@ -163,7 +163,19 @@ void APickUpItem::SetAllQuantity(int32 ChangeValue)
 	InstanceItemInteractData.Quantity = ChangeValue;
 	InteractionData = InstanceItemInteractData;
 	InstanceItemQuantity = ChangeValue;
-	InstanceItemData->SetQuantity(ChangeValue);
+
+	if (InstanceItemData)
+	{
+		InstanceItemData->SetQuantity(ChangeValue);
+	}
+	else
+	{
+		Destroy();
+		return;
+		/*UNetwork_Manager_R* Manager = Cast<UNetwork_Manager_R>(GetGameInstance());
+		AItemManager* ItemManager = Manager->GetItemManager();
+		InstanceItemData = ItemManager->MakeItemBaseByKey(this,InstanceItemID,ChangeValue);*/
+	}
 
 	if (!GetWorld() || !GetWorld()->GetFirstPlayerController() || !GetWorld()->GetFirstPlayerController()->GetPawn()) return;
 
