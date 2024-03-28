@@ -100,8 +100,7 @@ void UNPCConversation::UpdateWidget()
 			{
 				if (InventoryItem->OwningInventory)
 				{
-					int32 CurrentQuantity = InventoryItem->BaseItemQuantity;
-					InventoryItem->SetQuantity(--CurrentQuantity);
+					CurrentCharacter->GetInventory()->RemoveAmountOfItem(InventoryItem,1);
 				}
 				CurrentCharacter->GetInventory()->HandleAddItem(ItemManagerInstance->MakeItemBaseByKey(this,9,1));
 			}

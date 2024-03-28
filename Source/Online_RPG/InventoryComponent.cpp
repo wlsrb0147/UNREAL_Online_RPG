@@ -4,13 +4,14 @@
 #include "InventoryComponent.h"
 
 #include "ItemBase.h"
+#include "Network_Manager_R.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent(): InventorySlotCapacity(0)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -20,6 +21,8 @@ void UInventoryComponent::AddMoney(const uint64 AmountToAddMoney)
 {
 	CurrentMoney += AmountToAddMoney;
 	OnInventoryUpdated.Broadcast();
+
+	NetWorkManager->Game_Save();
 }
 
 UItemBase* UInventoryComponent::FindMatchingItem(UItemBase* ItemIn) const
@@ -39,18 +42,11 @@ void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	NetWorkManager = Cast<UNetwork_Manager_R>(GetWorld()->GetGameInstance());
 	
 }
 
 
-// Called every frame
-void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
 
 int32 UInventoryComponent::AddStackableItem(UItemBase* InputItem, int32 AddAmount)
 {
@@ -86,6 +82,8 @@ int32 UInventoryComponent::AddStackableItem(UItemBase* InputItem, int32 AddAmoun
 
 	InputItem->SetQuantity(AmountToDistribute);
 	OnInventoryUpdated.Broadcast();
+
+	NetWorkManager->Game_Save();
 	 return AddAmount - AmountToDistribute;
 }
 
@@ -97,6 +95,8 @@ FItemAddResultData UInventoryComponent::AddNonStackableItem(UItemBase* InputItem
 	}
 
 	AddNewItem(InputItem,1);
+
+	NetWorkManager->Game_Save();
 	
 	return FItemAddResultData::AddAll(1,FText::Format(
 	FText::FromString("Successfully added {1} to the inventory"),
@@ -133,12 +133,16 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd)
 
 	InventoryContents.Add(NewItem);
 	OnInventoryUpdated.Broadcast();
+
+	NetWorkManager->Game_Save();
 }
 
 void UInventoryComponent::RemoveItemFromList(UItemBase* ItemToRemove)
 {
 	InventoryContents.RemoveSingle(ItemToRemove);
 	OnInventoryUpdated.Broadcast();
+
+	NetWorkManager->Game_Save();
 }
 
 int32 UInventoryComponent::RemoveAmountOfItem(UItemBase* RemoveItem, const int32 AmountToRemove) const
@@ -147,6 +151,8 @@ int32 UInventoryComponent::RemoveAmountOfItem(UItemBase* RemoveItem, const int32
 	RemoveItem->SetQuantity(RemoveItem->BaseItemQuantity-ActualAmountToRemove);
 
 	OnInventoryUpdated.Broadcast();
+
+	NetWorkManager->Game_Save();
 	return ActualAmountToRemove;
 }
 
@@ -180,7 +186,7 @@ int32 UInventoryComponent::CalculateNumberForFullStack(const UItemBase* Stackabl
 FItemAddResultData UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 {
 	if (!GetOwner()) return FItemAddResultData::AddNone(FText::FromString("오류발생"));
-
+	
 	const int32 InitialRequestedAddAmount = InputItem->BaseItemQuantity;
 
 	if (!InputItem->BaseItemNumericData.bIsStackable)
@@ -191,8 +197,7 @@ FItemAddResultData UInventoryComponent::HandleAddItem(UItemBase* InputItem)
 	if (InputItem->BaseItemType == EItemType::Money)
 	{
 		AddMoney(InitialRequestedAddAmount);
-		
-		
+
 		return FItemAddResultData::AddAll(InitialRequestedAddAmount,
 			FText::Format(FText::FromString("{0}원을 획득하였습니다"),InitialRequestedAddAmount));
 	}

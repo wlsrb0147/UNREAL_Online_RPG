@@ -991,7 +991,11 @@ void UNetwork_Manager_R::SetSpawnData(FVector _Location, FRotator _Rotation, FSt
 
 		////UE_LOG(LogTemp, Log, TEXT("Flag44"));
 		// Set any other necessary headers here, like Authorization if needed
-		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::SetSpawnData_Callback);
+		if(bIsLogout)
+			Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::SetSpawnData_Callback);
+		else {
+			Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::SetSpawnData_NO_Callback);
+		}
 		////UE_LOG(LogTemp, Log, TEXT("Flag55"));
 		if (!Request->ProcessRequest())
 		{
@@ -1022,7 +1026,7 @@ void UNetwork_Manager_R::Game_Save()
 
 void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	////UE_LOG(LogTemp, Log, TEXT("setspawn callback ..."));
+	UE_LOG(LogTemp, Log, TEXT("setspawn callback ..."));
 	if (bWasSuccessful && Response.IsValid())
 	{
 		if (EHttpResponseCodes::IsOk(Response->GetResponseCode()))
@@ -1061,7 +1065,7 @@ void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpRes
 								
 								//이미 있는것이니 UPDATE
 								////UE_LOG(LogTemp, Log, TEXT("flag1 ..."));
-								UpdateSpawnData();
+								UpdateSpawnData(true);
 
 								return;
 							}
@@ -1069,7 +1073,7 @@ void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpRes
 						{
 							////UE_LOG(LogTemp, Error, TEXT("이럼 없는 거임"));
 							//없으니 INSERT
-							InsertSpawnData();
+							InsertSpawnData(true);
 						}
 						
 					}
@@ -1103,7 +1107,90 @@ void UNetwork_Manager_R::SetSpawnData_Callback(FHttpRequestPtr Request, FHttpRes
 
 }
 
-void UNetwork_Manager_R::UpdateSpawnData()
+void UNetwork_Manager_R::SetSpawnData_NO_Callback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	UE_LOG(LogTemp, Log, TEXT("setspawn callback ..."));
+	if (bWasSuccessful && Response.IsValid())
+	{
+		if (EHttpResponseCodes::IsOk(Response->GetResponseCode()))
+		{
+			// JSON 응답 파싱을 시도합니다.
+
+			// JSON 응답을 배열로 파싱 시도합니다.
+			TSharedPtr<FJsonValue> JsonValue;
+			TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+			////UE_LOG(LogTemp, Error, TEXT("SetSpawnData_Callback response...  %s"), *Response->GetContentAsString());
+			if (FJsonSerializer::Deserialize(Reader, JsonValue) && JsonValue.IsValid() && JsonValue->Type == EJson::Array)
+			{
+				TArray<TSharedPtr<FJsonValue>> JsonArray = JsonValue->AsArray();
+				// 배열 내의 객체를 처리합니다.
+				for (auto& Item : JsonArray)
+				{
+					TSharedPtr<FJsonObject> JsonObject = Item->AsObject();
+
+					if (JsonObject.IsValid())
+					{
+						if (JsonObject->HasField(TEXT("document")))
+						{
+							// "document" 객체에 접근합니다.
+							TSharedPtr<FJsonObject> DocumentObject = JsonObject->GetObjectField(TEXT("document"));
+							if (DocumentObject.IsValid())
+							{
+								FString DocumentName = DocumentObject->GetStringField("name");
+
+								// 문서 ID를 추출합니다. 일반적으로 마지막 '/' 이후의 문자열이 ID입니다.
+								DocumentId = DocumentName;
+								int32 LastSlashIndex;
+								if (DocumentName.FindLastChar('/', LastSlashIndex))
+								{
+									DocumentId = DocumentName.Mid(LastSlashIndex + 1);
+								}
+
+								//이미 있는것이니 UPDATE
+								////UE_LOG(LogTemp, Log, TEXT("flag1 ..."));
+								UpdateSpawnData(false);
+
+								return;
+							}
+						}
+						else
+						{
+							////UE_LOG(LogTemp, Error, TEXT("이럼 없는 거임"));
+							//없으니 INSERT
+							InsertSpawnData(false);
+						}
+
+					}
+				}
+			}
+			else
+			{
+				////UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON response."));
+			}
+			//TSharedPtr<FJsonObject> JsonObject;
+			//TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+
+			////UE_LOG(LogTemp, Log, TEXT("HTTP Request was successful. Response: %s"), *Response->GetContentAsString());
+			// Parse the JSON response if needed
+			// ... rest of your code for JSON parsing
+			// Assuming the query results are in an array named "results"
+			 //TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+
+
+		}
+		else
+		{
+			////UE_LOG(LogTemp, Warning, TEXT("HTTP Request returned status code: %d"), Response->GetResponseCode());
+		}
+	}
+	else
+	{
+		////UE_LOG(LogTemp, Error, TEXT("HTTP Request was not successful."));
+	}
+
+}
+
+void UNetwork_Manager_R::UpdateSpawnData(bool bIsLogout)
 {
 	//UE_LOG(LogTemp, Log, TEXT("UpdateSpawnData ..."));
 	FHttpModule* Http = &FHttpModule::Get();
@@ -1181,7 +1268,12 @@ void UNetwork_Manager_R::UpdateSpawnData()
 		);
 //
 		Request->SetContentAsString(FieldsJson);
-		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::Callback_ForceExit);
+		if (bIsLogout) {
+			Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::Callback_ForceExit);
+		}
+		else {
+			Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::Callback_NO_ForceExit);
+		}
 		if (!Request->ProcessRequest())
 		{
 			////UE_LOG(LogTemp, Log, TEXT("Failed to process HTTP request for updating spawn data."));
@@ -1193,7 +1285,7 @@ void UNetwork_Manager_R::UpdateSpawnData()
 	}
 }
 
-void UNetwork_Manager_R::InsertSpawnData()
+void UNetwork_Manager_R::InsertSpawnData(bool bIsLogout)
 {
 	////UE_LOG(LogTemp, Log, TEXT("InsertSpawnData..."));
 	FHttpModule* Http = &FHttpModule::Get();
@@ -1267,7 +1359,12 @@ void UNetwork_Manager_R::InsertSpawnData()
 			);
 
 		Request->SetContentAsString(InsertJson);
-		Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::Callback_ForceExit);
+		if (bIsLogout) {
+			Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::Callback_ForceExit);
+		}
+		else {
+			Request->OnProcessRequestComplete().BindUObject(this, &UNetwork_Manager_R::Callback_NO_ForceExit);
+		}
 		if (!Request->ProcessRequest())
 		{
 			// 오류 처리
@@ -1297,9 +1394,18 @@ void UNetwork_Manager_R::Callback_ForceExit(FHttpRequestPtr Request, FHttpRespon
 	}
 }
 
+void UNetwork_Manager_R::Callback_NO_ForceExit(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	UE_LOG(LogTemp, Log, TEXT("저장 완료"));
+}
+
 
 void UNetwork_Manager_R::OnSequenceFinished()
 {
+	if (GetWorld() && 1==2) {
+		FTimerHandle SaveTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(SaveTimerHandle, this, &UNetwork_Manager_R::Game_Save, 5.0f, true);
+	}
 	//UE_LOG(LogTemp, Error, TEXT("시퀀스 콜백"));
 
 	LoadStartAsset();

@@ -139,9 +139,11 @@ public:
 	void SetSpawnData(FVector _Location, FRotator _Rotation, FString _Login_ID, bool bIsLogout = true);
 	void Game_Save();
 	void SetSpawnData_Callback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-	void UpdateSpawnData();
-	void InsertSpawnData();
+	void SetSpawnData_NO_Callback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	void UpdateSpawnData(bool bIsLogout = true);
+	void InsertSpawnData(bool bIsLogout = true);
 	void Callback_ForceExit(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	void Callback_NO_ForceExit(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	FString DocumentId;
 
 	class ULevelSequence* Level_Sequence;
@@ -152,6 +154,7 @@ public:
 	//시퀀스 콜백 함수
 	UFUNCTION()
 	void OnSequenceFinished();
+	
 
 	//스폰 캐릭터 클래스
 	UPROPERTY(EditDefaultsOnly)
