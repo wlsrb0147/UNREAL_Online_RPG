@@ -716,6 +716,11 @@ void APlayerCharacter::RPC_Drop_Item_Implementation(int key, const int32 Removed
 	ItemManagerInstance->SpawnItem(this, ItemToDrop, SpawnTransform, RemovedQuantity);
 }
 
+void APlayerCharacter::RPC_Set_Current_Health_Implementation(float _Val)
+{
+	CurrentHealth = _Val;
+}
+
 // 리플리케이트된 프로퍼티
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifetimeProps) const
 {

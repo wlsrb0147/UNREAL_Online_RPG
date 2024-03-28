@@ -61,7 +61,8 @@ void UItemBase::Use(APlayerCharacter* UsingCharacter)
 {
 	if (this->BaseItemType == EItemType::Consume)
 	{
-		UsingCharacter->SetCurrentHealth(UsingCharacter->GetCurrentHealth()+this->BaseItemStatistics.HealAmount); 
+		UsingCharacter->RPC_Set_Current_Health(UsingCharacter->GetCurrentHealth() + this->BaseItemStatistics.HealAmount);
+		//UsingCharacter->SetCurrentHealth(UsingCharacter->GetCurrentHealth()+this->BaseItemStatistics.HealAmount); 
 		OwningInventory->RemoveAmountOfItem(this,1);
 	}
 	else

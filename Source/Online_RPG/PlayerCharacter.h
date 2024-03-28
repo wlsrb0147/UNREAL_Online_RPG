@@ -112,6 +112,9 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void RPC_Drop_Item(int key, const int32 QuantityToDrop);
+
+	UFUNCTION(Server, Reliable)
+	void RPC_Set_Current_Health(float _Val);
 	// UPROPERTY(ReplicatedUsing=OnRep_Possessed)
 	// bool bIsPossessed = false;
 	// UFUNCTION()
