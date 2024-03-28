@@ -39,7 +39,7 @@ public:
 
 	bool ActiveInitialize = false;
 	void InitializePanel(APlayerCharacter* Player);
-	
+	APlayerCharacter* GetCharacter() const {return PlayerCharacter;}
 	void RefreshInventory();
 protected:
 	void WriteInfoText() const;

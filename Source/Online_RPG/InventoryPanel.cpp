@@ -12,7 +12,7 @@
 
 void UInventoryPanel::InitializePanel(APlayerCharacter* Player)
 {
-	if (!PlayerCharacter)
+	if (UGameplayStatics::GetPlayerController(this,0)->GetPawn() == Player)
 	{
 		PlayerCharacter = Player;
 	}
@@ -20,10 +20,8 @@ void UInventoryPanel::InitializePanel(APlayerCharacter* Player)
 	{
 		PlayerCharacter = Player;
 	}
-	else if (UGameplayStatics::GetPlayerController(this,0)->GetPawn() == Player)
-	{
-		PlayerCharacter = Player;
-	}
+	
+	
 	if (!PlayerCharacter) return;
 
 	Inventory = PlayerCharacter->GetInventory();
