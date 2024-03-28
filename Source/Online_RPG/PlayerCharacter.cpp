@@ -140,6 +140,8 @@ void APlayerCharacter::Interact()
 {
 
 	if (!IsValid(InteractionTarget.GetObject())) return;
+
+	UE_LOG(LogTemp,Warning,TEXT("인트8 %d"),IsQuestAccept)
 	
 	if (InteractionTarget->InteractionData.InteractionType == EInteractionType::NPC)
 	{
@@ -334,16 +336,17 @@ void APlayerCharacter::BeginPlay()
 	
 	HUD = Cast<AInventoryHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	HUD->InventoryPanel->InitializePanel(this);
-	HUD->NPCConversation->SetCharacter(this);
+	if (HUD->InventoryPanel->GetCharacter())
+	{
+		HUD->NPCConversation->SetCharacter(HUD->InventoryPanel->GetCharacter());
+	}
 	
 	UNetwork_Manager_R* Network_Manager =  Cast<UNetwork_Manager_R>(GetGameInstance());
 	//const ItemManager& ItemManagerInstance = ItemManager::Get();
 
-	ItemManagerInstance = Network_Manager->GetItemManager();
-	if (IsLocallyControlled()) {
-		IsQuestAccept = Network_Manager->IsQuestAccept;
-	}
+	IsQuestAccept = Network_Manager->IsQuestAccept;
 	
+	ItemManagerInstance = Network_Manager->GetItemManager();
 	
 	if (!ItemManagerInstance->ItemDataTable)
 	{
