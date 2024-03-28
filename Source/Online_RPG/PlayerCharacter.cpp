@@ -816,10 +816,10 @@ void APlayerCharacter::StartFire_Implementation()
 	if (bIsDead || bIsAttacking || GetCharacterMovement()->IsFalling()) return;
 	//UE_LOG(LogTemp, Log, TEXT("START FIRE"));
 
-	UseControllerRotationYaw_Toggle_Multi(true);
-
 	//////UE_LOG(LogTemp, Display, TEXT("??????????????"));
 	bIsShoot = true;
+	OnIsShootUpdate();
+
 	bIsAttacking = true;
 	//bIsShootAnim = true;
 	//UWorld* World = GetWorld();
@@ -830,14 +830,12 @@ void APlayerCharacter::StartFire_Implementation()
 
 void APlayerCharacter::StopFire_Implementation()
 {
-
-
 	if (bIsDead || !bIsShoot) return;
 
-	UseControllerRotationYaw_Toggle_Multi(false);
 	////UE_LOG(LogTemp, Display, TEXT("FALSE"));
 
 	bIsShoot = false;
+	OnIsShootUpdate();
 	//UWorld* World = GetWorld();
 	//World->GetTimerManager().SetTimer(FiringTimer, this, &APlayerCharacter::AttackCoolTime, FireRate, false);
 	bIsAttacking = false;
@@ -994,7 +992,12 @@ void APlayerCharacter::OnIsDeadUpdate()
 	{
 		if (bIsDead)
 		{
-
+			bIsShoot = false;
+			OnIsShootUpdate();
+			bIsShootAnim = false;
+			bIsAttacking = false;
+			bIsUpperSlash = false;
+			bIsUpperSlashCooldown = false;
 		}
 	}
 
@@ -1054,8 +1057,11 @@ void APlayerCharacter::OnIsShootUpdate()
 	{
 		if (bIsShoot)
 		{
-			//...
-
+			UseControllerRotationYaw_Toggle_Multi(true);
+		}
+		else 
+		{
+			UseControllerRotationYaw_Toggle_Multi(false);
 		}
 	}
 
@@ -1063,6 +1069,7 @@ void APlayerCharacter::OnIsShootUpdate()
 	/*
 		여기에 대미지 또는 사망의 결과로 발생하는 특별 함수 기능 배치
 	*/
+
 }
 
 

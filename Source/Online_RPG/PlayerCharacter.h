@@ -293,8 +293,8 @@ protected:
 	bool bIsAttack;
 
 
-	UPROPERTY(VisibleAnywhere, Category = "State")
-	bool bIsFalling;
+	/*UPROPERTY(VisibleAnywhere, Category = "State")
+	bool bIsFalling;*/
 
 	//???? ???? ????
 	UPROPERTY(ReplicatedUsing = OnRep_IsDead)
