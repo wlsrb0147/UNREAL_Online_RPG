@@ -86,6 +86,11 @@ void AEnemyAIController::StopBehaviorTree()
 	}
 }
 
+void AEnemyAIController::SetChangeCool()
+{
+	bIsChangeCool = false;
+}
+
 void AEnemyAIController::StartBehaviorTree()
 {
 	UBehaviorTreeComponent* BehaviorTreeComponent = Cast<UBehaviorTreeComponent>(this->GetBrainComponent());
@@ -97,7 +102,13 @@ void AEnemyAIController::StartBehaviorTree()
 
 void AEnemyAIController::SetPlayer(APawn* _pawn)
 {
-	AttackPawn = _pawn;
+	if (!bIsChangeCool) {
+		AttackPawn = _pawn;
+		bIsChangeCool = true;
+		FTimerHandle CoolTimerHandle;
+		float RandomCoolDown = FMath::RandRange(MinCool, MaxCool);
+		GetWorld()->GetTimerManager().SetTimer(CoolTimerHandle, this, &AEnemyAIController::SetChangeCool, RandomCoolDown, false);
+	}
 }
 void AEnemyAIController::PlayerRangeCheck()
 {

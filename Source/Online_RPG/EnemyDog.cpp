@@ -428,15 +428,19 @@ void AEnemyDog::EnemyAttack()
 					
 					if (__Tmp->GetCurrentHealth() <= 0.1f) {
 						AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
-						if (OwnerController)
+						if (OwnerController) {
+							OwnerController->bIsChangeCool = false;
 							OwnerController->SetPlayer(nullptr);
+						}
 					}
 				}
 				else if (Cast<AEnemyDog>(HitActor)) {
 					if (Cast<AEnemyDog>(HitActor)->Health <= 0.1f) {
 						AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
-						if (OwnerController)
+						if (OwnerController) {
+							OwnerController->bIsChangeCool = false;
 							OwnerController->SetPlayer(nullptr);
+						}
 					}
 				}
 			}

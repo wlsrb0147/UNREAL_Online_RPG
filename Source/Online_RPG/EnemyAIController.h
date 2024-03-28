@@ -26,6 +26,11 @@ public:
 	void PlayerRangeCheck();
 	void StopBehaviorTree();
 
+	bool bIsChangeCool = false;
+	void SetChangeCool();
+	float MinCool = 1.0f;
+	float MaxCool = 3.0f;
+
 private:
 	UPROPERTY(EditAnywhere)
 	float ChaseRange = 1000;
