@@ -26,7 +26,7 @@ void UNPCConversation::NativeConstruct()
 
 FReply UNPCConversation::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
 		UpdateWidget();
 	}

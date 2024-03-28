@@ -73,9 +73,9 @@ void APlayerCharacter::CheckInteraction()
 		return;
 	}
 
-	
 
-		if (!HitResult.GetActor()->GetClass()->ImplementsInterface(UItemInteractionInterface::StaticClass())) return;
+
+	if (!HitResult.GetActor()->GetClass()->ImplementsInterface(UItemInteractionInterface::StaticClass())) return;
 
 	if (HitResult.GetActor() != InteractionData.CurrentInteracting)
 	{
@@ -118,7 +118,7 @@ void APlayerCharacter::FoundInteract(AActor* NewInteract)
 
 	InteractionData.CurrentInteracting = NewInteract;
 	InteractionTarget = NewInteract;
-	
+
 	HUD->UpdateInteractionWidget(&InteractionTarget->InteractionData);
 	InteractionTarget->BeginFocus();
 }
@@ -126,7 +126,7 @@ void APlayerCharacter::FoundInteract(AActor* NewInteract)
 void APlayerCharacter::BeginInteract()
 {
 	//UE_LOG(LogTemp, Display, TEXT(" blue111 %d"), PlayerInventory->GetInventoryCapacity())
-		CheckInteraction();
+	CheckInteraction();
 
 	if (!InteractionData.CurrentInteracting) return;
 
@@ -141,18 +141,18 @@ void APlayerCharacter::Interact()
 
 	if (!IsValid(InteractionTarget.GetObject())) return;
 
-	UE_LOG(LogTemp,Warning,TEXT("인트8 %d"),IsQuestAccept)
-	
-	if (InteractionTarget->InteractionData.InteractionType == EInteractionType::NPC)
-	{
-		HUD->CloseInteractionWidget();
-		HUD->OpenConversationWidget(InteractionTarget->GetFBum());
-		return;
-	}
+	UE_LOG(LogTemp, Warning, TEXT("인트8 %d"), IsQuestAccept)
+
+		if (InteractionTarget->InteractionData.InteractionType == EInteractionType::NPC)
+		{
+			HUD->CloseInteractionWidget();
+			HUD->OpenConversationWidget(InteractionTarget->GetFBum());
+			return;
+		}
 
 	APickUpItem* Tem = Cast<APickUpItem>(InteractionTarget.GetObject());
 	Tem->SetOwner(this);
-	
+
 	RPC_Item_Owner(Tem, this);
 
 	FoundNoInteract();
@@ -190,13 +190,13 @@ void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDro
 	const FVector SpawnLocation{ GetActorLocation() + GetActorForwardVector() * 50.0f };
 	const FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
 	const int32 RemovedQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop, QuantityToDrop);
-	
+
 	int32 Key = FCString::Atoi(*ItemToDrop->BaseItemID.ToString());
 	RPC_Drop_Item(Key, RemovedQuantity);
-//
-////	ItemManager& ItemManagerInstance = ItemManager::Get();
-//	
-//	ItemManagerInstance->SpawnItem(this,ItemToDrop,SpawnTransform,RemovedQuantity);
+	//
+	////	ItemManager& ItemManagerInstance = ItemManager::Get();
+	//	
+	//	ItemManagerInstance->SpawnItem(this,ItemToDrop,SpawnTransform,RemovedQuantity);
 }
 
 
@@ -241,7 +241,7 @@ APlayerCharacter::APlayerCharacter() : HUD(nullptr)
 	bIsUpperSlash = false;
 
 	//bReplicates = true;
-	
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -298,7 +298,7 @@ void APlayerCharacter::OnRep_Owner()
 	OwnerActor = GetOwner();
 	if (OwnerActor)
 	{
-		
+
 		////UE_LOG(LogTemp, Log, TEXT("OnRep_Owner!!!!!!!!!!!!!!!!:  %s"), *GetOwner()->GetActorNameOrLabel());
 	}
 	else
@@ -333,21 +333,21 @@ void APlayerCharacter::RPC_Item_Owner_Implementation(APickUpItem* InteractItem, 
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	HUD = Cast<AInventoryHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	HUD->InventoryPanel->InitializePanel(this);
 	if (HUD->InventoryPanel->GetCharacter())
 	{
 		HUD->NPCConversation->SetCharacter(HUD->InventoryPanel->GetCharacter());
 	}
-	
-	UNetwork_Manager_R* Network_Manager =  Cast<UNetwork_Manager_R>(GetGameInstance());
+
+	UNetwork_Manager_R* Network_Manager = Cast<UNetwork_Manager_R>(GetGameInstance());
 	//const ItemManager& ItemManagerInstance = ItemManager::Get();
 
 	IsQuestAccept = Network_Manager->IsQuestAccept;
-	
+
 	ItemManagerInstance = Network_Manager->GetItemManager();
-	
+
 	if (!ItemManagerInstance->ItemDataTable)
 	{
 		//UE_LOG(LogTemp,Warning,TEXT("DB 널"))
@@ -360,14 +360,14 @@ void APlayerCharacter::BeginPlay()
 			// 각 항목을 mapValue 객체로 추출합니다.
 			const TSharedPtr<FJsonObject> MapValueObject = Value->AsObject()->GetObjectField(TEXT("mapValue"));
 			const TSharedPtr<FJsonObject> TheObject = MapValueObject->GetObjectField(TEXT("fields"));
-    
+
 			// 이제 key와 quantity를 fields 객체에서 추출할 수 있습니다.
 			const FString ItemKey = TheObject->GetObjectField(TEXT("key"))->GetStringField(TEXT("stringValue"));
 			const int32 ItemQuantity = TheObject->GetObjectField(TEXT("quantity"))->GetIntegerField(TEXT("integerValue"));
-			
-			UItemBase* MakeItem = ItemManagerInstance->MakeItemBaseByKey(this,ItemKey,ItemQuantity);
+
+			UItemBase* MakeItem = ItemManagerInstance->MakeItemBaseByKey(this, ItemKey, ItemQuantity);
 			PlayerInventory->HandleAddItem(MakeItem);
-		
+
 		}
 
 		PlayerInventory->AddMoney(Network_Manager->MoneyFromServer);
@@ -434,7 +434,7 @@ void APlayerCharacter::BeginPlay()
 		MyGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket_l"));
 		MyGun->SetOwner(this);
 	}
-	
+
 	//Dead 애니메이션 테스트 코드
 	/*FTimerHandle TestTimerHandle;
 	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &APlayerCharacter::SetIsDead, 0.1f);*/
@@ -450,7 +450,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 
 	CheckInteraction();
 
@@ -579,7 +579,7 @@ void APlayerCharacter::Move(const FInputActionInstance& Instance)
 {
 	//////UE_LOG(LogTemp,Log,TEXT("Move ..."));
 	//공격중에는 움직임 X
-	if (bIsAttacking) return;
+	if (bIsDead || bIsAttacking) return;
 
 	FVector2D MovementVector = Instance.GetValue().Get<FVector2D>();
 
@@ -600,7 +600,7 @@ void APlayerCharacter::Move(const FInputActionInstance& Instance)
 
 void APlayerCharacter::MoveForward(float AxisValue)
 {
-	if (bIsAttacking) return;
+	if (bIsDead || bIsAttacking) return;
 
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -613,7 +613,7 @@ void APlayerCharacter::MoveForward(float AxisValue)
 
 void APlayerCharacter::MoveRight(float AxisValue)
 {
-	if (bIsAttacking) return;
+	if (bIsDead || bIsAttacking) return;
 
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -650,7 +650,7 @@ void APlayerCharacter::Look(const FInputActionInstance& Instance)
 
 void APlayerCharacter::UpperSlash_Implementation()
 {
-	if (bIsAttacking || bIsUpperSlashCooldown || GetCharacterMovement()->IsFalling()) return;
+	if (bIsDead || bIsAttacking || bIsUpperSlashCooldown || GetCharacterMovement()->IsFalling()) return;
 
 	bIsUpperSlashCooldown = true;
 	bIsUpperSlash = true;
@@ -813,8 +813,8 @@ void APlayerCharacter::OnHealthUpdate()
 void APlayerCharacter::StartFire_Implementation()
 {
 
-	if (bIsAttacking || GetCharacterMovement()->IsFalling()) return;
-	////UE_LOG(LogTemp, Log, TEXT("START RFIRE"));
+	if (bIsDead || bIsAttacking || GetCharacterMovement()->IsFalling()) return;
+	//UE_LOG(LogTemp, Log, TEXT("START FIRE"));
 
 	UseControllerRotationYaw_Toggle_Multi(true);
 
@@ -832,7 +832,7 @@ void APlayerCharacter::StopFire_Implementation()
 {
 
 
-	if (!bIsShoot) return;
+	if (bIsDead || !bIsShoot) return;
 
 	UseControllerRotationYaw_Toggle_Multi(false);
 	////UE_LOG(LogTemp, Display, TEXT("FALSE"));
@@ -994,7 +994,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 	{
 		if (bIsDead)
 		{
-			
+
 		}
 	}
 
@@ -1022,7 +1022,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 		//GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		//UE_LOG(LogTemp, Display, TEXT("플레이어 부활"));
 	}
-	
+
 }
 
 void APlayerCharacter::Respawn_Implementation()
