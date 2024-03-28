@@ -341,9 +341,10 @@ void APlayerCharacter::BeginPlay()
 		HUD->NPCConversation->SetCharacter(HUD->InventoryPanel->GetCharacter());
 	}
 
-	UNetwork_Manager_R* Network_Manager = Cast<UNetwork_Manager_R>(GetGameInstance());
+	Network_Manager = Cast<UNetwork_Manager_R>(GetGameInstance());
 	//const ItemManager& ItemManagerInstance = ItemManager::Get();
 
+	Network_Manager->SetDeadOpened(bIsDead);
 	IsQuestAccept = Network_Manager->IsQuestAccept;
 
 	ItemManagerInstance = Network_Manager->GetItemManager();
@@ -958,6 +959,7 @@ void APlayerCharacter::SetIsDead(bool IsDead)
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		bIsDead = IsDead;
+		Network_Manager->SetDeadOpened(bIsDead);
 		OnIsDeadUpdate();
 	}
 }
@@ -974,7 +976,7 @@ void APlayerCharacter::OnIsDeadUpdate()
 	//클라이언트 전용 함수 기능
 	if (IsLocallyControlled())
 	{
-		UNetwork_Manager_R* Network_Manager = Cast<UNetwork_Manager_R>(GetGameInstance());
+	//	UNetwork_Manager_R* Network_Manager = Cast<UNetwork_Manager_R>(GetGameInstance());
 		if (bIsDead)
 		{
 			Network_Manager->Respawn_Widget->SetVisibility(ESlateVisibility::Visible);
@@ -983,12 +985,16 @@ void APlayerCharacter::OnIsDeadUpdate()
 			GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
 			GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 		}
-		else {
+		else
+		{
 			Network_Manager->Respawn_Widget->SetVisibility(ESlateVisibility::Collapsed);
-			FInputModeGameOnly InputMode;
-			//FInputModeDataBase
-			GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
-			GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(false);
+
+			if (!Network_Manager->IsSomeWidgetIsOpened())
+			{
+				FInputModeGameOnly InputMode;
+				GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
+				GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(false);
+			}
 		}
 	}
 

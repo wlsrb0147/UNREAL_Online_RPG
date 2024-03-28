@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "InventoryHUD.generated.h"
 
+class UNetwork_Manager_R;
 class APlayerCharacter;
 struct FBum;
 class UNPCConversation;
@@ -56,6 +57,9 @@ public:
 	
 	bool bIsConversationOpen = false;
 	bool bIsInventoryOpen = false;
+
+	UPROPERTY()
+	UNetwork_Manager_R* NetworkManager;
 
 	void ToggleInventoryWidget();
 	void OpenInventoryWidget();

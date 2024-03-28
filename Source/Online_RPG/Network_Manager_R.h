@@ -58,19 +58,38 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ASound_Manager_R> Sound_Class;
+
+	UPROPERTY()
 	ASound_Manager_R* Sound_Instance ;
 	ASound_Manager_R* Get_Sound_Instance();
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AItemManager> ItemManagerInstance_Class;
+
+	UPROPERTY()
 	AItemManager* ItemManagerInstance;
 	AItemManager* GetItemManager();
 
 	//에셋 매니저 관련
 	UFUNCTION(BlueprintCallable)
 	void LoadStartAsset();
+
+	UFUNCTION(BlueprintCallable)
+	bool IsSomeWidgetIsOpened();
 	
+	bool BIsConversationOpened = false;
+	bool BIsInventoryOpened = false;
+	bool BIsDeadOpened = false;
 	
+	bool BIsCloseOpened = false;
+
+	void SetConversationOpened(const bool Value){BIsConversationOpened = Value;}
+	void SetInventoryOpened(const bool Value){BIsInventoryOpened =Value; }
+	void SetDeadOpened(const bool Value){BIsDeadOpened =Value; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetCloseOpened(const bool Value){BIsCloseOpened =Value; }
+
 	
 	UFUNCTION(BlueprintCallable)
 	void Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator, APawn* MyPawn = nullptr);

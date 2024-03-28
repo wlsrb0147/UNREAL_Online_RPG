@@ -7,18 +7,18 @@
 #include "ItemInteractWidget.h"
 #include "Network_Manager_R.h"
 #include "NPCConversation.h"
-#include "PlayerCharacter.h"
 
 void AInventoryHUD::OpenInventoryWidget()
 {
 	bIsInventoryOpen = !bIsInventoryOpen;
+	NetworkManager->SetInventoryOpened(bIsInventoryOpen);
 	InventoryMainMenuWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void AInventoryHUD::CloseInventoryWidget()
 {
-	bIsInventoryOpen = !bIsInventoryOpen
-	;
+	bIsInventoryOpen = !bIsInventoryOpen;
+	NetworkManager->SetInventoryOpened(bIsInventoryOpen);
 	InventoryMainMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
@@ -28,14 +28,13 @@ void AInventoryHUD::ToggleInventoryWidget()
 	if (bIsInventoryOpen) 
 	{
 		CloseInventoryWidget();
-
-		if (!bIsConversationOpen)
+		
+		if (!NetworkManager->IsSomeWidgetIsOpened())
 		{
 			const FInputModeGameOnly InputMode;
 			GetOwningPlayerController()->SetInputMode(InputMode);
 			GetOwningPlayerController()->SetShowMouseCursor(false);
 		}
-		
 	}
 	else
 	{
@@ -78,21 +77,24 @@ void AInventoryHUD::OpenConversationWidget(const FBum& Initial)
 	GetOwningPlayerController()->SetInputMode(InputMode);
 	GetOwningPlayerController()->SetShowMouseCursor(true);
 	bIsConversationOpen = true;
+	NetworkManager->SetConversationOpened(bIsConversationOpen);
 	SkillWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void AInventoryHUD::CloseConversationWidget()
 {
 	NPCConversation->SetVisibility(ESlateVisibility::Collapsed);
-	if (!bIsInventoryOpen)
+	SkillWidget->SetVisibility(ESlateVisibility::Visible);
+	
+	bIsConversationOpen = false;
+	NetworkManager->SetConversationOpened(bIsConversationOpen);
+	
+	if (!NetworkManager->IsSomeWidgetIsOpened())
 	{
 		const FInputModeGameOnly InputMode;
 		GetOwningPlayerController()->SetInputMode(InputMode);
 		GetOwningPlayerController()->SetShowMouseCursor(false);
 	}
-
-	bIsConversationOpen = false;
-	SkillWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void AInventoryHUD::BeginPlay()
@@ -121,4 +123,9 @@ void AInventoryHUD::BeginPlay()
 		NPCConversation->AddToViewport(10);
 		NPCConversation->SetVisibility(ESlateVisibility::Collapsed);
 	}
+
+	NetworkManager = Cast<UNetwork_Manager_R>(GetGameInstance());
+	NetworkManager->SetConversationOpened(bIsConversationOpen);
+	NetworkManager->SetInventoryOpened(bIsInventoryOpen);
+	
 }

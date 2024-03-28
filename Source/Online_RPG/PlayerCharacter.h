@@ -9,6 +9,7 @@
 #include "PlayerCharacter.generated.h"
 
 
+class UNetwork_Manager_R;
 class AItemManager;
 struct FItemData;
 class UItemBase;
@@ -87,6 +88,9 @@ public:
 	void UpdateInteractionWidget() const;
 	void DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop);
 	void CheckInteraction();
+
+	UPROPERTY()
+	UNetwork_Manager_R* Network_Manager;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// �κ��丮 ���� �κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 �����κ��丮 ���� ////

@@ -406,6 +406,11 @@ Streamable.RequestAsyncLoad(AssetPaths,FStreamableDelegate::CreateLambda(OnLoadC
 	// StreamableManager.RequestAsyncLoad(AssetRef, Callback);
 }
 
+bool UNetwork_Manager_R::IsSomeWidgetIsOpened()
+{
+	return BIsConversationOpened||BIsInventoryOpened||BIsDeadOpened||BIsCloseOpened;
+}
+
 void UNetwork_Manager_R::Sound_Play(SOUND_TYPE Sound_Type, int32 Audio_idx, FVector Location, FRotator Rotator, APawn* MyPawn)
 {
 	if (!Sound_Instance) Get_Sound_Instance();	
