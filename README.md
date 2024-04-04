@@ -21,6 +21,7 @@
 ## 2. 기술서 & 시연영상
 
 시연영상 : https://youtu.be/KNrG7cmZnLg
+설명 PDF : https://drive.google.com/file/d/1VSAAhnuiWu1VIX4vAJXQsxYeGPjNsoON/view?usp=sharing
 
 ## 3. 기능 시연
 
