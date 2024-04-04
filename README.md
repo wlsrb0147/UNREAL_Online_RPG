@@ -23,6 +23,8 @@
 시연영상 : https://youtu.be/KNrG7cmZnLg 
 </br>
 설명 PDF : https://drive.google.com/file/d/1VSAAhnuiWu1VIX4vAJXQsxYeGPjNsoON/view?usp=sharing
+</br>
+(목차 포함 10p)
 
 ## 3. 기능 시연
 
