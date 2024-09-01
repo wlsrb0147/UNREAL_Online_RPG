@@ -57,15 +57,24 @@ UI 구조</br>
 ### 3-2 아이템 획득 및 파괴</br>
 ![3get](https://github.com/wlsrb0147/UNREAL_Online_RPG/assets/50743287/2cb75afc-3a13-4d20-accf-798e004723e6)
 
-아이템 감지 : Source/Online_RPG/PlayerCharacter -> Tick() -> CheckInteraction() </br>
-아이템 상호작용 시작 : Source/Online_RPG/PlayerCharacter -> Interact() (Bind Key F) </br>
-아이템 상호작용 : Source/Online_RPG/PickUpItem -> Interact() </br>
-아이템 획득 및 파괴 : Source/Online_RPG/PickUpItem -> PickUpItem() </br></br>
+아이템 감지 : Source/Online_RPG/PlayerCharacter => Tick() => CheckInteraction() </br>
+아이템 상호작용 시작 : Source/Online_RPG/PlayerCharacter => Interact() (Bind Key F) </br>
+아이템 상호작용 : Source/Online_RPG/PickUpItem => Interact() </br>
+아이템 획득 및 파괴1 : Source/Online_RPG/PickUpItem => PickUpItem()</br>
+아이템 획득 및 파괴2 : Source/Online_RPG/InventoryComponent => HandleAddItem()</br></br>
 
-### 3-3 아이템 수량변화 동기화</br>
+### 3-3 아이템 수량변화 온라인 동기화</br>
 ![4part](https://github.com/wlsrb0147/UNREAL_Online_RPG/assets/50743287/b47816b2-180e-44c4-b965-f34ccb6e6c79)
+
+아이템 수량 변경 : Source/Online_RPG/PickUpItem => PickUpItem() => RPC_Set_Quantity() </br>
 
 ### 3-4 로그인/로그아웃시 데이터의 저장과 불러오기</br>
 ![5logout](https://github.com/wlsrb0147/UNREAL_Online_RPG/assets/50743287/af4d7e10-e4e8-4cdc-a371-ae2b2fa2aea5)
 
+아이템 저장 : 아이템의 Key값과 Quantity값만 저장 하고, Key값으로 ItemBase를 탐색 후, Quantity의 개수를 인벤토리에 추가합니다.
+아이템 저장 기준 : 일정 시간 주기, 게임을 종료할 때, 퀘스트 진행도 또는 아이템 수량이 변경될 때마다 저장합니다. 
+
+아이템 신규 데이터 저장 : Source/Online_RPG/Network_Manager_R => InsertSpawnData()
+아이템 기존 데이터 업데이트 : Source/Online_RPG/Network_Manager_R => UpdateSpawnData()
+아이템 불러오기 : Source/Online_RPG/Network_Manager_R => 
 
