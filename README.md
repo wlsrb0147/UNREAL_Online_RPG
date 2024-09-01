@@ -47,9 +47,18 @@ UI 구조</br>
 
 ### 3-1 아이템 드랍 및 생성</br>
 ![2drop](https://github.com/wlsrb0147/UNREAL_Online_RPG/assets/50743287/1292436e-3145-4769-93d1-98b0d0d74f5d)
+</br>
+아이템 드래그 : Source/Online_RPG/ItemSlot</br>
+아이템 드래그 감지 : Source/Online_RPG/InventoryMainMenu</br>
+아이템 생성 : Source/Online_RPG/PlayerCharacter -> DropItem</br>
 
 ### 3-2 아이템 획득 및 파괴</br>
 ![3get](https://github.com/wlsrb0147/UNREAL_Online_RPG/assets/50743287/2cb75afc-3a13-4d20-accf-798e004723e6)
+
+아이템 감지 : Source/Online_RPG/PlayerCharacter -> Tick -> CheckInteraction </br>
+아이템 상호작용 시작 : Source/Online_RPG/PlayerCharacter -> Interact (Bind Key F) </br>
+아이템 상호작용 : Source/Online_RPG/PickUpItem -> Interact </br>
+아이템 획득 및 파괴 : Source/Online_RPG/PickUpItem -> PickUpItem </br></br>
 
 ### 3-3 아이템 수량변화 동기화</br>
 ![4part](https://github.com/wlsrb0147/UNREAL_Online_RPG/assets/50743287/b47816b2-180e-44c4-b965-f34ccb6e6c79)
