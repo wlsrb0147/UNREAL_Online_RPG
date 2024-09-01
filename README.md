@@ -73,8 +73,10 @@ UI 구조</br>
 
 아이템 저장 : 아이템의 Key값과 Quantity값만 저장 하고, Key값으로 ItemBase를 탐색 후, Quantity의 개수를 인벤토리에 추가합니다.</br>
 아이템 저장 기준 : 일정 시간 주기, 게임을 종료할 때, 퀘스트 진행도 또는 아이템 수량이 변경될 때마다 저장합니다. </br>
-</br></br>
-아이템 신규 데이터 저장 : Source/Online_RPG/Network_Manager_R => InsertSpawnData()</br>
-아이템 기존 데이터 업데이트 : Source/Online_RPG/Network_Manager_R => UpdateSpawnData()</br>
-아이템 불러오기 : Source/Online_RPG/Network_Manager_R => 
+</br>
+Firebase의 아이템 관련 데이터 불러오기 : Source/Online_RPG/Network_Manager_R => GetSpawnData_CallBack()</br>
+아이템 인벤토리에 추가 : Source/Online_RPG/PlayerCharacter =>BeginPlay()</br>
+
+아이템 정보 저장 : Source/Online_RPG/Network_Manager_R => UpdateSpawnData()</br>
+
 
