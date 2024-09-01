@@ -35,6 +35,8 @@ Client는 Discord의 송출화면을 사용하여 약간의 딜레이가 존재�
 
 위쪽화면이 Server 이며, 아래쪽화면이 Client 입니다. 
 
+메서드는 (~)로 표기합니다.
+
 아이템 기본 정보</br>
 아이템 데이터 구조체 : Source/Online_RPG/ItemStruct</br>
 아이템 구조 UObject : Source/Online_RPG/ItemBase</br>
@@ -50,15 +52,15 @@ UI 구조</br>
 </br>
 아이템 드래그 : Source/Online_RPG/ItemSlot</br>
 아이템 드래그 감지 : Source/Online_RPG/InventoryMainMenu</br>
-아이템 생성 : Source/Online_RPG/PlayerCharacter -> DropItem</br>
+아이템 생성 : Source/Online_RPG/PlayerCharacter -> DropItem(~)</br>
 
 ### 3-2 아이템 획득 및 파괴</br>
 ![3get](https://github.com/wlsrb0147/UNREAL_Online_RPG/assets/50743287/2cb75afc-3a13-4d20-accf-798e004723e6)
 
-아이템 감지 : Source/Online_RPG/PlayerCharacter -> Tick -> CheckInteraction </br>
-아이템 상호작용 시작 : Source/Online_RPG/PlayerCharacter -> Interact (Bind Key F) </br>
-아이템 상호작용 : Source/Online_RPG/PickUpItem -> Interact </br>
-아이템 획득 및 파괴 : Source/Online_RPG/PickUpItem -> PickUpItem </br></br>
+아이템 감지 : Source/Online_RPG/PlayerCharacter -> Tick(~) -> CheckInteraction(~) </br>
+아이템 상호작용 시작 : Source/Online_RPG/PlayerCharacter -> Interact(~) (Bind Key F) </br>
+아이템 상호작용 : Source/Online_RPG/PickUpItem -> Interact(~) </br>
+아이템 획득 및 파괴 : Source/Online_RPG/PickUpItem -> PickUpItem(~) </br></br>
 
 ### 3-3 아이템 수량변화 동기화</br>
 ![4part](https://github.com/wlsrb0147/UNREAL_Online_RPG/assets/50743287/b47816b2-180e-44c4-b965-f34ccb6e6c79)
