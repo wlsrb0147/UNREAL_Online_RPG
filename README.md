@@ -66,15 +66,15 @@ UI 구조</br>
 ### 3-3 아이템 수량변화 온라인 동기화</br>
 ![4part](https://github.com/wlsrb0147/UNREAL_Online_RPG/assets/50743287/b47816b2-180e-44c4-b965-f34ccb6e6c79)
 
-아이템 수량 변경 : Source/Online_RPG/PickUpItem => PickUpItem() => RPC_Set_Quantity() </br>
+아이템 수량 변경 및 동기화 : Source/Online_RPG/PickUpItem => PickUpItem() => RPC_Set_Quantity() </br>
 
 ### 3-4 로그인/로그아웃시 데이터의 저장과 불러오기</br>
 ![5logout](https://github.com/wlsrb0147/UNREAL_Online_RPG/assets/50743287/af4d7e10-e4e8-4cdc-a371-ae2b2fa2aea5)
 
-아이템 저장 : 아이템의 Key값과 Quantity값만 저장 하고, Key값으로 ItemBase를 탐색 후, Quantity의 개수를 인벤토리에 추가합니다.
-아이템 저장 기준 : 일정 시간 주기, 게임을 종료할 때, 퀘스트 진행도 또는 아이템 수량이 변경될 때마다 저장합니다. 
-
-아이템 신규 데이터 저장 : Source/Online_RPG/Network_Manager_R => InsertSpawnData()
-아이템 기존 데이터 업데이트 : Source/Online_RPG/Network_Manager_R => UpdateSpawnData()
+아이템 저장 : 아이템의 Key값과 Quantity값만 저장 하고, Key값으로 ItemBase를 탐색 후, Quantity의 개수를 인벤토리에 추가합니다.</br>
+아이템 저장 기준 : 일정 시간 주기, 게임을 종료할 때, 퀘스트 진행도 또는 아이템 수량이 변경될 때마다 저장합니다. </br>
+</br></br>
+아이템 신규 데이터 저장 : Source/Online_RPG/Network_Manager_R => InsertSpawnData()</br>
+아이템 기존 데이터 업데이트 : Source/Online_RPG/Network_Manager_R => UpdateSpawnData()</br>
 아이템 불러오기 : Source/Online_RPG/Network_Manager_R => 
 
